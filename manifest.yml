@@ -1,0 +1,8 @@
+---
+applications:
+  - name: contractor-approval
+    memory: 512M
+    buildpacks:
+      - python_buildpack
+    services:
+      - contractor-approval-db

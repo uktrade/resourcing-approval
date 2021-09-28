@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      DJANGO_SETTINGS_MODULE: contractor_approval.settings_local
+    links:
+      - postgres
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: contractor-approval
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
