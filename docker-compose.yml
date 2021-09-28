@@ -8,7 +8,7 @@ services:
     volumes:
       - .:/app
     environment:
-      DJANGO_SETTINGS_MODULE: contractor_approval.settings_local
+      DJANGO_SETTINGS_MODULE: config.settings.local
     links:
       - postgres
   postgres:
