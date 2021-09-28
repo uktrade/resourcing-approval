@@ -45,6 +45,7 @@ SESSION_COOKIE_SECURE = True
 # Application definition
 
 INSTALLED_APPS = [
+    "user.apps.UserConfig",
     "main.apps.MainConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -138,3 +139,8 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# User app
+# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-user-model
+
+AUTH_USER_MODEL = "user.User"

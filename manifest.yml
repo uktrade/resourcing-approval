@@ -5,4 +5,4 @@ applications:
     buildpacks:
       - python_buildpack
     services:
-      - contractor-approval-db
+      - contractor-approval-postgres
