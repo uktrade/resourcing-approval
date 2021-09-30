@@ -21,3 +21,12 @@ superuser:
 
 requirements:
 	poetry export -f requirements.txt --output requirements.txt
+
+check-black:
+	black --check .
+
+check-isort:
+	isort --check .
+
+check-flake8:
+	flake8
