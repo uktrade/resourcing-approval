@@ -23,13 +23,13 @@ requirements:
 	poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 black:
-	black --check .
+	docker-compose run --rm web black --check .
 
 isort:
-	isort --check .
+	docker-compose run --rm web isort --check .
 
 flake8:
-	flake8
+	docker-compose run --rm web flake8 $(file)
 
 collectstatic:
 	docker-compose run --rm web python manage.py collectstatic
