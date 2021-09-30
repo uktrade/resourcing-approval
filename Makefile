@@ -8,25 +8,31 @@ down:
 	docker-compose down
 
 bash:
-	docker-compose run web /bin/bash
+	docker-compose run --rm web /bin/bash
 
 migrations:
-	docker-compose run web python manage.py makemigrations
+	docker-compose run --rm web python manage.py makemigrations
 
 migrate:
-	docker-compose run web python manage.py migrate
+	docker-compose run --rm web python manage.py migrate
 
 superuser:
-	docker-compose run web python manage.py createsuperuser 
+	docker-compose run --rm web python manage.py createsuperuser
 
 requirements:
 	poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-check-black:
+black:
 	black --check .
 
-check-isort:
+isort:
 	isort --check .
 
-check-flake8:
+flake8:
 	flake8
+
+collectstatic:
+	docker-compose run --rm web python manage.py collectstatic
+
+compilescss:
+	docker-compose run --rm web python manage.py compilescss
