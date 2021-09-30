@@ -136,7 +136,6 @@ node_modules
 
 # Django static
 staticfiles/
-<<<<<<< HEAD
 
 # Generated front end files
 main/static/main/css/styles.css
