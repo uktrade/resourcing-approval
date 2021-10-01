@@ -127,3 +127,15 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# JS
+node_modules
+
+# IDE
+.idea/
+
+# Django static
+staticfiles/
+
+# Generated front end files
+main/static/main/css/styles.css

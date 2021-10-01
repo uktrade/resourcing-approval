@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_celery_beat",
+    "django_workflow_engine",
 ]
 
 MIDDLEWARE = [
@@ -160,3 +161,6 @@ if REDIS_CREDENTIALS:
             **REDIS_CREDENTIALS
         )
     )
+
+# django-workflow-engine
+DJANGO_WORKFLOWS = env("DJANGO_WORKFLOWS")
