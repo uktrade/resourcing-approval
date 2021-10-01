@@ -22,10 +22,10 @@ superuser:
 requirements:
 	docker-compose run --rm web poetry export -f requirements.txt --output requirements.txt
 
-black:
+check-black:
 	docker-compose run --rm web black --check .
 
-isort:
+check-isort:
 	docker-compose run --rm web isort --check .
 
 flake8:
