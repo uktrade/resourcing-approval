@@ -26,6 +26,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 environ.Env.read_env(BASE_DIR / ".env")
 
+# VCAP services
+# See https://docs.cloudfoundry.org/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES
+
+VCAP_SERVICES = env.json("VCAP_SERVICES", {})
+
+REDIS_CREDENTIALS = VCAP_SERVICES["redis"][0]["credentials"] if VCAP_SERVICES else None
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -144,3 +151,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-user-model
 
 AUTH_USER_MODEL = "user.User"
+
+# Celery
+if REDIS_CREDENTIALS:
+    CELERY_BROKER_URL = (
+        "rediss://:{password}@{host}:{port}/0?ssl_cert_reqs=required".format(
+            **REDIS_CREDENTIALS
+        )
+    )

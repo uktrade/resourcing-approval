@@ -6,3 +6,4 @@ applications:
       - python_buildpack
     services:
       - contractor-approval-postgres
+      - contractor-approval-redis

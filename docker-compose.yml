@@ -11,6 +11,16 @@ services:
       DJANGO_SETTINGS_MODULE: config.settings.local
     links:
       - postgres
+      - redis
+  celery:
+    build: .
+    command: celery -A config worker -l INFO
+    volumes:
+      - .:/app
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.local
+    links:
+      - redis
   postgres:
     image: postgres
     environment:
@@ -18,3 +28,5 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
+  redis:
+    image: redis

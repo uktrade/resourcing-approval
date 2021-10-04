@@ -20,7 +20,7 @@ superuser:
 	docker-compose run web python manage.py createsuperuser 
 
 requirements:
-	poetry export -f requirements.txt --output requirements.txt
+	poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 check-black:
 	black --check .
