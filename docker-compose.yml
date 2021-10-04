@@ -1,25 +1,31 @@
 version: "3.9"
+
+x-app-base: &app-base
+  build: .
+  volumes:
+    - .:/app
+  environment:
+    DJANGO_SETTINGS_MODULE: config.settings.local
+
 services:
   web:
-    build: .
+    <<: *app-base
     command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app
-    environment:
-      DJANGO_SETTINGS_MODULE: config.settings.local
     links:
       - postgres
       - redis
   celery:
-    build: .
+    <<: *app-base
     command: celery -A config worker -l INFO
-    volumes:
-      - .:/app
-    environment:
-      DJANGO_SETTINGS_MODULE: config.settings.local
     links:
+      - redis
+  celery-beat:
+    <<: *app-base
+    command: celery -A config beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    links:
+      - postgres
       - redis
   postgres:
     image: postgres
