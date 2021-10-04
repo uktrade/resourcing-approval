@@ -16,6 +16,8 @@ services:
     links:
       - postgres
       - redis
+    stdin_open: true
+    tty: true
   celery:
     <<: *app-base
     command: celery -A config worker -l INFO

@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import os
 from pathlib import Path
 
 import dj_database_url
@@ -76,13 +77,13 @@ MIDDLEWARE = [
 ]
 
 STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'sass_processor.finders.CssFinder',
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "sass_processor.finders.CssFinder",
 ]
 
 SASS_PROCESSOR_INCLUDE_DIRS = [
-    BASE_DIR / 'node_modules',
+    os.path.join(BASE_DIR, "node_modules"),
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -173,4 +174,6 @@ if REDIS_CREDENTIALS:
     )
 
 # django-workflow-engine
-DJANGO_WORKFLOWS = env("DJANGO_WORKFLOWS")
+DJANGO_WORKFLOWS = [
+    "main.workflow.ContractorApprovalWorkflow",
+]
