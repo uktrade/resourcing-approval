@@ -10,13 +10,14 @@ dj-database-url==0.5.0
 django-celery-beat==2.2.1
 django-environ==0.7.0; python_version >= "3.4" and python_version < "4"
 django-timezone-field==4.2.1; python_version >= "3.5"
+django-workflow-engine==0.0.5; python_version >= "3.6"
 django==3.2.7; python_version >= "3.6"
 kombu==5.1.0; python_version >= "3.6"
 prompt-toolkit==3.0.20; python_full_version >= "3.6.2" and python_version >= "3.6"
 psycopg2==2.9.1; python_version >= "3.6"
 python-crontab==2.5.1
 python-dateutil==2.8.2; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.3.0"
-pytz==2021.1; python_version >= "3.6"
+pytz==2021.3; python_version >= "3.6"
 redis==3.5.3; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
 six==1.16.0; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version >= "3.6"
 sqlparse==0.4.2; python_version >= "3.6"
