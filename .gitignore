@@ -135,7 +135,9 @@ node_modules
 .idea/
 
 # Django static
-staticfiles/
+!staticfiles
+staticfiles/*
+!staticfiles/stub
 
 # Generated front end files
 main/static/main/css/styles.css
