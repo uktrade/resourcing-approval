@@ -1,0 +1,23 @@
+{
+  "name": "contractor-approval",
+  "version": "1.0.0",
+  "description": "Contractor Approval workflow",
+  "main": "index.js",
+  "dependencies": {
+    "govuk-frontend": "^3.14.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uktrade/contractor-approval.git"
+  },
+  "author": "Live Services",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/uktrade/contractor-approval/issues"
+  },
+  "homepage": "https://github.com/uktrade/contractor-approval#readme"
+}
