@@ -1,0 +1,46 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Workflows</h1>
+
+        <a class="govuk-button" href="{% url 'flow-create' %}">Create flow</a>
+
+        {% for flow in object_list %}
+            <div>
+                <form action="{% url 'flow-delete' flow.pk %}" method="POST">
+                    {% csrf_token %}
+                    <h2 class="govuk-heading-m">{{ flow.flow_name }}</h2>
+
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Started by</dt>
+                            <dd class="govuk-summary-list__value">{{ flow.executed_by }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Started at</dt>
+                            <dd class="govuk-summary-list__value">{{ flow.started }}</dd>
+                        </div>
+                        {% if flow.finished %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Finished</dt>
+                                <dd class="govuk-summary-list__value">{{ flow.finished }}</dd>
+                            </div>
+                        {% endif %}
+                    </dl>
+
+                    {% if flow.on_manual_step or not flow.is_complete %}
+                        <a class="govuk-button" href="{% url 'flow-continue' flow.pk %}">Progress requirement</a>
+                    {% else %}
+                        <a class="govuk-button govuk-button--secondary" href="{% url 'flow' flow.pk %}">View requirement</a>
+                    {% endif %}
+                    <button class="govuk-button govuk-button--warning">
+                        Delete requirement
+                    </button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

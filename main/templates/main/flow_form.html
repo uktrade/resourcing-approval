@@ -1,9 +1,9 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<form method="POST">
+<form novalidate method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button>Start</button>
+    {% include 'main/partials/forms/form.html' %}
+    <button class="govuk-button">Start</button>
 </form>
 {% endblock %}
