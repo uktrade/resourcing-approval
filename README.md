@@ -25,3 +25,7 @@
 
 - If you have made any changes to the dependencies, compile the new `requirements.txt`
   file using `make requirements`.
+
+# Test data
+
+`John Smith : Cu{>A-pVj@MY*0C?`
