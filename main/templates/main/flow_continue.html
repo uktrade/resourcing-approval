@@ -1,4 +1,6 @@
-{% block main_content %}
+{% extends 'main/base.html' %}
+
+{% block content %}
 <div>
     <form novalidate method="POST">
         {% csrf_token %}
