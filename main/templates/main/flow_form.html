@@ -1,5 +1,7 @@
 {% extends 'main/base.html' %}
 
+{% block title %}Create approval workflow{% endblock %}
+
 {% block content %}
 <form novalidate method="POST">
     {% csrf_token %}
