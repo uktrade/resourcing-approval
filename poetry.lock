@@ -470,7 +470,7 @@ rest_framework = ["djangorestframework (>=3.0.0)"]
 
 [[package]]
 name = "django-workflow-engine"
-version = "0.0.15"
+version = "0.0.16"
 description = "Lightweight, reusable workflow engine for Django applications"
 category = "main"
 optional = false
@@ -1170,7 +1170,7 @@ brotli = ["brotli"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "3ed9fb90668df3997f8d3ae313249f733d1f6e903bd12c99a0822caac726e508"
+content-hash = "b0ad0101c4ea93f8af065574c71afad920717efacf52b82b80eda5301416298b"
 
 [metadata.files]
 amqp = [
@@ -1401,7 +1401,7 @@ django-timezone-field = [
     {file = "django_timezone_field-4.2.1-py3-none-any.whl", hash = "sha256:6dc782e31036a58da35b553bd00c70f112d794700025270d8a6a4c1d2e5b26c6"},
 ]
 django-workflow-engine = [
-    {file = "django-workflow-engine-0.0.15.tar.gz", hash = "sha256:ea0da9b0347d09208a6c18ce341939ff0170227cb1703933367ebb63d9c6f61f"},
+    {file = "django-workflow-engine-0.0.16.tar.gz", hash = "sha256:a3786a4b2bc5300c2d2e269ae5b02985bca864b5ae76bae09a81525bfe6abb8f"},
 ]
 filelock = [
     {file = "filelock-3.3.0-py3-none-any.whl", hash = "sha256:bbc6a0382fe8ec4744ecdf6683a2e07f65eb10ff1aff53fc02a202565446cde0"},
