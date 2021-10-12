@@ -5,8 +5,8 @@
     <form novalidate method="POST">
         {% csrf_token %}
         <input type="hidden" name="uuid" value="{{ flow.current_task_record.uuid }}">
-        {{ form.as_p }}
-        <button>Submit</button>
+        {% include 'main/partials/forms/form.html' %}
+        <button class="govuk-button">Submit</button>
     </form>
 </div>
 {% endblock %}

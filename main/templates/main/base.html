@@ -11,6 +11,12 @@
     <link href="{% sass_src 'main/css/styles.scss' %}" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-    {% block content %}{% endblock %}
+    {% include 'main/partials/header.html' with service_name='Contractor Approval' %}
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    {% include 'main/partials/footer.html' %}
 </body>
 </html>
