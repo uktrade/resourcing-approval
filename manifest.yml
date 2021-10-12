@@ -4,6 +4,7 @@ applications:
     memory: 512M
     buildpacks:
       - python_buildpack
+      - nodejs_buildpack
     services:
       - contractor-approval-postgres
       - contractor-approval-redis

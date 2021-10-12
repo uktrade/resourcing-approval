@@ -1,5 +1,9 @@
-from django.db import models
+from enum import Enum
 
+from django.db import models
+from django.db.models import Q
+from django.db.models.expressions import F
+from django.urls import reverse
 
 TRUE_FALSE_CHOICES = (
     (True, "Yes"),
@@ -8,13 +12,129 @@ TRUE_FALSE_CHOICES = (
 
 
 class ContractorApproval(models.Model):
-    flow = models.OneToOneField(
-        "django_workflow_engine.Flow",
-        models.CASCADE,
-        related_name="contractor_approval",
-    )
+    class Meta:
+        permissions = (
+            ("can_give_chief_approval", "Can give chief approval"),
+            ("can_give_hrbp_approval", "Can give HRBP approval"),
+            ("can_give_finance_approval", "Can give finance approval"),
+            ("can_give_commercial_approval", "Can give commercial approval"),
+        )
+        constraints = [
+            models.CheckConstraint(
+                check=(
+                    Q(
+                        status=0,
+                        chief_approval__isnull=True,
+                        hrbp_approval__isnull=True,
+                        finance_approval__isnull=True,
+                        commercial_approval__isnull=True,
+                    )
+                    | Q(status=1)
+                ),
+                name="check_status",
+            ),
+            models.CheckConstraint(
+                check=Q(chief_approval_who=F("chief")), name="check_chief"
+            ),
+        ]
 
-    is_ir35 = models.BooleanField(null=True, choices=TRUE_FALSE_CHOICES)
+    class Status(models.IntegerChoices):
+        DRAFT = 0, "Draft"
+        READY = 1, "Ready"
+
+    class Approvals(Enum):
+        CHIEF = "chief"
+        HRBP = "hrbp"
+        FINANCE = "finance"
+        COMMERCIAL = "commercial"
+
+    status = models.SmallIntegerField(choices=Status.choices, default=Status.DRAFT)
+
+    name = models.CharField(max_length=255)
+    is_ir35 = models.BooleanField(
+        "Is the role inside IR35?", null=True, choices=TRUE_FALSE_CHOICES
+    )
+    chief = models.ForeignKey("user.User", models.CASCADE, related_name="+")
+
+    # Approvals
+    chief_approval = models.BooleanField(choices=TRUE_FALSE_CHOICES, null=True)
+    chief_approval_who = models.ForeignKey(
+        "user.User", models.CASCADE, null=True, related_name="+"
+    )
+    chief_approval_when = models.DateTimeField(null=True)
+
+    hrbp_approval = models.BooleanField(
+        "HRBP approval", choices=TRUE_FALSE_CHOICES, null=True
+    )
+    hrbp_approval_who = models.ForeignKey(
+        "user.User", models.CASCADE, null=True, related_name="+"
+    )
+    hrbp_approval_when = models.DateTimeField(null=True)
+
+    finance_approval = models.BooleanField(choices=TRUE_FALSE_CHOICES, null=True)
+    finance_approval_who = models.ForeignKey(
+        "user.User", models.CASCADE, null=True, related_name="+"
+    )
+    finance_approval_when = models.DateTimeField(null=True)
+
+    commercial_approval = models.BooleanField(choices=TRUE_FALSE_CHOICES, null=True)
+    commercial_approval_who = models.ForeignKey(
+        "user.User", models.CASCADE, null=True, related_name="+"
+    )
+    commercial_approval_when = models.DateTimeField(null=True)
+
+    def get_absolute_url(self):
+        return reverse("approval-detail", kwargs={"pk": self.pk})
+
+    def clear_approvals(self):
+        for approval in self.Approvals:
+            setattr(self, f"{approval.value}_approval", None)
+            setattr(self, f"{approval.value}_approval_who", None)
+            setattr(self, f"{approval.value}_approval_when", None)
+
+    @property
+    def can_edit(self):
+        return self.status == self.Status.DRAFT
+
+    @property
+    def can_mark_as_ready(self):
+        if self.is_ir35 and not self.job_description:
+            return False
+
+        if not self.is_ir35 and not self.statement_of_work:
+            return False
+
+        return all(
+            [
+                self.interim_request,
+                self.cest_rationale,
+                self.sds_status_determination,
+            ]
+        )
+
+    @property
+    def approvals(self):
+        return (
+            self.chief_approval,
+            self.hrbp_approval,
+            self.finance_approval,
+            self.commercial_approval,
+        )
+
+    @property
+    def approved(self):
+        return all(self.approvals)
+
+    @property
+    def status_display(self):
+        if self.status == self.Status.DRAFT:
+            return "Draft"
+
+        if self.chief_approval:
+            return f"Awaiting approval from {self.chief}"
+
+        if not self.approved:
+            return "Awaiting approvals"
 
 
 class JobDescription(models.Model):
@@ -56,3 +176,68 @@ class JobDescription(models.Model):
             " better pool of candidates to select from at interview."
         )
     )
+
+    def __str__(self):
+        return self.title
+
+
+class StatementOfWork(models.Model):
+    approval = models.OneToOneField(
+        "ContractorApproval",
+        models.CASCADE,
+        related_name="statement_of_work",
+    )
+
+    company_name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.company_name
+
+
+class InterimRequest(models.Model):
+    approval = models.OneToOneField(
+        "ContractorApproval",
+        models.CASCADE,
+        related_name="interim_request",
+    )
+
+    todo = models.TextField()
+
+    def __str__(self):
+        return "Interim request"
+
+
+class CestRationale(models.Model):
+    approval = models.OneToOneField(
+        "ContractorApproval",
+        models.CASCADE,
+        related_name="cest_rationale",
+    )
+
+    todo = models.TextField()
+
+    def __str__(self):
+        return "CEST rationale"
+
+
+class SdsStatusDetermination(models.Model):
+    approval = models.OneToOneField(
+        "ContractorApproval",
+        models.CASCADE,
+        related_name="sds_status_determination",
+    )
+
+    todo = models.TextField()
+
+    def __str__(self):
+        return "SDS status determination"
+
+
+class Comment(models.Model):
+    approval = models.ForeignKey(
+        "ContractorApproval", models.CASCADE, related_name="comments"
+    )
+    user = models.ForeignKey("user.User", models.CASCADE, related_name="comments")
+
+    timestamp = models.DateTimeField(auto_now_add=True)
+    text = models.TextField("Add a comment")
