@@ -1,28 +1,223 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
-from django_workflow_engine.views import (
-    FlowContinueView,
-    FlowCreateView,
-    FlowListView,
-    FlowView,
+from django.urls import reverse_lazy
+from django.urls.base import reverse
+from django.utils import timezone
+from django.views import View
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.list import ListView
+
+from main.forms import (
+    CestRationaleForm,
+    CommentForm,
+    ContractorApprovalForm,
+    InterimRequestForm,
+    JobDescriptionForm,
+    SdsStatusDeterminationForm,
+    StatementOfWorkForm,
+)
+from main.models import (
+    CestRationale,
+    Comment,
+    ContractorApproval,
+    InterimRequest,
+    JobDescription,
+    SdsStatusDetermination,
+    StatementOfWork,
 )
 
 
-def index(request):
-    return redirect("flow-list")
+class CanEditApprovalMixin:
+    def get_approval(self):
+        return self.get_object()
+
+    def dispatch(self, request, *args, **kwargs):
+        if not self.get_approval().can_edit:
+            raise ValidationError("Cannot edit approval")
+
+        return super().dispatch(request, *args, **kwargs)
 
 
-class MyFlowCreateView(FlowCreateView):
-    template_name = "main/flow_form.html"
+# Contractor approval
+class ApprovalListView(PermissionRequiredMixin, ListView):
+    model = ContractorApproval
+    context_object_name = "approvals"
+    permission_required = "main.view_contractorapproval"
 
 
-class MyFlowListView(FlowListView):
-    template_name = "main/flow_list.html"
+class ApprovalCreateView(PermissionRequiredMixin, CreateView):
+    model = ContractorApproval
+    form_class = ContractorApprovalForm
+    permission_required = "main.add_contractorapproval"
+    template_name = "main/form.html"
 
 
-class MyFlowView(FlowView):
-    template_name = "main/flow.html"
+class ApprovalDetailView(PermissionRequiredMixin, DetailView):
+    model = ContractorApproval
+    context_object_name = "approval"
+    permission_required = "main.view_contractorapproval"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        approval = context["approval"]
+        context["comment_form"] = CommentForm(
+            initial={"approval": approval.pk, "user": self.request.user.pk}
+        )
+
+        return context
 
 
-class MyFlowContinueView(FlowContinueView):
-    # TODO: Can't override template like this for the continue view.
-    template_name = "main/flow_continue.html"
+class ApprovalUpdateView(CanEditApprovalMixin, PermissionRequiredMixin, UpdateView):
+    model = ContractorApproval
+    form_class = ContractorApprovalForm
+    permission_required = "main.change_contractorapproval"
+    template_name = "main/form.html"
+
+
+class ApprovalDeleteView(PermissionRequiredMixin, DeleteView):
+    model = ContractorApproval
+    success_url = reverse_lazy("approval-list")
+    permission_required = "main.delete_contractorapproval"
+    template_name = "main/form.html"
+
+
+# Approval actions
+class ApprovalChangeStatusView(PermissionRequiredMixin, View):
+    permission_required = "main.change_contractorapproval"
+
+    def post(self, request, pk):
+        status = request.POST["status"]
+
+        approval = ContractorApproval.objects.get(pk=pk)
+        approval.status = status
+        approval.save()
+
+        return redirect(reverse("approval-detail", kwargs={"pk": pk}))
+
+
+class ApprovalApproveRejectView(View):
+    # TODO: Change to post.
+    def get(self, request, pk, approved=True):
+        which_approval = request.GET["which_approval"]
+
+        # TODO: Switch to using ContractorApproval.Approvals enum.
+        if which_approval not in ["chief", "hrbp", "finance", "commercial"]:
+            raise ValidationError("Invalid approval")
+
+        if not request.user.has_perm(f"main.can_give_{which_approval}_approval"):
+            raise PermissionError("Invalid permission")
+
+        approval = ContractorApproval.objects.get(pk=pk)
+
+        if which_approval == "chief" and request.user != approval.chief:
+            raise PermissionError("Only the nominated chief can give chief approval")
+
+        setattr(approval, f"{which_approval}_approval", approved)
+        setattr(approval, f"{which_approval}_approval_who", request.user)
+        setattr(approval, f"{which_approval}_approval_when", timezone.now())
+        approval.save()
+
+        return redirect(reverse("approval-detail", kwargs={"pk": pk}))
+
+
+class ApprovalAddComment(PermissionRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    permission_required = "main.view_contractorapproval"
+
+    def get_initial(self):
+        return {"approval": self.kwargs["pk"], "user": self.request.user.pk}
+
+    def get_success_url(self):
+        return self.object.approval.get_absolute_url()
+
+
+# Supporting forms
+# TODO: Possible opportunity to refactor the supporting forms to use a shared view and
+# template.
+class ApprovalFormCreateView(PermissionRequiredMixin, CreateView):
+    template_name = "main/form.html"
+
+    def get_initial(self):
+        return {"approval": self.request.GET.get("approval")}
+
+    def get_success_url(self):
+        return self.object.approval.get_absolute_url()
+
+    def get_approval(self):
+        return self.get_object().approval
+
+
+class ApprovalFormUpdateView(CanEditApprovalMixin, PermissionRequiredMixin, UpdateView):
+    template_name = "main/form.html"
+
+    def get_initial(self):
+        return {"approval": self.object.approval.pk}
+
+    def get_success_url(self):
+        return self.object.approval.get_absolute_url()
+
+    def get_approval(self):
+        return self.get_object().approval
+
+
+class JobDescriptionCreateView(ApprovalFormCreateView):
+    model = JobDescription
+    form_class = JobDescriptionForm
+    permission_required = "main.add_jobdescription"
+
+
+class JobDescriptionUpdateView(ApprovalFormUpdateView):
+    model = JobDescription
+    form_class = JobDescriptionForm
+    permission_required = "main.change_jobdescription"
+
+
+class StatementOfWorkCreateView(ApprovalFormCreateView):
+    model = StatementOfWork
+    form_class = StatementOfWorkForm
+    permission_required = "main.add_statementofwork"
+
+
+class StatementOfWorkUpdateView(ApprovalFormUpdateView):
+    model = StatementOfWork
+    form_class = StatementOfWorkForm
+    permission_required = "main.change_statementofwork"
+
+
+class InterimRequestCreateView(ApprovalFormCreateView):
+    model = InterimRequest
+    form_class = InterimRequestForm
+    permission_required = "main.add_interimrequest"
+
+
+class InterimRequestUpdateView(ApprovalFormUpdateView):
+    model = InterimRequest
+    form_class = InterimRequestForm
+    permission_required = "main.change_interimrequest"
+
+
+class CestRationaleCreateView(ApprovalFormCreateView):
+    model = CestRationale
+    form_class = CestRationaleForm
+    permission_required = "main.add_cestrationale"
+
+
+class CestRationaleUpdateView(ApprovalFormUpdateView):
+    model = CestRationale
+    form_class = CestRationaleForm
+    permission_required = "main.change_cestrationale"
+
+
+class SdsStatusDeterminationCreateView(ApprovalFormCreateView):
+    model = SdsStatusDetermination
+    form_class = SdsStatusDeterminationForm
+    permission_required = "main.add_sdsstatusdetermination"
+
+
+class SdsStatusDeterminationUpdateView(ApprovalFormUpdateView):
+    model = SdsStatusDetermination
+    form_class = SdsStatusDeterminationForm
+    permission_required = "main.change_sdsstatusdetermination"

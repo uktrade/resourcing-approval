@@ -61,7 +61,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_celery_beat",
-    "django_workflow_engine",
     "sass_processor",
 ]
 
@@ -154,6 +153,14 @@ USE_TZ = True
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "/static/"
+
+# django-sass-processor
+# https://github.com/jrief/django-sass-processor#using-manifeststaticfilesstorage
+SASS_PROCESSOR_STORAGE = "django.contrib.staticfiles.storage.FileSystemStorage"
+SASS_PROCESSOR_STORAGE_OPTIONS = {
+    "location": STATIC_ROOT,
+    "base_url": STATIC_URL,
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

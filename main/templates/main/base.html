@@ -14,7 +14,9 @@
     {% include 'main/partials/header.html' with service_name='Contractor Approval' %}
     <div class="govuk-width-container">
         <main class="govuk-main-wrapper">
-            {% block content %}{% endblock %}
+            <div class="govuk-grid-row">
+                {% block content %}{% endblock %}
+            </div>
         </main>
     </div>
     {% include 'main/partials/footer.html' %}
