@@ -1,6 +1,8 @@
 from .base import *
 
 
+ENV = "local"
+
 DEBUG = True
 
 CSRF_COOKIE_SECURE = False
