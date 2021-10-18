@@ -19,6 +19,7 @@ django-celery-beat = "^2.2.1"
 django-sass-processor = "^1.1"
 libsass = "^0.21.0"
 django-compressor = "^2.4.1"
+notifications-python-client = "^6.3.0"
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"

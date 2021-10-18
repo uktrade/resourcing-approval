@@ -180,7 +180,5 @@ if REDIS_CREDENTIALS:
         )
     )
 
-# django-workflow-engine
-DJANGO_WORKFLOWS = [
-    "main.workflow.ContractorApprovalWorkflow",
-]
+# GOV.UK Notify
+GOVUK_NOTIFY_API_KEY = env("GOVUK_NOTIFY_API_KEY")
