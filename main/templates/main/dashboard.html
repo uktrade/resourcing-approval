@@ -1,0 +1,50 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="govuk-heading-l">Approvals</h1>
+
+{% if perms.main.add_contractorapproval %}
+    <a class="govuk-button" href="{% url 'approval-create' %}">Create approval</a>
+{% endif %}
+
+<h1 class="govuk-heading-m">Your approval requests</h1>
+
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th class="govuk-table__header">Name</th>
+            <th class="govuk-table__header">Status</th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        {% for approval in your_approvals %}
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell"><a href="{% url 'approval-detail' approval.pk %}">{{ approval }}</a></td>
+                <td class="govuk-table__cell">{{ approval.get_status_display }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h1 class="govuk-heading-m">Awaiting your approval</h1>
+
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th class="govuk-table__header">Name</th>
+            <th class="govuk-table__header">Status</th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        {% for approval in awaiting_your_approval %}
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell"><a href="{% url 'approval-detail' approval.pk %}">{{ approval }}</a></td>
+                <td class="govuk-table__cell">{{ approval.get_status_display }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

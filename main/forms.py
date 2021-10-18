@@ -14,7 +14,15 @@ from main.models import (
 class ContractorApprovalForm(forms.ModelForm):
     class Meta:
         model = ContractorApproval
-        fields = ["name", "is_ir35", "chief"]
+        fields = ["requestor", "name", "is_ir35", "chief"]
+        widgets = {
+            "requestor": forms.HiddenInput,
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["requestor"].disabled = True
 
 
 class CommentForm(forms.ModelForm):
