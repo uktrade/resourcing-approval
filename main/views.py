@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import ValidationError
 from django.db.models.query_utils import Q
 from django.shortcuts import redirect
@@ -69,6 +69,18 @@ class DashboardView(TemplateView):
         return context
 
 
+class CanAccessApprovalMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user == self.get_object().requestor or any(
+            (
+                self.request.user.has_perm("can_give_chief_approval"),
+                self.request.user.has_perm("can_give_hrbp_approval"),
+                self.request.user.has_perm("can_give_finance_approval"),
+                self.request.user.has_perm("can_give_commercial_approval"),
+            )
+        )
+
+
 class CanEditApprovalMixin:
     def get_approval(self):
         return self.get_object()
@@ -91,7 +103,7 @@ class ApprovalCreateView(PermissionRequiredMixin, CreateView):
         return {"requestor": self.request.user}
 
 
-class ApprovalDetailView(PermissionRequiredMixin, DetailView):
+class ApprovalDetailView(CanAccessApprovalMixin, PermissionRequiredMixin, DetailView):
     model = ResourcingApproval
     context_object_name = "approval"
     permission_required = "main.view_resourcingapproval"
@@ -106,14 +118,16 @@ class ApprovalDetailView(PermissionRequiredMixin, DetailView):
         return context
 
 
-class ApprovalUpdateView(CanEditApprovalMixin, PermissionRequiredMixin, UpdateView):
+class ApprovalUpdateView(
+    CanEditApprovalMixin, CanAccessApprovalMixin, PermissionRequiredMixin, UpdateView
+):
     model = ResourcingApproval
     form_class = ResourcingApprovalForm
     permission_required = "main.change_resourcingapproval"
     template_name = "main/form.html"
 
 
-class ApprovalDeleteView(PermissionRequiredMixin, DeleteView):
+class ApprovalDeleteView(CanAccessApprovalMixin, PermissionRequiredMixin, DeleteView):
     model = ResourcingApproval
     success_url = reverse_lazy("dashboard")
     permission_required = "main.delete_resourcingapproval"
