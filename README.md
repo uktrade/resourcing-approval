@@ -17,9 +17,11 @@
 
 ## Running
 
-1. `make up`
-2. `make migrate`
-3. http://localhost:8000
+1. `make migrate`
+2. `make up`
+3. `make superuser`
+4. Goto http://localhost:8000/admin and login
+5. Goto http://localhost:8000
 
 # Deployment
 
