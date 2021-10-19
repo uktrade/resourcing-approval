@@ -115,7 +115,7 @@ class ApprovalUpdateView(CanEditApprovalMixin, PermissionRequiredMixin, UpdateVi
 
 class ApprovalDeleteView(PermissionRequiredMixin, DeleteView):
     model = ResourcingApproval
-    success_url = reverse_lazy("approval-list")
+    success_url = reverse_lazy("dashboard")
     permission_required = "main.delete_resourcingapproval"
     template_name = "main/form.html"
 
