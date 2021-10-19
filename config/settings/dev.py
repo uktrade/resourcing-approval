@@ -4,6 +4,6 @@ from .base import *
 ENV = "dev"
 
 ALLOWED_HOSTS = [
-    "contractor-approval-dev.london.cloudapps.digital",
-    "contractor-approval.dev.uktrade.digital",
+    "resourcing-approval-dev.london.cloudapps.digital",
+    "resourcing-approval.dev.uktrade.digital",
 ]

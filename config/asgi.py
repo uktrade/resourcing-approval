@@ -1,5 +1,5 @@
 """
-ASGI config for contractor_approval project.
+ASGI config for resourcing_approval project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

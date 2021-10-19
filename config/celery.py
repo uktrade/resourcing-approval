@@ -6,7 +6,7 @@ from celery import Celery
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
-app = Celery("contractor_approval")
+app = Celery("resourcing_approval")
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.

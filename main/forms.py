@@ -3,7 +3,7 @@ from django import forms
 from main.models import (
     CestRationale,
     Comment,
-    ContractorApproval,
+    ResourcingApproval,
     InterimRequest,
     JobDescription,
     SdsStatusDetermination,
@@ -11,9 +11,9 @@ from main.models import (
 )
 
 
-class ContractorApprovalForm(forms.ModelForm):
+class ResourcingApprovalForm(forms.ModelForm):
     class Meta:
-        model = ContractorApproval
+        model = ResourcingApproval
         fields = ["requestor", "name", "is_ir35", "chief"]
         widgets = {
             "requestor": forms.HiddenInput,

@@ -32,7 +32,7 @@ services:
   postgres:
     image: postgres
     environment:
-      POSTGRES_DB: contractor-approval
+      POSTGRES_DB: resourcing-approval
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"

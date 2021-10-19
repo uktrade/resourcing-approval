@@ -12,7 +12,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from main.forms import (
     CestRationaleForm,
     CommentForm,
-    ContractorApprovalForm,
+    ResourcingApprovalForm,
     InterimRequestForm,
     JobDescriptionForm,
     SdsStatusDeterminationForm,
@@ -21,7 +21,7 @@ from main.forms import (
 from main.models import (
     CestRationale,
     Comment,
-    ContractorApproval,
+    ResourcingApproval,
     InterimRequest,
     JobDescription,
     SdsStatusDetermination,
@@ -56,11 +56,11 @@ class DashboardView(TemplateView):
         if user.has_perm("can_give_commercial_approval"):
             query = query | Q(commercial_approval__isnull=True)
 
-        context["awaiting_your_approval"] = ContractorApproval.objects.filter(
+        context["awaiting_your_approval"] = ResourcingApproval.objects.filter(
             Q(
                 status__in=(
-                    ContractorApproval.Status.AWAITING_CHIEF_APPROVAL,
-                    ContractorApproval.Status.AWAITING_APPROVALS,
+                    ResourcingApproval.Status.AWAITING_CHIEF_APPROVAL,
+                    ResourcingApproval.Status.AWAITING_APPROVALS,
                 )
             )
             & query
@@ -80,11 +80,11 @@ class CanEditApprovalMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
-# Contractor approval
+# Resourcing approval
 class ApprovalCreateView(PermissionRequiredMixin, CreateView):
-    model = ContractorApproval
-    form_class = ContractorApprovalForm
-    permission_required = "main.add_contractorapproval"
+    model = ResourcingApproval
+    form_class = ResourcingApprovalForm
+    permission_required = "main.add_resourcingapproval"
     template_name = "main/form.html"
 
     def get_initial(self):
@@ -92,9 +92,9 @@ class ApprovalCreateView(PermissionRequiredMixin, CreateView):
 
 
 class ApprovalDetailView(PermissionRequiredMixin, DetailView):
-    model = ContractorApproval
+    model = ResourcingApproval
     context_object_name = "approval"
-    permission_required = "main.view_contractorapproval"
+    permission_required = "main.view_resourcingapproval"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -107,27 +107,27 @@ class ApprovalDetailView(PermissionRequiredMixin, DetailView):
 
 
 class ApprovalUpdateView(CanEditApprovalMixin, PermissionRequiredMixin, UpdateView):
-    model = ContractorApproval
-    form_class = ContractorApprovalForm
-    permission_required = "main.change_contractorapproval"
+    model = ResourcingApproval
+    form_class = ResourcingApprovalForm
+    permission_required = "main.change_resourcingapproval"
     template_name = "main/form.html"
 
 
 class ApprovalDeleteView(PermissionRequiredMixin, DeleteView):
-    model = ContractorApproval
+    model = ResourcingApproval
     success_url = reverse_lazy("approval-list")
-    permission_required = "main.delete_contractorapproval"
+    permission_required = "main.delete_resourcingapproval"
     template_name = "main/form.html"
 
 
 # Approval actions
 class ApprovalChangeStatusView(PermissionRequiredMixin, View):
-    permission_required = "main.change_contractorapproval"
+    permission_required = "main.change_resourcingapproval"
 
     def post(self, request, pk):
         status = int(request.POST["status"])
 
-        approval = ContractorApproval.objects.get(pk=pk)
+        approval = ResourcingApproval.objects.get(pk=pk)
 
         if status == approval.Status.DRAFT:
             approval.mark_as_draft()
@@ -146,14 +146,14 @@ class ApprovalApproveRejectView(View):
     def get(self, request, pk, approved=True):
         which_approval = request.GET["which_approval"]
 
-        # TODO: Switch to using ContractorApproval.Approvals enum.
+        # TODO: Switch to using ResourcingApproval.Approvals enum.
         if which_approval not in ["chief", "hrbp", "finance", "commercial"]:
             raise ValidationError("Invalid approval")
 
         if not request.user.has_perm(f"main.can_give_{which_approval}_approval"):
             raise PermissionError("User does not have permission to give this approval")
 
-        approval = ContractorApproval.objects.get(pk=pk)
+        approval = ResourcingApproval.objects.get(pk=pk)
 
         if which_approval == "chief" and request.user != approval.chief:
             raise PermissionError("Only the nominated chief can give chief approval")
@@ -171,7 +171,7 @@ class ApprovalApproveRejectView(View):
 class ApprovalAddComment(PermissionRequiredMixin, CreateView):
     model = Comment
     form_class = CommentForm
-    permission_required = "main.view_contractorapproval"
+    permission_required = "main.view_resourcingapproval"
 
     def get_initial(self):
         return {"approval": self.kwargs["pk"], "user": self.request.user.pk}

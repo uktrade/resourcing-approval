@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "contractor-approval"
+name = "resourcing-approval"
 version = "0.1.0"
-description = ""
+description = "A web application to aid with resourcing approvals."
 authors = ["Live Services <live.services@digital.trade.gov.uk>"]
 license = "MIT"
 

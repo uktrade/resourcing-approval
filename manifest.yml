@@ -1,10 +1,10 @@
 ---
 applications:
-  - name: contractor-approval
+  - name: resourcing-approval
     memory: 512M
     buildpacks:
       - python_buildpack
       - nodejs_buildpack
     services:
-      - contractor-approval-postgres
-      - contractor-approval-redis
+      - resourcing-approval-postgres
+      - resourcing-approval-redis

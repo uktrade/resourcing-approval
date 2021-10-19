@@ -1,7 +1,7 @@
 {
-  "name": "contractor-approval",
+  "name": "resourcing-approval",
   "version": "1.0.0",
-  "description": "Contractor Approval workflow",
+  "description": "A web application to aid with resourcing approvals.",
   "main": "index.js",
   "dependencies": {
     "govuk-frontend": "^3.14.0"
@@ -12,12 +12,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/uktrade/contractor-approval.git"
+    "url": "git+https://github.com/uktrade/resourcing-approval.git"
   },
   "author": "Live Services",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/uktrade/contractor-approval/issues"
+    "url": "https://github.com/uktrade/resourcing-approval/issues"
   },
-  "homepage": "https://github.com/uktrade/contractor-approval#readme"
+  "homepage": "https://github.com/uktrade/resourcing-approval#readme"
 }
