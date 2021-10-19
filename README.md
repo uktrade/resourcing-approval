@@ -1,4 +1,4 @@
-# contractor-approval
+# resourcing-approval
 
 # Local environment
 

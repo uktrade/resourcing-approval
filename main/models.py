@@ -13,7 +13,7 @@ TRUE_FALSE_CHOICES = (
 )
 
 
-class ContractorApproval(models.Model):
+class ResourcingApproval(models.Model):
     class Meta:
         permissions = (
             ("can_give_chief_approval", "Can give chief approval"),
@@ -202,7 +202,7 @@ class ContractorApproval(models.Model):
 
 class JobDescription(models.Model):
     approval = models.OneToOneField(
-        "ContractorApproval",
+        "ResourcingApproval",
         models.CASCADE,
         related_name="job_description",
     )
@@ -246,7 +246,7 @@ class JobDescription(models.Model):
 
 class StatementOfWork(models.Model):
     approval = models.OneToOneField(
-        "ContractorApproval",
+        "ResourcingApproval",
         models.CASCADE,
         related_name="statement_of_work",
     )
@@ -259,7 +259,7 @@ class StatementOfWork(models.Model):
 
 class InterimRequest(models.Model):
     approval = models.OneToOneField(
-        "ContractorApproval",
+        "ResourcingApproval",
         models.CASCADE,
         related_name="interim_request",
     )
@@ -272,7 +272,7 @@ class InterimRequest(models.Model):
 
 class CestRationale(models.Model):
     approval = models.OneToOneField(
-        "ContractorApproval",
+        "ResourcingApproval",
         models.CASCADE,
         related_name="cest_rationale",
     )
@@ -285,7 +285,7 @@ class CestRationale(models.Model):
 
 class SdsStatusDetermination(models.Model):
     approval = models.OneToOneField(
-        "ContractorApproval",
+        "ResourcingApproval",
         models.CASCADE,
         related_name="sds_status_determination",
     )
@@ -298,7 +298,7 @@ class SdsStatusDetermination(models.Model):
 
 class Comment(models.Model):
     approval = models.ForeignKey(
-        "ContractorApproval", models.CASCADE, related_name="comments"
+        "ResourcingApproval", models.CASCADE, related_name="comments"
     )
     user = models.ForeignKey("user.User", models.CASCADE, related_name="comments")
 

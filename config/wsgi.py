@@ -1,5 +1,5 @@
 """
-WSGI config for contractor_approval project.
+WSGI config for resourcing_approval project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

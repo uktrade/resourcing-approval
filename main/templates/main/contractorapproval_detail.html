@@ -124,7 +124,7 @@
     </div>
 </dl>
 
-{% if perms.main.change_contractorapproval %}
+{% if perms.main.change_resourcingapproval %}
     <form class="inline" action="{% url 'approval-change-status' approval.pk %}" method="post">
         {% csrf_token %}
         {% if approval.can_send_to_chief %}
@@ -141,7 +141,7 @@
     {% endif %}
 {% endif %}
 
-{% if perms.main.delete_contractorapproval %}
+{% if perms.main.delete_resourcingapproval %}
     <form class="inline" action="{% url 'approval-delete' approval.pk %}" method="post">
         {% csrf_token %}
         <button class="govuk-button govuk-button--warning">Delete</button>

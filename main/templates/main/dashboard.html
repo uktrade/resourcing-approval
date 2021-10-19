@@ -5,7 +5,7 @@
 {% block content %}
 <h1 class="govuk-heading-l">Approvals</h1>
 
-{% if perms.main.add_contractorapproval %}
+{% if perms.main.add_resourcingapproval %}
     <a class="govuk-button" href="{% url 'approval-create' %}">Create approval</a>
 {% endif %}
 
