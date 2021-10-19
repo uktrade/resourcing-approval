@@ -12,7 +12,7 @@
 {% for approval in approvals %}
     <div>
         <h2 class="govuk-heading-m">{{ approval.name }}</h2>
-        <p class="govuk-body">{{ approval.status_display }}</p>
+        <p class="govuk-body">{{ approval.get_status_display }}</p>
         <a class="govuk-button govuk-button--secondary" href="{{ approval.get_absolute_url }}">View approval</a>
     </div>
 {% endfor %}

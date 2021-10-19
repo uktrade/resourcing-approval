@@ -8,10 +8,10 @@ from main.views import (
     ApprovalCreateView,
     ApprovalDeleteView,
     ApprovalDetailView,
-    ApprovalListView,
     ApprovalUpdateView,
     CestRationaleCreateView,
     CestRationaleUpdateView,
+    DashboardView,
     InterimRequestCreateView,
     InterimRequestUpdateView,
     JobDescriptionCreateView,
@@ -20,7 +20,9 @@ from main.views import (
     SdsStatusDeterminationUpdateView,
     StatementOfWorkCreateView,
     StatementOfWorkUpdateView,
+    index,
 )
+
 
 approval_urls = [
     path("create/", ApprovalCreateView.as_view(), name="approval-create"),
@@ -98,7 +100,8 @@ sds_status_determination_urls = document_urls(
 )
 
 urlpatterns = [
-    path("", ApprovalListView.as_view(), name="approval-list"),
+    path("", index, name="index"),
+    path("dashboard/", DashboardView.as_view(), name="dashboard"),
     path("approval/", include(approval_urls)),
     path("job-description/", include(job_description_urls)),
     path("statement-of-work/", include(statement_of_work_urls)),

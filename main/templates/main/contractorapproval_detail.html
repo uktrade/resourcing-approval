@@ -6,7 +6,8 @@
 <h1 class="govuk-heading-l">{{ approval.name }}</h2>
 
 <dl class="govuk-summary-list">
-    {% include 'main/partials/summary-row.html' with key='Status' value=approval.status_display %}
+    {% include 'main/partials/summary-row.html' with key='Requestor' value=approval.requestor %}
+    {% include 'main/partials/summary-row.html' with key='Status' value=approval.get_status_display %}
     {% include 'main/partials/summary-row.html' with key='Is IR35' value=approval.get_is_ir35_display %}
     {% include 'main/partials/summary-row.html' with key='Chief' value=approval.chief %}
 
@@ -126,10 +127,11 @@
 {% if perms.main.change_contractorapproval %}
     <form class="inline" action="{% url 'approval-change-status' approval.pk %}" method="post">
         {% csrf_token %}
-        {% if approval.status == approval.Status.DRAFT and approval.can_mark_as_ready %}
-            <input type="hidden" name="status" value="{{ approval.Status.READY }}">
-            <button class="govuk-button">Mark as ready</button>
-        {% elif approval.status == approval.Status.READY %}
+        {% if approval.can_send_to_chief %}
+            <input type="hidden" name="status" value="{{ approval.Status.AWAITING_CHIEF_APPROVAL }}">
+            <button class="govuk-button">Send to Chief</button>
+        {% endif %}
+        {% if approval.can_mark_as_draft %}
             <input type="hidden" name="status" value="{{ approval.Status.DRAFT }}">
             <button class="govuk-button govuk-button--secondary">Mark as draft</button>
         {% endif %}
@@ -148,7 +150,7 @@
 
 <h1 class="govuk-heading-l">Approvals</h1>
 
-{% if approval.status == approval.Status.READY %}
+{% if approval.can_approve %}
     <dl class="govuk-summary-list">
         <!-- Approvals -->
         <div class="govuk-summary-list__row">
@@ -173,7 +175,7 @@
                 HRBP approval
             </dt>
             <dd class="govuk-summary-list__value">
-                {% if approval.hrbp_approval %}
+                {% if approval.hrbp_approval is not None %}
                     {{ approval.get_hrbp_approval_display }} - {{ approval.hrbp_approval_who }} - {{ approval.hrbp_approval_when }}
                 {% endif %}
             </dd>
@@ -219,6 +221,8 @@
             </dd>
         </div>
     </dl>
+{% elif approval.approved %}
+    <p class="govuk-body">Document has been approved.</p>
 {% else %}
     <p class="govuk-body">Document is not ready for approvals.</p>
 {% endif %}

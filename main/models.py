@@ -4,6 +4,8 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.expressions import F
 from django.urls import reverse
+from django.utils import timezone
+
 
 TRUE_FALSE_CHOICES = (
     (True, "Yes"),
@@ -19,6 +21,7 @@ class ContractorApproval(models.Model):
             ("can_give_finance_approval", "Can give finance approval"),
             ("can_give_commercial_approval", "Can give commercial approval"),
         )
+        indexes = [models.Index(name="status_index", fields=["status"])]
         constraints = [
             models.CheckConstraint(
                 check=(
@@ -29,7 +32,20 @@ class ContractorApproval(models.Model):
                         finance_approval__isnull=True,
                         commercial_approval__isnull=True,
                     )
-                    | Q(status=1)
+                    | Q(
+                        status=1,
+                    )
+                    | Q(
+                        status=2,
+                        chief_approval=True,
+                    )
+                    | Q(
+                        status=3,
+                        chief_approval=True,
+                        hrbp_approval=True,
+                        finance_approval=True,
+                        commercial_approval=True,
+                    )
                 ),
                 name="check_status",
             ),
@@ -40,13 +56,17 @@ class ContractorApproval(models.Model):
 
     class Status(models.IntegerChoices):
         DRAFT = 0, "Draft"
-        READY = 1, "Ready"
+        AWAITING_CHIEF_APPROVAL = 1, "Awaiting chief approval"
+        AWAITING_APPROVALS = 2, "Awaiting approvals"
+        APPROVED = 3, "Approved"
 
-    class Approvals(Enum):
+    class Approval(Enum):
         CHIEF = "chief"
         HRBP = "hrbp"
         FINANCE = "finance"
         COMMERCIAL = "commercial"
+
+    requestor = models.ForeignKey("user.User", models.CASCADE, related_name="approvals")
 
     status = models.SmallIntegerField(choices=Status.choices, default=Status.DRAFT)
 
@@ -83,21 +103,17 @@ class ContractorApproval(models.Model):
     )
     commercial_approval_when = models.DateTimeField(null=True)
 
+    def __str__(self):
+        return self.name
+
     def get_absolute_url(self):
         return reverse("approval-detail", kwargs={"pk": self.pk})
 
-    def clear_approvals(self):
-        for approval in self.Approvals:
-            setattr(self, f"{approval.value}_approval", None)
-            setattr(self, f"{approval.value}_approval_who", None)
-            setattr(self, f"{approval.value}_approval_when", None)
-
     @property
-    def can_edit(self):
-        return self.status == self.Status.DRAFT
+    def can_send_to_chief(self):
+        if self.status != self.Status.DRAFT:
+            return False
 
-    @property
-    def can_mark_as_ready(self):
         if self.is_ir35 and not self.job_description:
             return False
 
@@ -112,6 +128,64 @@ class ContractorApproval(models.Model):
             ]
         )
 
+    def send_to_chief(self):
+        self.status = self.Status.AWAITING_CHIEF_APPROVAL
+        # TODO: Notify chief
+
+    @property
+    def can_chief_approve(self):
+        return self.status == self.Status.AWAITING_CHIEF_APPROVAL
+
+    def chief_approves(self):
+        self.status = self.Status.AWAITING_APPROVALS
+
+    def approve(self, approval, user):
+        setattr(self, f"{approval}_approval", True)
+        setattr(self, f"{approval}_approval_who", user)
+        setattr(self, f"{approval}_approval_when", timezone.now())
+
+        if approval == "chief":
+            self.chief_approves()
+
+        if self.approved:
+            self.status = self.Status.APPROVED
+
+    def reject(self, approval, user):
+        setattr(self, f"{approval}_approval", False)
+        setattr(self, f"{approval}_approval_who", user)
+        setattr(self, f"{approval}_approval_when", timezone.now())
+
+        if approval == "chief":
+            self.status = self.Status.AWAITING_CHIEF_APPROVAL
+
+    @property
+    def can_mark_as_draft(self):
+        return self.status in (
+            self.Status.AWAITING_CHIEF_APPROVAL,
+            self.Status.AWAITING_APPROVALS,
+        )
+
+    def mark_as_draft(self):
+        self.status = self.Status.DRAFT
+        self.clear_approvals()
+
+    def clear_approvals(self):
+        for approval in self.Approval:
+            setattr(self, f"{approval.value}_approval", None)
+            setattr(self, f"{approval.value}_approval_who", None)
+            setattr(self, f"{approval.value}_approval_when", None)
+
+    @property
+    def can_edit(self):
+        return self.status == self.Status.DRAFT
+
+    @property
+    def can_approve(self):
+        return self.status in (
+            self.Status.AWAITING_CHIEF_APPROVAL,
+            self.Status.AWAITING_APPROVALS,
+        )
+
     @property
     def approvals(self):
         return (
@@ -124,17 +198,6 @@ class ContractorApproval(models.Model):
     @property
     def approved(self):
         return all(self.approvals)
-
-    @property
-    def status_display(self):
-        if self.status == self.Status.DRAFT:
-            return "Draft"
-
-        if self.chief_approval:
-            return f"Awaiting approval from {self.chief}"
-
-        if not self.approved:
-            return "Awaiting approvals"
 
 
 class JobDescription(models.Model):

@@ -1,13 +1,13 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import ValidationError
+from django.db.models.query_utils import Q
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.urls.base import reverse
-from django.utils import timezone
 from django.views import View
+from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django.views.generic.list import ListView
 
 from main.forms import (
     CestRationaleForm,
@@ -29,6 +29,46 @@ from main.models import (
 )
 
 
+def index(request):
+    return redirect(reverse("dashboard"))
+
+
+class DashboardView(TemplateView):
+    template_name = "main/dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        context["your_approvals"] = user.approvals.all()
+
+        query = Q()
+
+        if user.has_perm("can_give_chief_approval"):
+            query = query | Q(chief_approval__isnull=True)
+
+        if user.has_perm("can_give_hrbp_approval"):
+            query = query | Q(hrbp_approval__isnull=True)
+
+        if user.has_perm("can_give_finance_approval"):
+            query = query | Q(finance_approval__isnull=True)
+
+        if user.has_perm("can_give_commercial_approval"):
+            query = query | Q(commercial_approval__isnull=True)
+
+        context["awaiting_your_approval"] = ContractorApproval.objects.filter(
+            Q(
+                status__in=(
+                    ContractorApproval.Status.AWAITING_CHIEF_APPROVAL,
+                    ContractorApproval.Status.AWAITING_APPROVALS,
+                )
+            )
+            & query
+        )
+
+        return context
+
+
 class CanEditApprovalMixin:
     def get_approval(self):
         return self.get_object()
@@ -41,17 +81,14 @@ class CanEditApprovalMixin:
 
 
 # Contractor approval
-class ApprovalListView(PermissionRequiredMixin, ListView):
-    model = ContractorApproval
-    context_object_name = "approvals"
-    permission_required = "main.view_contractorapproval"
-
-
 class ApprovalCreateView(PermissionRequiredMixin, CreateView):
     model = ContractorApproval
     form_class = ContractorApprovalForm
     permission_required = "main.add_contractorapproval"
     template_name = "main/form.html"
+
+    def get_initial(self):
+        return {"requestor": self.request.user}
 
 
 class ApprovalDetailView(PermissionRequiredMixin, DetailView):
@@ -88,10 +125,17 @@ class ApprovalChangeStatusView(PermissionRequiredMixin, View):
     permission_required = "main.change_contractorapproval"
 
     def post(self, request, pk):
-        status = request.POST["status"]
+        status = int(request.POST["status"])
 
         approval = ContractorApproval.objects.get(pk=pk)
-        approval.status = status
+
+        if status == approval.Status.DRAFT:
+            approval.mark_as_draft()
+        elif status == approval.Status.AWAITING_CHIEF_APPROVAL:
+            approval.send_to_chief()
+        else:
+            raise ValidationError("Invalid status")
+
         approval.save()
 
         return redirect(reverse("approval-detail", kwargs={"pk": pk}))
@@ -107,16 +151,18 @@ class ApprovalApproveRejectView(View):
             raise ValidationError("Invalid approval")
 
         if not request.user.has_perm(f"main.can_give_{which_approval}_approval"):
-            raise PermissionError("Invalid permission")
+            raise PermissionError("User does not have permission to give this approval")
 
         approval = ContractorApproval.objects.get(pk=pk)
 
         if which_approval == "chief" and request.user != approval.chief:
             raise PermissionError("Only the nominated chief can give chief approval")
 
-        setattr(approval, f"{which_approval}_approval", approved)
-        setattr(approval, f"{which_approval}_approval_who", request.user)
-        setattr(approval, f"{which_approval}_approval_when", timezone.now())
+        if approved:
+            approval.approve(which_approval, request.user)
+        else:
+            approval.reject(which_approval, request.user)
+
         approval.save()
 
         return redirect(reverse("approval-detail", kwargs={"pk": pk}))
@@ -145,9 +191,6 @@ class ApprovalFormCreateView(PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         return self.object.approval.get_absolute_url()
-
-    def get_approval(self):
-        return self.get_object().approval
 
 
 class ApprovalFormUpdateView(CanEditApprovalMixin, PermissionRequiredMixin, UpdateView):
