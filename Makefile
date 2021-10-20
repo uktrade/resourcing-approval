@@ -21,6 +21,12 @@ migrations:
 migrate:
 	$(web) python manage.py migrate
 
+groups:
+	$(web) python manage.py loaddata groups.json
+
+test-data: groups	
+	$(web) python manage.py loaddata test-users.json
+
 superuser:
 	$(web) python manage.py createsuperuser
 
