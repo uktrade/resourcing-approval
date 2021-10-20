@@ -1,0 +1,41 @@
+[
+  {
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+      "name": "Hiring Manager",
+      "permissions": [
+        33, 34, 35, 36, 29, 30, 31, 32, 25, 26, 27, 28, 21, 22, 23, 24, 5, 6, 7,
+        8, 17, 18, 19, 20, 13, 14, 15, 16
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+      "name": "Approver",
+      "permissions": [36, 29, 30, 31, 32, 28, 24, 8, 20, 16]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 3,
+    "fields": { "name": "Chief", "permissions": [9] }
+  },
+  {
+    "model": "auth.group",
+    "pk": 4,
+    "fields": { "name": "HRBP", "permissions": [10] }
+  },
+  {
+    "model": "auth.group",
+    "pk": 5,
+    "fields": { "name": "Finance", "permissions": [11] }
+  },
+  {
+    "model": "auth.group",
+    "pk": 6,
+    "fields": { "name": "Commercial", "permissions": [12] }
+  }
+]

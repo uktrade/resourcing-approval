@@ -19,8 +19,9 @@
 
 1. `make migrate`
 2. `make up`
-3. `make superuser`
+3. `make test-data`
 4. Goto http://localhost:8000/admin and login
+   - You can find the login details for test users on confluence
 5. Goto http://localhost:8000
 
 # Deployment
@@ -31,7 +32,3 @@
 # Integrations
 
 - GOV.UK Notify
-
-# Test data
-
-`John Smith : Cu{>A-pVj@MY*0C?`
