@@ -252,6 +252,15 @@ class StatementOfWork(models.Model):
     )
 
     company_name = models.CharField(max_length=255)
+    slot_code = models.CharField(max_length=30)
+    is_nominated_worker = models.BooleanField(
+        "Did DDaT find them or not?", null=True, choices=TRUE_FALSE_CHOICES
+    )
+    hiring_manager_team_leader = models.CharField(max_length=255, verbose="HIRING MANAGER / TEAM LEAD (if different)")
+    project_description = models.TextField()
+    notice_period = models.CharField(max_length=255)
+    fees = models.CharField(max_length=255, verbose = "PROJECT FEE AND INVOICING")
+
 
     def __str__(self):
         return self.company_name
