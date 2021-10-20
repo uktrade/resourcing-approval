@@ -256,12 +256,23 @@ class StatementOfWork(models.Model):
     is_nominated_worker = models.BooleanField(
         "Did DDaT find them or not?", null=True, choices=TRUE_FALSE_CHOICES
     )
-    hiring_manager_team_leader = models.CharField(max_length=255, verbose="HIRING MANAGER / TEAM LEAD (if different)")
+    hiring_manager_team_leader = models.CharField("Hiring manager / Team lead (if different)", max_length=255)
+    team_directorate = models.CharField("Team/Directorate", max_length=255)
     project_description = models.TextField()
-    notice_period = models.CharField(max_length=255)
-    fees = models.CharField(max_length=255, verbose = "PROJECT FEE AND INVOICING")
+    role = models.CharField(max_length=255)
+    cost_centre_code = models.CharField(max_length=6)
+    programme_code = models.CharField(max_length=4)
+    project_code = models.CharField(max_length=6, blank=True,null=True)
+    start_date = models.DateField()
+    # Todo check end date is after start date
+    end_date = models.DateField()
+    notice_period = models.TextField()
+    fees = models.TextField("Project fee and invoicing")
+    # todo list payment schedules
+    exceptional_expenses = models.TextField()
+    deliverable_notes = models.TextField()
 
-
+    # todo list deliverables 
     def __str__(self):
         return self.company_name
 
