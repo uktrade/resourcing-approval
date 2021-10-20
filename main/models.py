@@ -272,7 +272,7 @@ class StatementOfWork(models.Model):
     exceptional_expenses = models.TextField()
     deliverable_notes = models.TextField()
 
-    # todo list deliverables 
+    # todo list deliverables
     def __str__(self):
         return self.company_name
 
