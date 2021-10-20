@@ -14,6 +14,8 @@ from pathlib import Path
 
 import dj_database_url
 import environ
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 
 # Setup
@@ -23,8 +25,22 @@ env = environ.Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-
 environ.Env.read_env(BASE_DIR / ".env")
+
+APP_ENV = env("APP_ENV")
+
+
+# Sentry
+# https://docs.sentry.io/platforms/python/guides/django/
+def init_sentry():
+    sentry_sdk.init(
+        dsn=env("SENTRY_DSN"),
+        environment=APP_ENV,
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=1.0,
+        send_default_pii=True,
+    )
+
 
 # VCAP services
 # See https://docs.cloudfoundry.org/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES
