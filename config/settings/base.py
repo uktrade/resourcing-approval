@@ -54,6 +54,7 @@ SESSION_COOKIE_SECURE = True
 INSTALLED_APPS = [
     "user.apps.UserConfig",
     "main.apps.MainConfig",
+    "dev_tools.apps.DevToolsConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -98,6 +99,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "dev_tools.views.dev_tools_context",
             ],
         },
     },
