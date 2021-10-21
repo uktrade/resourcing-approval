@@ -268,13 +268,40 @@ class StatementOfWork(models.Model):
     end_date = models.DateField()
     notice_period = models.TextField()
     fees = models.TextField("Project fee and invoicing")
-    # todo list payment schedules
     exceptional_expenses = models.TextField()
     deliverable_notes = models.TextField()
 
     # todo list deliverables
     def __str__(self):
         return self.company_name
+
+
+class StatementOfWorkModule(models.Model):
+    module_title = models.CharField(max_length=255)
+    completion_date = models.DateField()
+    statement_of_work = models.ForeignKey(
+        StatementOfWork,
+        on_delete=models.CASCADE,
+        related_name="module",
+    )
+
+
+class StatementOfWorkModuleDeliverable(models.Model):
+    deliverable_title = models.CharField(max_length=255)
+    deliverable_description = models.TextField()
+
+    start_date = models.DateField()
+    # Todo check end date is after start date
+    end_date = models.DateField()
+    monthly_fee = models.DecimalField(max_digits=9, decimal_places=2)
+    payment_date = models.DateField()
+    statement_of_work = models.ForeignKey(
+        StatementOfWork,
+        on_delete=models.CASCADE,
+        related_name="deliverable",
+    )
+
+
 
 
 class InterimRequest(models.Model):
