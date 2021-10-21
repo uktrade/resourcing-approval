@@ -12,18 +12,18 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from main.forms import (
     CestRationaleForm,
     CommentForm,
-    ResourcingApprovalForm,
     InterimRequestForm,
     JobDescriptionForm,
+    ResourcingApprovalForm,
     SdsStatusDeterminationForm,
     StatementOfWorkForm,
 )
 from main.models import (
     CestRationale,
     Comment,
-    ResourcingApproval,
     InterimRequest,
     JobDescription,
+    ResourcingApproval,
     SdsStatusDetermination,
     StatementOfWork,
 )
@@ -44,39 +44,42 @@ class DashboardView(TemplateView):
 
         query = Q()
 
-        if user.has_perm("can_give_chief_approval"):
+        if user.has_perm("main.can_give_chief_approval"):
             query = query | Q(chief_approval__isnull=True)
 
-        if user.has_perm("can_give_hrbp_approval"):
+        if user.has_perm("main.can_give_hrbp_approval"):
             query = query | Q(hrbp_approval__isnull=True)
 
-        if user.has_perm("can_give_finance_approval"):
+        if user.has_perm("main.can_give_finance_approval"):
             query = query | Q(finance_approval__isnull=True)
 
-        if user.has_perm("can_give_commercial_approval"):
+        if user.has_perm("main.can_give_commercial_approval"):
             query = query | Q(commercial_approval__isnull=True)
 
-        context["awaiting_your_approval"] = ResourcingApproval.objects.filter(
-            Q(
-                status__in=(
-                    ResourcingApproval.Status.AWAITING_CHIEF_APPROVAL,
-                    ResourcingApproval.Status.AWAITING_APPROVALS,
+        # `bool(Q()) is True` so we can use this check as a proxy for is an approver.
+        if query:
+            context["awaiting_your_approval"] = ResourcingApproval.objects.filter(
+                Q(
+                    status__in=(
+                        ResourcingApproval.Status.AWAITING_CHIEF_APPROVAL,
+                        ResourcingApproval.Status.AWAITING_APPROVALS,
+                    )
                 )
+                & query
             )
-            & query
-        )
 
         return context
 
 
 class CanAccessApprovalMixin(UserPassesTestMixin):
     def test_func(self):
+        print(self.request.user.has_perm("main.can_give_chief_approval"))
         return self.request.user == self.get_object().requestor or any(
             (
-                self.request.user.has_perm("can_give_chief_approval"),
-                self.request.user.has_perm("can_give_hrbp_approval"),
-                self.request.user.has_perm("can_give_finance_approval"),
-                self.request.user.has_perm("can_give_commercial_approval"),
+                self.request.user.has_perm("main.can_give_chief_approval"),
+                self.request.user.has_perm("main.can_give_hrbp_approval"),
+                self.request.user.has_perm("main.can_give_finance_approval"),
+                self.request.user.has_perm("main.can_give_commercial_approval"),
             )
         )
 
