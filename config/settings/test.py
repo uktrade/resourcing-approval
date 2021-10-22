@@ -1,7 +1,5 @@
-from .base import *
+from .base import *  # noqa: F403
 
-
-ENV = "test"
 
 DATABASES["default"] = dj_database_url.parse(
     "postgres://postgres:postgres@postgres:5432/resourcing-approval"

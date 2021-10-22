@@ -11,7 +11,7 @@ from dev_tools.forms import ChangeUserForm
 
 User = get_user_model()
 
-DEV_TOOLS_ENABLED = settings.ENV in ("local", "dev")
+DEV_TOOLS_ENABLED = settings.APP_ENV in ("local", "dev")
 
 
 def dev_tools_context(request):
