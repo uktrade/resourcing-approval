@@ -21,6 +21,7 @@ libsass = "^0.21.0"
 django-compressor = "^2.4.1"
 notifications-python-client = "^6.3.0"
 sentry-sdk = "^1.4.3"
+django-staff-sso-client = "^3.1.1"
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"

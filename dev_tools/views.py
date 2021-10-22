@@ -47,9 +47,11 @@ def change_user(request):
     if not form.is_valid():
         raise ValidationError("Invalid change user form")
 
-    new_user = User.objects.get(pk=form.cleaned_data["user"])
+    if form.cleaned_data["user"]:
+        new_user = User.objects.get(pk=form.cleaned_data["user"])
 
-    logout(request)
-    login(request, new_user)
+        login(request, new_user)
+    else:
+        logout(request)
 
-    return redirect(reverse("dev-tools"))
+    return redirect(reverse("dev_tools:index"))
