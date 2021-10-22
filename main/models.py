@@ -271,7 +271,10 @@ class StatementOfWork(models.Model):
     exceptional_expenses = models.TextField()
     deliverable_notes = models.TextField()
 
-    # todo list deliverables
+    @property
+    def module_count(self):
+        return self.modules.all().count()
+
     def __str__(self):
         return self.company_name
 
@@ -282,8 +285,11 @@ class StatementOfWorkModule(models.Model):
     statement_of_work = models.ForeignKey(
         StatementOfWork,
         on_delete=models.CASCADE,
-        related_name="module",
+        related_name="modules",
     )
+    @property
+    def deliverable_count(self):
+        return self.deliverables.all().count()
 
 
 class StatementOfWorkModuleDeliverable(models.Model):
@@ -298,7 +304,7 @@ class StatementOfWorkModuleDeliverable(models.Model):
     statement_of_work = models.ForeignKey(
         StatementOfWork,
         on_delete=models.CASCADE,
-        related_name="deliverable",
+        related_name="deliverables",
     )
 
 

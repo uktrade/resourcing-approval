@@ -1,7 +1,7 @@
 from django.urls import path
 from django.urls.conf import include
 
-from main.views import (
+from main.views.views import (
     ApprovalAddComment,
     ApprovalApproveRejectView,
     ApprovalChangeStatusView,
@@ -18,13 +18,17 @@ from main.views import (
     JobDescriptionUpdateView,
     SdsStatusDeterminationCreateView,
     SdsStatusDeterminationUpdateView,
+    index,
+)
+
+from main.views.statement_of_work_views import (
     StatementOfWorkCreateView,
     StatementOfWorkUpdateView,
     StatementOfWorkModuleCreateView,
     StatementOfWorkModuleUpdateView,
     StatementOfWorkModuleDeliverableCreateView,
     StatementOfWorkModuleDeliverableUpdateView,
-    index,
+
 )
 
 
@@ -61,7 +65,7 @@ approval_urls = [
 def document_urls(create_view, update_view, name_prefix, parent_key=""):
     return [
         path(
-            f"{parent_key}create",
+            f"create{parent_key}",
             create_view.as_view(),
             name=f"{name_prefix}-create",
         ),
@@ -101,14 +105,14 @@ statement_of_work__module_urls = document_urls(
     StatementOfWorkModuleCreateView,
     StatementOfWorkModuleUpdateView,
     "statement-of-work-module",
-    "<int:sow_pk>/"
+    "/<int:parent_pk>"
 )
 
 statement_of_work__module_deliverable_urls = document_urls(
     StatementOfWorkModuleDeliverableCreateView,
     StatementOfWorkModuleDeliverableUpdateView,
     "statement-of-work-module-deliverable",
-    "<int:module_pk>/"
+    "/<int:parent_pk>"
 )
 
 

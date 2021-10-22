@@ -9,16 +9,13 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from main.forms import (
+from main.forms.forms import (
     CestRationaleForm,
     CommentForm,
     ResourcingApprovalForm,
     InterimRequestForm,
     JobDescriptionForm,
     SdsStatusDeterminationForm,
-    StatementOfWorkForm,
-    StatementOfWorkModuleForm,
-    StatementOfWorkModuleDeliverableForm,
 )
 from main.models import (
     CestRationale,
@@ -27,9 +24,6 @@ from main.models import (
     InterimRequest,
     JobDescription,
     SdsStatusDetermination,
-    StatementOfWork,
-    StatementOfWorkModuleDeliverable,
-    StatementOfWorkModule,
 )
 
 
@@ -236,20 +230,6 @@ class JobDescriptionUpdateView(ApprovalFormUpdateView):
     permission_required = "main.change_jobdescription"
 
 
-class StatementOfWorkCreateView(ApprovalFormCreateView):
-    template_name = "main/statementofwork.html"
-    model = StatementOfWork
-    form_class = StatementOfWorkForm
-    permission_required = "main.add_statementofwork"
-
-
-class StatementOfWorkUpdateView(ApprovalFormUpdateView):
-    template_name = "main/statementofwork.html"
-    model = StatementOfWork
-    form_class = StatementOfWorkForm
-    permission_required = "main.change_statementofwork"
-
-
 class InterimRequestCreateView(ApprovalFormCreateView):
     model = InterimRequest
     form_class = InterimRequestForm
@@ -284,33 +264,5 @@ class SdsStatusDeterminationUpdateView(ApprovalFormUpdateView):
     model = SdsStatusDetermination
     form_class = SdsStatusDeterminationForm
     permission_required = "main.change_sdsstatusdetermination"
-
-
-class StatementOfWorkModuleCreateView(ApprovalFormCreateView):
-    template_name = "main/form.html"
-    model = StatementOfWorkModule
-    form_class = StatementOfWorkModuleForm
-    permission_required = "main.add_statementofwork"
-
-
-class StatementOfWorkModuleUpdateView(ApprovalFormUpdateView):
-    template_name = "main/form.html"
-    model = StatementOfWorkModule
-    form_class = StatementOfWorkModuleForm
-    permission_required = "main.change_statementofwork"
-
-
-class StatementOfWorkModuleDeliverableCreateView(ApprovalFormCreateView):
-    template_name = "main/form.html"
-    model = StatementOfWorkModuleDeliverable
-    form_class = StatementOfWorkModuleDeliverableForm
-    permission_required = "main.add_statementofwork"
-
-
-class StatementOfWorkModuleDeliverableUpdateView(ApprovalFormUpdateView):
-    template_name = "main/form.html"
-    model = StatementOfWorkModuleDeliverable
-    form_class = StatementOfWorkModuleDeliverableForm
-    permission_required = "main.change_statementofwork"
 
 
