@@ -6,8 +6,11 @@ User = get_user_model()
 
 
 def get_user_choices():
-    return [(x.id, str(x)) for x in User.objects.all()]
+    return [
+        (None, "AnonymousUser"),
+        *[(x.id, str(x)) for x in User.objects.all()],
+    ]
 
 
 class ChangeUserForm(forms.Form):
-    user = forms.ChoiceField(choices=get_user_choices)
+    user = forms.ChoiceField(choices=get_user_choices, required=False)

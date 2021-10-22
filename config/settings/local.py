@@ -1,4 +1,4 @@
-from .base import *  # noqa: F403
+from .non_prod import *  # noqa: F403
 
 
 DEBUG = True
