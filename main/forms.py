@@ -8,6 +8,8 @@ from main.models import (
     JobDescription,
     SdsStatusDetermination,
     StatementOfWork,
+    StatementOfWorkModule,
+    StatementOfWorkModuleDeliverable,
 )
 
 
@@ -100,3 +102,29 @@ class SdsStatusDeterminationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields["approval"].disabled = True
+
+
+class StatementOfWorkModuleForm(forms.ModelForm):
+    class Meta:
+        model = StatementOfWorkModule
+        fields = "__all__"
+        widgets = {"approval": forms.HiddenInput}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["approval"].disabled = True
+
+
+class StatementOfWorkModuleDeliverableForm(forms.ModelForm):
+    class Meta:
+        model = StatementOfWorkModuleDeliverable
+        fields = "__all__"
+        widgets = {"approval": forms.HiddenInput}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["approval"].disabled = True
+
+

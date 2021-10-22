@@ -17,6 +17,8 @@ from main.forms import (
     JobDescriptionForm,
     SdsStatusDeterminationForm,
     StatementOfWorkForm,
+    StatementOfWorkModuleForm,
+    StatementOfWorkModuleDeliverableForm,
 )
 from main.models import (
     CestRationale,
@@ -26,6 +28,8 @@ from main.models import (
     JobDescription,
     SdsStatusDetermination,
     StatementOfWork,
+    StatementOfWorkModuleDeliverable,
+    StatementOfWorkModule,
 )
 
 
@@ -233,12 +237,14 @@ class JobDescriptionUpdateView(ApprovalFormUpdateView):
 
 
 class StatementOfWorkCreateView(ApprovalFormCreateView):
+    template_name = "main/statementofwork.html"
     model = StatementOfWork
     form_class = StatementOfWorkForm
     permission_required = "main.add_statementofwork"
 
 
 class StatementOfWorkUpdateView(ApprovalFormUpdateView):
+    template_name = "main/statementofwork.html"
     model = StatementOfWork
     form_class = StatementOfWorkForm
     permission_required = "main.change_statementofwork"
@@ -278,3 +284,33 @@ class SdsStatusDeterminationUpdateView(ApprovalFormUpdateView):
     model = SdsStatusDetermination
     form_class = SdsStatusDeterminationForm
     permission_required = "main.change_sdsstatusdetermination"
+
+
+class StatementOfWorkModuleCreateView(ApprovalFormCreateView):
+    template_name = "main/form.html"
+    model = StatementOfWorkModule
+    form_class = StatementOfWorkModuleForm
+    permission_required = "main.add_statementofwork"
+
+
+class StatementOfWorkModuleUpdateView(ApprovalFormUpdateView):
+    template_name = "main/form.html"
+    model = StatementOfWorkModule
+    form_class = StatementOfWorkModuleForm
+    permission_required = "main.change_statementofwork"
+
+
+class StatementOfWorkModuleDeliverableCreateView(ApprovalFormCreateView):
+    template_name = "main/form.html"
+    model = StatementOfWorkModuleDeliverable
+    form_class = StatementOfWorkModuleDeliverableForm
+    permission_required = "main.add_statementofwork"
+
+
+class StatementOfWorkModuleDeliverableUpdateView(ApprovalFormUpdateView):
+    template_name = "main/form.html"
+    model = StatementOfWorkModuleDeliverable
+    form_class = StatementOfWorkModuleDeliverableForm
+    permission_required = "main.change_statementofwork"
+
+
