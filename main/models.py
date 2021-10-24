@@ -272,8 +272,19 @@ class StatementOfWork(models.Model):
     deliverable_notes = models.TextField()
 
     @property
-    def module_count(self):
+    def module_count(self) -> int:
         return self.modules.all().count()
+
+    @property
+    def module_valid(self) -> bool:
+        # Check that there is at least one module defined,
+        # and every module defined has at least one deliverable.
+        if self.module_count == 0:
+            return False
+        for module in self.modules.all():
+            if module.deliverable_count == 0:
+                return False
+        return True
 
     def __str__(self):
         return self.company_name
@@ -287,8 +298,13 @@ class StatementOfWorkModule(models.Model):
         on_delete=models.CASCADE,
         related_name="modules",
     )
+
     @property
-    def deliverable_count(self):
+    def approval_id(self):
+        return self.statement_of_work.approval_id
+
+    @property
+    def deliverable_count(self) -> int:
         return self.deliverables.all().count()
 
 
@@ -301,11 +317,16 @@ class StatementOfWorkModuleDeliverable(models.Model):
     end_date = models.DateField()
     monthly_fee = models.DecimalField(max_digits=9, decimal_places=2)
     payment_date = models.DateField()
-    statement_of_work = models.ForeignKey(
-        StatementOfWork,
+    StatementOfWorkModule = models.ForeignKey(
+        StatementOfWorkModule,
         on_delete=models.CASCADE,
         related_name="deliverables",
     )
+
+    @property
+    def approval_id(self):
+        return self.StatementOfWorkModule.approval_id
+
 
 
 
