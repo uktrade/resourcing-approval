@@ -300,6 +300,10 @@ class StatementOfWorkModule(models.Model):
     )
 
     @property
+    def approval(self):
+        return self.statement_of_work.approval
+
+    @property
     def approval_id(self):
         return self.statement_of_work.approval_id
 
@@ -321,7 +325,7 @@ class StatementOfWorkModuleDeliverable(models.Model):
     end_date = models.DateField()
     monthly_fee = models.DecimalField(max_digits=9, decimal_places=2)
     payment_date = models.DateField()
-    StatementOfWorkModule = models.ForeignKey(
+    statement_of_work_module = models.ForeignKey(
         StatementOfWorkModule,
         on_delete=models.CASCADE,
         related_name="deliverables",
@@ -329,10 +333,14 @@ class StatementOfWorkModuleDeliverable(models.Model):
 
     @property
     def approval_id(self):
-        return self.StatementOfWorkModule.approval_id
+        return self.statement_of_work_module.approval_id
 
+    @property
+    def approval(self):
+        return self.statement_of_work_module.approval
 
-
+    def __str__(self):
+        return self.deliverable_title
 
 
 class InterimRequest(models.Model):

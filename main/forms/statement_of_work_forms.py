@@ -13,19 +13,12 @@ class StatementOfWorkModuleForm(forms.ModelForm):
         fields = "__all__"
         widgets = {"statement_of_work": forms.HiddenInput}
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
 
 class StatementOfWorkModuleDeliverableForm(forms.ModelForm):
     class Meta:
         model = StatementOfWorkModuleDeliverable
         fields = "__all__"
         widgets = {"statement_of_work_module": forms.HiddenInput}
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
 
 
 class StatementOfWorkForm(forms.ModelForm):
@@ -36,7 +29,6 @@ class StatementOfWorkForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.fields["approval"].disabled = True
 
 

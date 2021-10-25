@@ -51,7 +51,7 @@ class StatementOfWorkUpdateView(ApprovalFormUpdateView):
 
 
 class StatementOfWorkModuleCreateView(ApprovalFormCreateView):
-    template_name = "main/statementofwork.html"
+    template_name = "main/statement_of_work_module.html"
     model = StatementOfWorkModule
     form_class = StatementOfWorkModuleForm
     permission_required = "main.add_statementofwork"
@@ -69,36 +69,46 @@ class StatementOfWorkModuleCreateView(ApprovalFormCreateView):
 
 
 class StatementOfWorkModuleUpdateView(ApprovalFormUpdateView):
-    template_name = "main/statementofwork.html"
+    template_name = "main/statement_of_work_module.html"
     model = StatementOfWorkModule
     form_class = StatementOfWorkModuleForm
     permission_required = "main.change_statementofwork"
-    def get_initial(self):
-        return {"approval": self.kwargs["parent_pk"]}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # context["your_modules"] = user.approvals.all()
+        context["my_children"] = self.object.deliverables.all()
         return context
+
+    def get_success_url(self):
+        if "create_child" in self.request.POST:
+            url = reverse("statement-of-work-module-deliverable-create",
+                          kwargs={"parent_pk": self.object.id})
+        else:
+            url = reverse("statement-of-work-update", kwargs={"pk":self.object.statement_of_work.id})
+        return url
 
 
 class StatementOfWorkModuleDeliverableCreateView(ApprovalFormCreateView):
-    template_name = "main/statementofwork.html"
+    template_name = "main/form.html"
     model = StatementOfWorkModuleDeliverable
     form_class = StatementOfWorkModuleDeliverableForm
     permission_required = "main.add_statementofwork"
-    def get_initial(self):
-        return {"statement_of_work": self.kwargs["parent_pk"]}
 
+    def get_initial(self):
+        return {"statement_of_work_module": self.kwargs["parent_pk"]}
+
+    def get_success_url(self):
+        return reverse("statement-of-work-update", kwargs={"pk":self.object.statement_of_work_module.id})
 
 
 class StatementOfWorkModuleDeliverableUpdateView(ApprovalFormUpdateView):
-    template_name = "main/statementofwork.html"
+    template_name = "main/form.html"
     model = StatementOfWorkModuleDeliverable
     form_class = StatementOfWorkModuleDeliverableForm
     permission_required = "main.change_statementofwork"
-    def get_initial(self):
-        return {"approval": self.kwargs["parent_pk"]}
+
+    def get_success_url(self):
+        return reverse("statement-of-work-module-update", kwargs={"pk":self.object.statement_of_work_module.id})
 
 
 
