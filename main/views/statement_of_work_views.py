@@ -40,6 +40,7 @@ class StatementOfWorkUpdateView(ApprovalFormUpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["my_children"] = self.object.modules.all()
+        context["child_create"] = "Create module"
         return context
 
     def get_success_url(self):
@@ -98,7 +99,7 @@ class StatementOfWorkModuleDeliverableCreateView(ApprovalFormCreateView):
         return {"statement_of_work_module": self.kwargs["parent_pk"]}
 
     def get_success_url(self):
-        return reverse("statement-of-work-update", kwargs={"pk":self.object.statement_of_work_module.id})
+        return reverse("statement-of-work-module-update", kwargs={"pk":self.object.statement_of_work_module.id})
 
 
 class StatementOfWorkModuleDeliverableUpdateView(ApprovalFormUpdateView):

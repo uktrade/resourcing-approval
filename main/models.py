@@ -315,7 +315,6 @@ class StatementOfWorkModule(models.Model):
         return self.module_title
 
 
-
 class StatementOfWorkModuleDeliverable(models.Model):
     deliverable_title = models.CharField(max_length=255)
     deliverable_description = models.TextField()
