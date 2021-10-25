@@ -307,6 +307,10 @@ class StatementOfWorkModule(models.Model):
     def deliverable_count(self) -> int:
         return self.deliverables.all().count()
 
+    def __str__(self):
+        return self.module_title
+
+
 
 class StatementOfWorkModuleDeliverable(models.Model):
     deliverable_title = models.CharField(max_length=255)

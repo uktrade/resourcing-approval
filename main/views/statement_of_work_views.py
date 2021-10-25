@@ -24,7 +24,11 @@ class StatementOfWorkCreateView(ApprovalFormCreateView):
     permission_required = "main.add_statementofwork"
 
     def get_success_url(self):
-        return self.object.approval.get_absolute_url()
+        if "create_module" in self.request.POST:
+            url = reverse("statement-of-work-module-create", kwargs={"parent_pk": self.object.id})
+        else:
+            url = self.object.approval.get_absolute_url()
+        return url
 
 
 class StatementOfWorkUpdateView(ApprovalFormUpdateView):
@@ -33,46 +37,68 @@ class StatementOfWorkUpdateView(ApprovalFormUpdateView):
     form_class = StatementOfWorkForm
     permission_required = "main.change_statementofwork"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["my_children"] = self.object.modules.all()
+        return context
+
     def get_success_url(self):
-        if "create_module" in self.request.POST:
+        if "create_child" in self.request.POST:
             url = reverse("statement-of-work-module-create", kwargs={"parent_pk": self.object.id})
         else:
             url = self.object.approval.get_absolute_url()
         return url
 
 
-
-
-
 class StatementOfWorkModuleCreateView(ApprovalFormCreateView):
-    template_name = "main/form.html"
+    template_name = "main/statementofwork.html"
     model = StatementOfWorkModule
     form_class = StatementOfWorkModuleForm
     permission_required = "main.add_statementofwork"
+
     def get_initial(self):
-        return {"parent": self.kwargs["parent_pk"]}
+        return {"statement_of_work": self.kwargs["parent_pk"]}
+
+    def get_success_url(self):
+        if "create_child" in self.request.POST:
+            url = reverse("statement-of-work-module-deliverable-create",
+                          kwargs={"parent_pk": self.object.id})
+        else:
+            url = reverse("statement-of-work-update", kwargs={"pk":self.object.statement_of_work.id})
+        return url
 
 
 class StatementOfWorkModuleUpdateView(ApprovalFormUpdateView):
-    template_name = "main/form.html"
+    template_name = "main/statementofwork.html"
     model = StatementOfWorkModule
     form_class = StatementOfWorkModuleForm
     permission_required = "main.change_statementofwork"
     def get_initial(self):
         return {"approval": self.kwargs["parent_pk"]}
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # context["your_modules"] = user.approvals.all()
+        return context
+
 
 class StatementOfWorkModuleDeliverableCreateView(ApprovalFormCreateView):
-    template_name = "main/form.html"
+    template_name = "main/statementofwork.html"
     model = StatementOfWorkModuleDeliverable
     form_class = StatementOfWorkModuleDeliverableForm
     permission_required = "main.add_statementofwork"
+    def get_initial(self):
+        return {"statement_of_work": self.kwargs["parent_pk"]}
+
 
 
 class StatementOfWorkModuleDeliverableUpdateView(ApprovalFormUpdateView):
-    template_name = "main/form.html"
+    template_name = "main/statementofwork.html"
     model = StatementOfWorkModuleDeliverable
     form_class = StatementOfWorkModuleDeliverableForm
     permission_required = "main.change_statementofwork"
+    def get_initial(self):
+        return {"approval": self.kwargs["parent_pk"]}
+
 
 

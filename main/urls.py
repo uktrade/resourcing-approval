@@ -89,17 +89,6 @@ statement_of_work_urls = document_urls(
     "statement-of-work",
 )
 
-statement_of_work_urls = document_urls(
-    StatementOfWorkCreateView,
-    StatementOfWorkUpdateView,
-    "statement-of-work",
-)
-
-statement_of_work_urls = document_urls(
-    StatementOfWorkCreateView,
-    StatementOfWorkUpdateView,
-    "statement-of-work",
-)
 
 statement_of_work__module_urls = document_urls(
     StatementOfWorkModuleCreateView,
