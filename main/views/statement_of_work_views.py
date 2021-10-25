@@ -24,7 +24,7 @@ class StatementOfWorkCreateView(ApprovalFormCreateView):
     permission_required = "main.add_statementofwork"
 
     def get_success_url(self):
-        if "create_module" in self.request.POST:
+        if "create_child" in self.request.POST:
             url = reverse("statement-of-work-module-create", kwargs={"parent_pk": self.object.id})
         else:
             url = self.object.approval.get_absolute_url()
@@ -40,7 +40,6 @@ class StatementOfWorkUpdateView(ApprovalFormUpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["my_children"] = self.object.modules.all()
-        context["child_create"] = "Create module"
         return context
 
     def get_success_url(self):
