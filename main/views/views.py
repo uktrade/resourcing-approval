@@ -264,5 +264,3 @@ class SdsStatusDeterminationUpdateView(ApprovalFormUpdateView):
     model = SdsStatusDetermination
     form_class = SdsStatusDeterminationForm
     permission_required = "main.change_sdsstatusdetermination"
-
-

@@ -28,7 +28,6 @@ from main.views.statement_of_work_views import (
     StatementOfWorkModuleUpdateView,
     StatementOfWorkModuleDeliverableCreateView,
     StatementOfWorkModuleDeliverableUpdateView,
-
 )
 
 
@@ -94,14 +93,14 @@ statement_of_work__module_urls = document_urls(
     StatementOfWorkModuleCreateView,
     StatementOfWorkModuleUpdateView,
     "statement-of-work-module",
-    "/<int:parent_pk>"
+    "/<int:parent_pk>",
 )
 
 statement_of_work__module_deliverable_urls = document_urls(
     StatementOfWorkModuleDeliverableCreateView,
     StatementOfWorkModuleDeliverableUpdateView,
     "statement-of-work-module-deliverable",
-    "/<int:parent_pk>"
+    "/<int:parent_pk>",
 )
 
 
@@ -129,8 +128,10 @@ urlpatterns = [
     path("approval/", include(approval_urls)),
     path("job-description/", include(job_description_urls)),
     path("statement-of-work/", include(statement_of_work_urls)),
-    path("statement-of-work-module-deliverable/",
-         include(statement_of_work__module_deliverable_urls)),
+    path(
+        "statement-of-work-module-deliverable/",
+        include(statement_of_work__module_deliverable_urls),
+    ),
     path("statement-of-work-module/", include(statement_of_work__module_urls)),
     path("interim-request/", include(interim_request_urls)),
     path("cest-rationale/", include(cest_rationale_urls)),

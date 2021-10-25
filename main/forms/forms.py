@@ -87,5 +87,3 @@ class SdsStatusDeterminationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields["approval"].disabled = True
-
-

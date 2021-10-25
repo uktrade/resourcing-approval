@@ -15,7 +15,8 @@ from main.models import (
     StatementOfWorkModule,
 )
 
-from main.views.views import ApprovalFormCreateView,ApprovalFormUpdateView
+from main.views.views import ApprovalFormCreateView, ApprovalFormUpdateView
+
 
 class StatementOfWorkCreateView(ApprovalFormCreateView):
     template_name = "main/statement_of_work.html"
@@ -25,7 +26,9 @@ class StatementOfWorkCreateView(ApprovalFormCreateView):
 
     def get_success_url(self):
         if "create_child" in self.request.POST:
-            url = reverse("statement-of-work-module-create", kwargs={"parent_pk": self.object.id})
+            url = reverse(
+                "statement-of-work-module-create", kwargs={"parent_pk": self.object.id}
+            )
         else:
             url = self.object.approval.get_absolute_url()
         return url
@@ -44,7 +47,9 @@ class StatementOfWorkUpdateView(ApprovalFormUpdateView):
 
     def get_success_url(self):
         if "create_child" in self.request.POST:
-            url = reverse("statement-of-work-module-create", kwargs={"parent_pk": self.object.id})
+            url = reverse(
+                "statement-of-work-module-create", kwargs={"parent_pk": self.object.id}
+            )
         else:
             url = self.object.approval.get_absolute_url()
         return url
@@ -61,10 +66,15 @@ class StatementOfWorkModuleCreateView(ApprovalFormCreateView):
 
     def get_success_url(self):
         if "create_child" in self.request.POST:
-            url = reverse("statement-of-work-module-deliverable-create",
-                          kwargs={"parent_pk": self.object.id})
+            url = reverse(
+                "statement-of-work-module-deliverable-create",
+                kwargs={"parent_pk": self.object.id},
+            )
         else:
-            url = reverse("statement-of-work-update", kwargs={"pk":self.object.statement_of_work.id})
+            url = reverse(
+                "statement-of-work-update",
+                kwargs={"pk": self.object.statement_of_work.id},
+            )
         return url
 
 
@@ -81,10 +91,15 @@ class StatementOfWorkModuleUpdateView(ApprovalFormUpdateView):
 
     def get_success_url(self):
         if "create_child" in self.request.POST:
-            url = reverse("statement-of-work-module-deliverable-create",
-                          kwargs={"parent_pk": self.object.id})
+            url = reverse(
+                "statement-of-work-module-deliverable-create",
+                kwargs={"parent_pk": self.object.id},
+            )
         else:
-            url = reverse("statement-of-work-update", kwargs={"pk":self.object.statement_of_work.id})
+            url = reverse(
+                "statement-of-work-update",
+                kwargs={"pk": self.object.statement_of_work.id},
+            )
         return url
 
 
@@ -98,7 +113,10 @@ class StatementOfWorkModuleDeliverableCreateView(ApprovalFormCreateView):
         return {"statement_of_work_module": self.kwargs["parent_pk"]}
 
     def get_success_url(self):
-        return reverse("statement-of-work-module-update", kwargs={"pk":self.object.statement_of_work_module.id})
+        return reverse(
+            "statement-of-work-module-update",
+            kwargs={"pk": self.object.statement_of_work_module.id},
+        )
 
 
 class StatementOfWorkModuleDeliverableUpdateView(ApprovalFormUpdateView):
@@ -108,7 +126,7 @@ class StatementOfWorkModuleDeliverableUpdateView(ApprovalFormUpdateView):
     permission_required = "main.change_statementofwork"
 
     def get_success_url(self):
-        return reverse("statement-of-work-module-update", kwargs={"pk":self.object.statement_of_work_module.id})
-
-
-
+        return reverse(
+            "statement-of-work-module-update",
+            kwargs={"pk": self.object.statement_of_work_module.id},
+        )
