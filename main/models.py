@@ -276,7 +276,7 @@ class StatementOfWork(models.Model):
         return self.modules.all().count()
 
     @property
-    def module_valid(self) -> bool:
+    def is_statement_of_work_valid(self) -> bool:
         # Check that there is at least one module defined,
         # and every module defined has at least one deliverable.
         if self.module_count == 0:

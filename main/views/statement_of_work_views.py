@@ -18,7 +18,7 @@ from main.models import (
 from main.views.views import ApprovalFormCreateView,ApprovalFormUpdateView
 
 class StatementOfWorkCreateView(ApprovalFormCreateView):
-    template_name = "main/statementofwork.html"
+    template_name = "main/statement_of_work.html"
     model = StatementOfWork
     form_class = StatementOfWorkForm
     permission_required = "main.add_statementofwork"
@@ -32,7 +32,7 @@ class StatementOfWorkCreateView(ApprovalFormCreateView):
 
 
 class StatementOfWorkUpdateView(ApprovalFormUpdateView):
-    template_name = "main/statementofwork.html"
+    template_name = "main/statement_of_work.html"
     model = StatementOfWork
     form_class = StatementOfWorkForm
     permission_required = "main.change_statementofwork"
