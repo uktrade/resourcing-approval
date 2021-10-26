@@ -37,6 +37,9 @@
                     class="govuk-header__navigation"
                     aria-label="Navigation menu"
                 >
+                    <li class="govuk-header__navigation-item govuk-header__navigation-item--active">
+                        <a class="govuk-header__link" href="{% url 'dashboard' %}">Dashboard</a>
+                    </li>
                     {% if user.is_staff %}
                         <li class="govuk-header__navigation-item govuk-header__navigation-item--active">
                             <a class="govuk-header__link" href="{% url 'admin:index' %}">Admin</a>

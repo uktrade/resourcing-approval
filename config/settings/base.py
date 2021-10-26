@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
-from django.urls import reverse_lazy
 import dj_database_url
 import environ
 import sentry_sdk
+from django.urls import reverse_lazy
 from sentry_sdk.integrations.django import DjangoIntegration
 
 

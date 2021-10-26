@@ -1,62 +1,71 @@
 from django.urls import path
 from django.urls.conf import include
 
-from main.views.views import (
-    ApprovalAddComment,
-    ApprovalApproveRejectView,
-    ApprovalChangeStatusView,
-    ApprovalCreateView,
-    ApprovalDeleteView,
-    ApprovalDetailView,
-    ApprovalUpdateView,
+from main.views.dashboard import DashboardView, index
+from main.views.resourcing_request import (
+    ResourcingRequestAddApproval,
+    ResourcingRequestAddComment,
+    ResourcingRequestCreateView,
+    ResourcingRequestDeleteView,
+    ResourcingRequestDetailView,
+    ResourcingRequestSendForApprovalView,
+    ResourcingRequestUpdateView,
+)
+from main.views.statement_of_work_views import (
+    StatementOfWorkCreateView,
+    StatementOfWorkModuleCreateView,
+    StatementOfWorkModuleDeliverableCreateView,
+    StatementOfWorkModuleDeliverableUpdateView,
+    StatementOfWorkModuleUpdateView,
+    StatementOfWorkUpdateView,
+)
+from main.views.supporting_forms import (
     CestRationaleCreateView,
     CestRationaleUpdateView,
-    DashboardView,
     InterimRequestCreateView,
     InterimRequestUpdateView,
     JobDescriptionCreateView,
     JobDescriptionUpdateView,
     SdsStatusDeterminationCreateView,
     SdsStatusDeterminationUpdateView,
-    index,
-)
-
-from main.views.statement_of_work_views import (
-    StatementOfWorkCreateView,
-    StatementOfWorkUpdateView,
-    StatementOfWorkModuleCreateView,
-    StatementOfWorkModuleUpdateView,
-    StatementOfWorkModuleDeliverableCreateView,
-    StatementOfWorkModuleDeliverableUpdateView,
 )
 
 
-approval_urls = [
-    path("create/", ApprovalCreateView.as_view(), name="approval-create"),
-    path("<int:pk>/", ApprovalDetailView.as_view(), name="approval-detail"),
-    path("<int:pk>/update", ApprovalUpdateView.as_view(), name="approval-update"),
-    path("<int:pk>/delete", ApprovalDeleteView.as_view(), name="approval-delete"),
+request_urls = [
     path(
-        "<int:pk>/approve",
-        ApprovalApproveRejectView.as_view(),
-        {"approved": True},
-        name="approval-approve",
+        "create/",
+        ResourcingRequestCreateView.as_view(),
+        name="resourcing-request-create",
     ),
     path(
-        "<int:pk>/reject",
-        ApprovalApproveRejectView.as_view(),
-        {"approved": False},
-        name="approval-reject",
+        "<int:pk>/",
+        ResourcingRequestDetailView.as_view(),
+        name="resourcing-request-detail",
     ),
     path(
-        "<int:pk>/change-status",
-        ApprovalChangeStatusView.as_view(),
-        name="approval-change-status",
+        "<int:pk>/update",
+        ResourcingRequestUpdateView.as_view(),
+        name="resourcing-request-update",
+    ),
+    path(
+        "<int:pk>/delete",
+        ResourcingRequestDeleteView.as_view(),
+        name="resourcing-request-delete",
+    ),
+    path(
+        "<int:pk>/send-for-approval",
+        ResourcingRequestSendForApprovalView.as_view(),
+        name="resourcing-request-send-for-approval",
+    ),
+    path(
+        "<int:pk>/add-approval",
+        ResourcingRequestAddApproval.as_view(),
+        name="resourcing-request-add-approval",
     ),
     path(
         "<int:pk>/add-comment",
-        ApprovalAddComment.as_view(),
-        name="approval-add-comment",
+        ResourcingRequestAddComment.as_view(),
+        name="resourcing-request-add-comment",
     ),
 ]
 
@@ -125,7 +134,7 @@ sds_status_determination_urls = document_urls(
 urlpatterns = [
     path("", index, name="index"),
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
-    path("approval/", include(approval_urls)),
+    path("resourcing-request/", include(request_urls)),
     path("job-description/", include(job_description_urls)),
     path("statement-of-work/", include(statement_of_work_urls)),
     path(

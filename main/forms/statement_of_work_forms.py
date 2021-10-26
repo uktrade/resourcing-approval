@@ -25,8 +25,8 @@ class StatementOfWorkForm(forms.ModelForm):
     class Meta:
         model = StatementOfWork
         fields = "__all__"
-        widgets = {"approval": forms.HiddenInput}
+        widgets = {"resourcing_request": forms.HiddenInput}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["approval"].disabled = True
+        self.fields["resourcing_request"].disabled = True

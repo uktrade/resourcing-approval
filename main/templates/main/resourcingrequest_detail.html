@@ -1,0 +1,244 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ object.name }}{% endblock %}
+
+{% block content %}
+<h1 class="govuk-heading-l">{{ object.name }}</h2>
+
+<dl class="govuk-summary-list">
+    {% include 'main/partials/summary-row.html' with key='Requestor' value=object.requestor %}
+    {% include 'main/partials/summary-row.html' with key='Status' value=object.get_state_display %}
+    {% include 'main/partials/summary-row.html' with key='Is IR35' value=object.get_is_ir35_display %}
+    {% include 'main/partials/summary-row.html' with key='Chief' value=object.chief %}
+
+    <!-- Job description -->
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Job description
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {% if object.is_ir35 %}
+                {{ object.job_description|default:'No job description' }}
+            {% else %}
+                Not required
+            {% endif %}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            {% if object.is_ir35 %}
+                {% if perms.main.view_jobdescription and object.job_description %}
+                    <a class="govuk-button govuk-button--secondary mb-0" href="#">View</a>
+                {% endif %}
+                {% if perms.main.change_jobdescription and object.job_description and object.can_update %}
+                    <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'job-description-update' object.job_description.pk %}">Update</a>
+                {% elif perms.main.add_jobdescription and not object.job_description %}
+                    <a class="govuk-button govuk-button mb-0" href="{% url 'job-description-create' %}?resourcing_request={{ object.pk }}">Create</a>
+                {% endif %}
+            {% endif %}
+        </dd>
+    </div>
+
+    <!-- Statement of work -->
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Statement of work
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {% if not object.is_ir35 %}
+                {{ object.statement_of_work|default:'No statement of work' }}
+            {% else %}
+                Not required
+            {% endif %}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            {% if not object.is_ir35 %}
+                {% if perms.main.view_statementofwork and object.statement_of_work %}
+                    <a class="govuk-button govuk-button--secondary mb-0" href="#">View</a>
+                {% endif %}
+                {% if perms.main.change_statementofwork and object.statement_of_work and object.can_update %}
+                    <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'statement-of-work-update' object.statement_of_work.pk %}">Update</a>
+                {% elif perms.main.add_statementofwork and not object.statement_of_work %}
+                    <a class="govuk-button govuk-button mb-0" href="{% url 'statement-of-work-create' %}?resourcing_request={{ object.pk }}">Create</a>
+                {% endif %}
+            {% endif %}
+        </dd>
+    </div>
+
+    <!-- Interim request -->
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Interim request
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ object.interim_request|default:'No interim request' }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            {% if perms.main.view_interimrequest and object.interim_request %}
+                <a class="govuk-button govuk-button--secondary mb-0" href="#">View</a>
+            {% endif %}
+            {% if perms.main.change_interimrequest and object.interim_request and object.can_update %}
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'interim-request-update' object.interim_request.pk %}">Update</a>
+            {% elif perms.main.add_interimrequest and not object.interim_request %}
+                <a class="govuk-button govuk-button mb-0" href="{% url 'interim-request-create' %}?resourcing_request={{ object.pk }}">Create</a>
+            {% endif %}
+        </dd>
+    </div>
+
+    <!-- CEST rationale -->
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            CEST rationale
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ object.cest_rationale|default:'No CEST rationale' }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            {% if perms.main.view_cestrationale and object.cest_rationale %}
+                <a class="govuk-button govuk-button--secondary mb-0" href="#">View</a>
+            {% endif %}
+            {% if perms.main.change_cestrationale and object.cest_rationale and object.can_update %}
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'cest-rationale-update' object.cest_rationale.pk %}">Update</a>
+            {% elif perms.main.add_cestrationale and not object.cest_rationale %}
+                <a class="govuk-button govuk-button mb-0" href="{% url 'cest-rationale-create' %}?resourcing_request={{ object.pk }}">Create</a>
+            {% endif %}
+        </dd>
+    </div>
+
+    <!-- SDS status determination -->
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            SDS status determination
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ object.sds_status_determination|default:'No SDS status determination' }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            {% if perms.main.view_sdsstatusdetermination and object.sds_status_determination %}
+                <a class="govuk-button govuk-button--secondary mb-0" href="#">View</a>
+            {% endif %}
+            {% if perms.main.change_sdsstatusdetermination and object.sds_status_determination and object.can_update %}
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'sds-status-determination-update' object.sds_status_determination.pk %}">Update</a>
+            {% elif perms.main.add_sdsstatusdetermination and not object.sds_status_determination %}
+                <a class="govuk-button govuk-button mb-0" href="{% url 'sds-status-determination-create' %}?resourcing_request={{ object.pk }}">Create</a>
+            {% endif %}
+        </dd>
+    </div>
+</dl>
+
+<!-- Actions -->
+{% if perms.main.change_resourcingrequest %}
+    {% if object.can_send_for_approval %}
+        <form class="inline" action="{% url 'resourcing-request-send-for-approval' object.pk %}" method="post">
+            {% csrf_token %}
+            <button class="govuk-button">Send for approval</button>
+        </form>
+    {% endif %}
+
+    <!-- FIXME -->
+    {% if object.can_amend %}
+        <form class="inline" action="">
+            {% csrf_token %}
+            <button class="govuk-button govuk-button--secondary">Amend</button>
+        </form>
+    {% endif %}
+
+    {% if object.can_update %}
+        <a class="govuk-button govuk-button--secondary" href="{% url 'resourcing-request-update' object.pk %}">Update</a>
+    {% endif %}
+{% endif %}
+
+{% if perms.main.delete_resourcingrequest %}
+    <form class="inline" action="{% url 'resourcing-request-delete' object.pk %}" method="post">
+        {% csrf_token %}
+        <button class="govuk-button govuk-button--warning">Delete</button>
+    </form>
+{% endif %}
+
+<!-- Approvals -->
+<h1 class="govuk-heading-l">Approvals</h1>
+
+{% if object.is_draft %}
+    <p class="govuk-body">Resourcing request is not ready for approval.</p>
+{% else %}
+    <dl class="govuk-summary-list">
+        {% for approval in approvals %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    {{ approval.type.label }} approval
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {% if approval.object %}
+                        {{ approval.object.approved }} - {{ approval.object.user }} - {{ approval.object.timestamp }}
+                    {% endif %}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    {% if approval.has_permission and not is_approved %}
+                        <!-- Approve -->
+                        <form class="inline" action="{% url 'resourcing-request-add-approval' object.pk %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="type" value="{{ approval.type }}">
+                            <input type="hidden" name="approved" value="true">
+                            <button class="govuk-button mb-0">Approve</button>
+                        </form>
+
+                        <!-- Reject -->
+                        <form class="inline" action="{% url 'resourcing-request-add-approval' object.pk %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="type" value="{{ approval.type }}">
+                            <input type="hidden" name="approved" value="false">
+                            <button class="govuk-button govuk-button--warning mb-0">Reject</button>
+                        </form>
+
+                        {% comment %}
+                        <!-- Clear form -->
+                        <form class="inline" action="{% url 'resourcing-request-add-approval' object.pk %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="type" value="{{ approval.type }}">
+                            <input type="hidden" name="approved" value="unknown">
+                            <button class="govuk-button govuk-button--secondary mb-0">Clear</button>
+                        </form>
+                        {% endcomment %}
+                    {% endif %}
+                </dd>
+            </div>
+        {% endfor %}
+    </dl>
+
+    <!-- Approvals history -->
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                Approvals history
+            </span>
+        </summary>
+        <div class="govuk-details__text">
+            {% for approval in object.approvals.all %}
+                <div>{{ approval.get_type_display }} - {{ approval.approved }} - {{ approval.user }} - {{ approval.timestamp }}</div>
+            {% empty %}
+                No approval history.
+            {% endfor %}
+        </div>
+    </details>
+{% endif %}
+
+<!-- Comments -->
+<h1 class="govuk-heading-l">Comments</h1>
+
+{% if perms.main.view_comment %}
+    {% for comment in object.comments.all %}
+    <div>
+        <span class="govuk-body govuk-!-font-weight-bold">{{ comment.user }}</span><span class="govuk-body-s secondary-text ml-1">{{ comment.timestamp }}</span>
+        <p class="govuk-body">
+            {{ comment.text }}
+        </p>
+    </div>
+    {% endfor %}
+{% endif %}
+
+{% if perms.main.add_comment %}
+    <form action="{% url 'resourcing-request-add-comment' object.pk %}" method="post">
+        {% csrf_token %}
+        {% include 'main/partials/forms/form.html' with form=comment_form %}
+        <button class="govuk-button">Add comment</button>
+    </form>
+{% endif %}
+{% endblock %}
