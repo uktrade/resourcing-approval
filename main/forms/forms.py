@@ -7,7 +7,6 @@ from main.models import (
     InterimRequest,
     JobDescription,
     SdsStatusDetermination,
-    StatementOfWork,
 )
 
 
@@ -45,18 +44,6 @@ class CommentForm(forms.ModelForm):
 class JobDescriptionForm(forms.ModelForm):
     class Meta:
         model = JobDescription
-        fields = "__all__"
-        widgets = {"approval": forms.HiddenInput}
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields["approval"].disabled = True
-
-
-class StatementOfWorkForm(forms.ModelForm):
-    class Meta:
-        model = StatementOfWork
         fields = "__all__"
         widgets = {"approval": forms.HiddenInput}
 

@@ -9,14 +9,13 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from main.forms import (
+from main.forms.forms import (
     CestRationaleForm,
     CommentForm,
     InterimRequestForm,
     JobDescriptionForm,
     ResourcingApprovalForm,
     SdsStatusDeterminationForm,
-    StatementOfWorkForm,
 )
 from main.models import (
     CestRationale,
@@ -25,7 +24,6 @@ from main.models import (
     JobDescription,
     ResourcingApproval,
     SdsStatusDetermination,
-    StatementOfWork,
 )
 
 
@@ -233,18 +231,6 @@ class JobDescriptionUpdateView(ApprovalFormUpdateView):
     model = JobDescription
     form_class = JobDescriptionForm
     permission_required = "main.change_jobdescription"
-
-
-class StatementOfWorkCreateView(ApprovalFormCreateView):
-    model = StatementOfWork
-    form_class = StatementOfWorkForm
-    permission_required = "main.add_statementofwork"
-
-
-class StatementOfWorkUpdateView(ApprovalFormUpdateView):
-    model = StatementOfWork
-    form_class = StatementOfWorkForm
-    permission_required = "main.change_statementofwork"
 
 
 class InterimRequestCreateView(ApprovalFormCreateView):

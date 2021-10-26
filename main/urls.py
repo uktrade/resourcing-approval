@@ -1,7 +1,7 @@
 from django.urls import path
 from django.urls.conf import include
 
-from main.views import (
+from main.views.views import (
     ApprovalAddComment,
     ApprovalApproveRejectView,
     ApprovalChangeStatusView,
@@ -18,9 +18,16 @@ from main.views import (
     JobDescriptionUpdateView,
     SdsStatusDeterminationCreateView,
     SdsStatusDeterminationUpdateView,
+    index,
+)
+
+from main.views.statement_of_work_views import (
     StatementOfWorkCreateView,
     StatementOfWorkUpdateView,
-    index,
+    StatementOfWorkModuleCreateView,
+    StatementOfWorkModuleUpdateView,
+    StatementOfWorkModuleDeliverableCreateView,
+    StatementOfWorkModuleDeliverableUpdateView,
 )
 
 
@@ -54,10 +61,10 @@ approval_urls = [
 ]
 
 
-def document_urls(create_view, update_view, name_prefix):
+def document_urls(create_view, update_view, name_prefix, parent_key=""):
     return [
         path(
-            "create",
+            f"create{parent_key}",
             create_view.as_view(),
             name=f"{name_prefix}-create",
         ),
@@ -80,6 +87,22 @@ statement_of_work_urls = document_urls(
     StatementOfWorkUpdateView,
     "statement-of-work",
 )
+
+
+statement_of_work__module_urls = document_urls(
+    StatementOfWorkModuleCreateView,
+    StatementOfWorkModuleUpdateView,
+    "statement-of-work-module",
+    "/<int:parent_pk>",
+)
+
+statement_of_work__module_deliverable_urls = document_urls(
+    StatementOfWorkModuleDeliverableCreateView,
+    StatementOfWorkModuleDeliverableUpdateView,
+    "statement-of-work-module-deliverable",
+    "/<int:parent_pk>",
+)
+
 
 interim_request_urls = document_urls(
     InterimRequestCreateView,
@@ -105,6 +128,11 @@ urlpatterns = [
     path("approval/", include(approval_urls)),
     path("job-description/", include(job_description_urls)),
     path("statement-of-work/", include(statement_of_work_urls)),
+    path(
+        "statement-of-work-module-deliverable/",
+        include(statement_of_work__module_deliverable_urls),
+    ),
+    path("statement-of-work-module/", include(statement_of_work__module_urls)),
     path("interim-request/", include(interim_request_urls)),
     path("cest-rationale/", include(cest_rationale_urls)),
     path("sds-status-determination/", include(sds_status_determination_urls)),

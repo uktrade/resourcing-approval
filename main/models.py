@@ -252,9 +252,96 @@ class StatementOfWork(models.Model):
     )
 
     company_name = models.CharField(max_length=255)
+    slot_code = models.CharField(max_length=30)
+    is_nominated_worker = models.BooleanField(
+        "Did DDaT find them or not?", null=True, choices=TRUE_FALSE_CHOICES
+    )
+    hiring_manager_team_leader = models.CharField(
+        "Hiring manager / Team lead (if different)", max_length=255
+    )
+    team_directorate = models.CharField("Team/Directorate", max_length=255)
+    project_description = models.TextField()
+    role = models.CharField(max_length=255)
+    cost_centre_code = models.CharField(max_length=6)
+    programme_code = models.CharField(max_length=4)
+    project_code = models.CharField(max_length=6, blank=True, null=True)
+    start_date = models.DateField()
+    # Todo check end date is after start date
+    end_date = models.DateField()
+    notice_period = models.TextField()
+    fees = models.TextField("Project fee and invoicing")
+    exceptional_expenses = models.TextField()
+    deliverable_notes = models.TextField()
+
+    @property
+    def module_count(self) -> int:
+        return self.modules.all().count()
+
+    @property
+    def is_statement_of_work_valid(self) -> bool:
+        # Check that there is at least one module defined,
+        # and every module defined has at least one deliverable.
+        if self.module_count == 0:
+            return False
+        for module in self.modules.all():
+            if module.deliverable_count == 0:
+                return False
+        return True
 
     def __str__(self):
         return self.company_name
+
+
+class StatementOfWorkModule(models.Model):
+    module_title = models.CharField(max_length=255)
+    completion_date = models.DateField()
+    statement_of_work = models.ForeignKey(
+        StatementOfWork,
+        on_delete=models.CASCADE,
+        related_name="modules",
+    )
+
+    @property
+    def approval(self):
+        return self.statement_of_work.approval
+
+    @property
+    def approval_id(self):
+        return self.statement_of_work.approval_id
+
+    @property
+    def deliverable_count(self) -> int:
+        return self.deliverables.all().count()
+
+    def __str__(self):
+        return self.module_title
+
+
+class StatementOfWorkModuleDeliverable(models.Model):
+    deliverable_title = models.CharField(max_length=255)
+    deliverable_description = models.TextField()
+
+    start_date = models.DateField()
+    # Todo check end date is after start date
+    end_date = models.DateField()
+    monthly_fee = models.DecimalField(max_digits=9, decimal_places=2)
+    payment_date = models.DateField()
+    statement_of_work_module = models.ForeignKey(
+        StatementOfWorkModule,
+        on_delete=models.CASCADE,
+        related_name="deliverables",
+    )
+
+    @property
+    def approval_id(self):
+        return self.statement_of_work_module.approval_id
+
+    @property
+    def approval(self):
+        return self.statement_of_work_module.approval
+
+    def __str__(self):
+        return self.deliverable_title
 
 
 class InterimRequest(models.Model):
