@@ -1,10 +1,5 @@
-from enum import Enum
-
 from django.db import models
-from django.db.models import Q
-from django.db.models.expressions import F
 from django.urls import reverse
-from django.utils import timezone
 
 
 TRUE_FALSE_CHOICES = (
@@ -13,62 +8,32 @@ TRUE_FALSE_CHOICES = (
 )
 
 
-class ResourcingApproval(models.Model):
-    class Meta:
-        permissions = (
-            ("can_give_chief_approval", "Can give chief approval"),
-            ("can_give_hrbp_approval", "Can give HRBP approval"),
-            ("can_give_finance_approval", "Can give finance approval"),
-            ("can_give_commercial_approval", "Can give commercial approval"),
+class ResourcingRequestQuerySet(models.QuerySet):
+    def select_related_approvals(self):
+        return self.select_related(
+            "head_of_profession_approval",
+            "chief_approval",
+            "busops_approval",
+            "hrbp_approval",
+            "finance_approval",
+            "commercial_approval",
         )
-        indexes = [models.Index(name="status_index", fields=["status"])]
-        constraints = [
-            models.CheckConstraint(
-                check=(
-                    Q(
-                        status=0,
-                        chief_approval__isnull=True,
-                        hrbp_approval__isnull=True,
-                        finance_approval__isnull=True,
-                        commercial_approval__isnull=True,
-                    )
-                    | Q(
-                        status=1,
-                    )
-                    | Q(
-                        status=2,
-                        chief_approval=True,
-                    )
-                    | Q(
-                        status=3,
-                        chief_approval=True,
-                        hrbp_approval=True,
-                        finance_approval=True,
-                        commercial_approval=True,
-                    )
-                ),
-                name="check_status",
-            ),
-            models.CheckConstraint(
-                check=Q(chief_approval_who=F("chief")), name="check_chief"
-            ),
-        ]
 
-    class Status(models.IntegerChoices):
+
+class ResourcingRequest(models.Model):
+    class Meta:
+        indexes = [models.Index(name="state_index", fields=["state"])]
+
+    class State(models.IntegerChoices):
         DRAFT = 0, "Draft"
-        AWAITING_CHIEF_APPROVAL = 1, "Awaiting chief approval"
-        AWAITING_APPROVALS = 2, "Awaiting approvals"
-        APPROVED = 3, "Approved"
+        AWAITING_APPROVALS = 1, "Awaiting approvals"
+        APPROVED = 2, "Approved"
 
-    class Approval(Enum):
-        CHIEF = "chief"
-        HRBP = "hrbp"
-        FINANCE = "finance"
-        COMMERCIAL = "commercial"
+    requestor = models.ForeignKey(
+        "user.User", models.CASCADE, related_name="resourcing_requests"
+    )
 
-    requestor = models.ForeignKey("user.User", models.CASCADE, related_name="approvals")
-
-    status = models.SmallIntegerField(choices=Status.choices, default=Status.DRAFT)
+    state = models.SmallIntegerField(choices=State.choices, default=State.DRAFT)
 
     name = models.CharField(max_length=255)
     is_ir35 = models.BooleanField(
@@ -76,133 +41,127 @@ class ResourcingApproval(models.Model):
     )
     chief = models.ForeignKey("user.User", models.CASCADE, related_name="+")
 
-    # Approvals
-    chief_approval = models.BooleanField(choices=TRUE_FALSE_CHOICES, null=True)
-    chief_approval_who = models.ForeignKey(
-        "user.User", models.CASCADE, null=True, related_name="+"
+    head_of_profession_approval = models.OneToOneField(
+        "Approval",
+        models.SET_NULL,
+        related_name="head_of_profession_approval",
+        null=True,
     )
-    chief_approval_when = models.DateTimeField(null=True)
+    chief_approval = models.OneToOneField(
+        "Approval", models.SET_NULL, related_name="chief_approval", null=True
+    )
+    busops_approval = models.OneToOneField(
+        "Approval", models.SET_NULL, related_name="busops_approval", null=True
+    )
+    hrbp_approval = models.OneToOneField(
+        "Approval", models.SET_NULL, related_name="hrbp_approval", null=True
+    )
+    finance_approval = models.OneToOneField(
+        "Approval", models.SET_NULL, related_name="finance_approval", null=True
+    )
+    commercial_approval = models.OneToOneField(
+        "Approval", models.SET_NULL, related_name="commercial_approval", null=True
+    )
 
-    hrbp_approval = models.BooleanField(
-        "HRBP approval", choices=TRUE_FALSE_CHOICES, null=True
-    )
-    hrbp_approval_who = models.ForeignKey(
-        "user.User", models.CASCADE, null=True, related_name="+"
-    )
-    hrbp_approval_when = models.DateTimeField(null=True)
-
-    finance_approval = models.BooleanField(choices=TRUE_FALSE_CHOICES, null=True)
-    finance_approval_who = models.ForeignKey(
-        "user.User", models.CASCADE, null=True, related_name="+"
-    )
-    finance_approval_when = models.DateTimeField(null=True)
-
-    commercial_approval = models.BooleanField(choices=TRUE_FALSE_CHOICES, null=True)
-    commercial_approval_who = models.ForeignKey(
-        "user.User", models.CASCADE, null=True, related_name="+"
-    )
-    commercial_approval_when = models.DateTimeField(null=True)
+    objects = ResourcingRequestQuerySet.as_manager()
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("approval-detail", kwargs={"pk": self.pk})
+        return reverse("resourcing-request-detail", kwargs={"pk": self.pk})
 
     @property
-    def can_send_to_chief(self):
-        if self.status != self.Status.DRAFT:
-            return False
+    def is_draft(self):
+        return self.state == self.State.DRAFT
 
-        if self.is_ir35 and not self.job_description:
-            return False
+    @property
+    def is_awaiting_approvals(self):
+        return self.state == self.State.AWAITING_APPROVALS
 
-        if not self.is_ir35 and not self.statement_of_work:
-            return False
+    @property
+    def required_supporting_forms(self):
+        if self.is_ir35:
+            yield self.job_description
+        else:
+            yield self.statement_of_work
 
-        return all(
-            [
-                self.interim_request,
-                self.cest_rationale,
-                self.sds_status_determination,
-            ]
+        yield from (
+            self.interim_request,
+            self.cest_rationale,
+            self.sds_status_determination,
         )
 
-    def send_to_chief(self):
-        self.status = self.Status.AWAITING_CHIEF_APPROVAL
-        # TODO: Notify chief
+    @property
+    def is_complete(self):
+        return all(self.required_supporting_forms)
 
     @property
-    def can_chief_approve(self):
-        return self.status == self.Status.AWAITING_CHIEF_APPROVAL
-
-    def chief_approves(self):
-        self.status = self.Status.AWAITING_APPROVALS
-
-    def approve(self, approval, user):
-        setattr(self, f"{approval}_approval", True)
-        setattr(self, f"{approval}_approval_who", user)
-        setattr(self, f"{approval}_approval_when", timezone.now())
-
-        if approval == "chief":
-            self.chief_approves()
-
-        if self.approved:
-            self.status = self.Status.APPROVED
-
-    def reject(self, approval, user):
-        setattr(self, f"{approval}_approval", False)
-        setattr(self, f"{approval}_approval_who", user)
-        setattr(self, f"{approval}_approval_when", timezone.now())
-
-        if approval == "chief":
-            self.status = self.Status.AWAITING_CHIEF_APPROVAL
+    def can_send_for_approval(self):
+        return self.is_complete and self.state == self.State.DRAFT
 
     @property
-    def can_mark_as_draft(self):
-        return self.status in (
-            self.Status.AWAITING_CHIEF_APPROVAL,
-            self.Status.AWAITING_APPROVALS,
-        )
-
-    def mark_as_draft(self):
-        self.status = self.Status.DRAFT
-        self.clear_approvals()
-
-    def clear_approvals(self):
-        for approval in self.Approval:
-            setattr(self, f"{approval.value}_approval", None)
-            setattr(self, f"{approval.value}_approval_who", None)
-            setattr(self, f"{approval.value}_approval_when", None)
-
-    @property
-    def can_edit(self):
-        return self.status == self.Status.DRAFT
+    def can_update(self):
+        return self.state == self.State.DRAFT
 
     @property
     def can_approve(self):
-        return self.status in (
-            self.Status.AWAITING_CHIEF_APPROVAL,
-            self.Status.AWAITING_APPROVALS,
-        )
+        return self.state == self.State.AWAITING_APPROVALS
 
-    @property
-    def approvals(self):
-        return (
-            self.chief_approval,
-            self.hrbp_approval,
-            self.finance_approval,
-            self.commercial_approval,
-        )
+    def get_approvals(self):
+        return {
+            Approval.Type.HEAD_OF_PROFESSION: self.head_of_profession_approval,
+            Approval.Type.CHIEF: self.chief_approval,
+            Approval.Type.BUSOPS: self.busops_approval,
+            Approval.Type.HRBP: self.hrbp_approval,
+            Approval.Type.FINANCE: self.finance_approval,
+            Approval.Type.COMMERCIAL: self.commercial_approval,
+        }
 
-    @property
-    def approved(self):
-        return all(self.approvals)
+    def get_is_approved(self):
+        return all(x and x.approved for x in self.get_approvals().values())
+
+
+class Approval(models.Model):
+    class Meta:
+        permissions = (
+            (
+                "can_give_head_of_profession_approval",
+                "Can give head of profession approval",
+            ),
+            ("can_give_busops_approval", "Can give BusOps approval"),
+            ("can_give_chief_approval", "Can give chief approval"),
+            ("can_give_hrbp_approval", "Can give HRBP approval"),
+            ("can_give_finance_approval", "Can give finance approval"),
+            ("can_give_commercial_approval", "Can give commercial approval"),
+        )
+        ordering = ["-timestamp"]
+        indexes = [models.Index(fields=["type"])]
+
+    class Type(models.TextChoices):
+        HEAD_OF_PROFESSION = "head_of_profession", "Head of Profession"
+        BUSOPS = "busops", "BusOps"
+        CHIEF = "chief", "Chief"
+        HRBP = "hrbp", "HRBP"
+        FINANCE = "finance", "Finance"
+        COMMERCIAL = "commercial", "Commercial"
+
+    resourcing_request = models.ForeignKey(
+        "ResourcingRequest", models.CASCADE, related_name="approvals"
+    )
+    user = models.ForeignKey("user.User", models.CASCADE, related_name="+")
+    reason = models.OneToOneField(
+        "Comment", models.CASCADE, null=True, related_name="reason"
+    )
+
+    type = models.CharField(choices=Type.choices, max_length=20)
+    approved = models.BooleanField(null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 
 class JobDescription(models.Model):
-    approval = models.OneToOneField(
-        "ResourcingApproval",
+    resourcing_request = models.OneToOneField(
+        "ResourcingRequest",
         models.CASCADE,
         related_name="job_description",
     )
@@ -245,8 +204,8 @@ class JobDescription(models.Model):
 
 
 class StatementOfWork(models.Model):
-    approval = models.OneToOneField(
-        "ResourcingApproval",
+    resourcing_request = models.OneToOneField(
+        "ResourcingRequest",
         models.CASCADE,
         related_name="statement_of_work",
     )
@@ -302,12 +261,12 @@ class StatementOfWorkModule(models.Model):
     )
 
     @property
-    def approval(self):
-        return self.statement_of_work.approval
+    def resourcing_request(self):
+        return self.statement_of_work.resourcing_request
 
     @property
-    def approval_id(self):
-        return self.statement_of_work.approval_id
+    def resourcing_request_id(self):
+        return self.statement_of_work.resourcing_request_id
 
     @property
     def deliverable_count(self) -> int:
@@ -333,20 +292,20 @@ class StatementOfWorkModuleDeliverable(models.Model):
     )
 
     @property
-    def approval_id(self):
-        return self.statement_of_work_module.approval_id
+    def resourcing_request(self):
+        return self.statement_of_work_module.resourcing_request
 
     @property
-    def approval(self):
-        return self.statement_of_work_module.approval
+    def resourcing_request_id(self):
+        return self.statement_of_work_module.resourcing_request_id
 
     def __str__(self):
         return self.deliverable_title
 
 
 class InterimRequest(models.Model):
-    approval = models.OneToOneField(
-        "ResourcingApproval",
+    resourcing_request = models.OneToOneField(
+        "ResourcingRequest",
         models.CASCADE,
         related_name="interim_request",
     )
@@ -358,8 +317,8 @@ class InterimRequest(models.Model):
 
 
 class CestRationale(models.Model):
-    approval = models.OneToOneField(
-        "ResourcingApproval",
+    resourcing_request = models.OneToOneField(
+        "ResourcingRequest",
         models.CASCADE,
         related_name="cest_rationale",
     )
@@ -371,8 +330,8 @@ class CestRationale(models.Model):
 
 
 class SdsStatusDetermination(models.Model):
-    approval = models.OneToOneField(
-        "ResourcingApproval",
+    resourcing_request = models.OneToOneField(
+        "ResourcingRequest",
         models.CASCADE,
         related_name="sds_status_determination",
     )
@@ -384,8 +343,8 @@ class SdsStatusDetermination(models.Model):
 
 
 class Comment(models.Model):
-    approval = models.ForeignKey(
-        "ResourcingApproval", models.CASCADE, related_name="comments"
+    resourcing_request = models.ForeignKey(
+        "ResourcingRequest", models.CASCADE, related_name="comments"
     )
     user = models.ForeignKey("user.User", models.CASCADE, related_name="comments")
 

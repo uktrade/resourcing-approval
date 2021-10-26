@@ -3,13 +3,13 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<h1 class="govuk-heading-l">Approvals</h1>
+<h1 class="govuk-heading-l">Resourcing Approvals</h1>
 
-{% if perms.main.add_resourcingapproval %}
-    <a class="govuk-button" href="{% url 'approval-create' %}">Create approval</a>
+{% if perms.main.add_resourcingrequest %}
+    <a class="govuk-button" href="{% url 'resourcing-request-create' %}">Create resourcing request</a>
 {% endif %}
 
-<h1 class="govuk-heading-m">Your approval requests</h1>
+<h1 class="govuk-heading-m">Your resourcing requests</h1>
 
 <table class="govuk-table">
     <thead class="govuk-table__head">
@@ -19,10 +19,10 @@
         </tr>
     </thead>
     <tbody class="govuk-table__body">
-        {% for approval in your_approvals %}
+        {% for object in your_resourcing_requests %}
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell"><a href="{% url 'approval-detail' approval.pk %}">{{ approval }}</a></td>
-                <td class="govuk-table__cell">{{ approval.get_status_display }}</td>
+                <td class="govuk-table__cell"><a href="{% url 'resourcing-request-detail' object.pk %}">{{ object }}</a></td>
+                <td class="govuk-table__cell">{{ object.get_state_display }}</td>
             </tr>
         {% endfor %}
     </tbody>
@@ -38,10 +38,10 @@
         </tr>
     </thead>
     <tbody class="govuk-table__body">
-        {% for approval in awaiting_your_approval %}
+        {% for object in awaiting_your_approval %}
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell"><a href="{% url 'approval-detail' approval.pk %}">{{ approval }}</a></td>
-                <td class="govuk-table__cell">{{ approval.get_status_display }}</td>
+                <td class="govuk-table__cell"><a href="{% url 'resourcing-request-detail' object.pk %}">{{ object }}</a></td>
+                <td class="govuk-table__cell">{{ object.get_state_display }}</td>
             </tr>
         {% endfor %}
     </tbody>

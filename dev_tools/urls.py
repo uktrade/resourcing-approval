@@ -1,6 +1,6 @@
 from django.urls import path
 
-from dev_tools.views import index, change_user
+from dev_tools.views import change_user, index
 
 
 app_name = "dev_tools"

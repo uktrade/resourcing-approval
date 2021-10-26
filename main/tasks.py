@@ -13,7 +13,7 @@ def send_notification(to, template_id, personalisation=None):
     if personalisation is None:
         personalisation = {}
 
-    if settings.ENV in ("local", "test"):
+    if settings.APP_ENV in ("local", "test"):
         logging.info(
             "\n".join(
                 (

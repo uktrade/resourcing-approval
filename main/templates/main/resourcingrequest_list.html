@@ -5,14 +5,14 @@
 {% block content %}
 <h1 class="govuk-heading-l">Approvals</h1>
 
-{% if perms.main.add_resourcingapproval %}
+{% if perms.main.add_resourcingrequest %}
     <a class="govuk-button" href="{% url 'approval-create' %}">Create approval</a>
 {% endif %}
 
 {% for approval in approvals %}
     <div>
         <h2 class="govuk-heading-m">{{ approval.name }}</h2>
-        <p class="govuk-body">{{ approval.get_status_display }}</p>
+        <p class="govuk-body">{{ approval.get_state_display }}</p>
         <a class="govuk-button govuk-button--secondary" href="{{ approval.get_absolute_url }}">View approval</a>
     </div>
 {% endfor %}

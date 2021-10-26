@@ -1,24 +1,23 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
-
 # https://simpleit.rocks/python/django/having-multiple-submit-buttons-for-same-form-in-django/
 from django.urls import reverse
 
-
 from main.forms.statement_of_work_forms import (
     StatementOfWorkForm,
-    StatementOfWorkModuleForm,
     StatementOfWorkModuleDeliverableForm,
+    StatementOfWorkModuleForm,
 )
 from main.models import (
     StatementOfWork,
-    StatementOfWorkModuleDeliverable,
     StatementOfWorkModule,
+    StatementOfWorkModuleDeliverable,
+)
+from main.views.supporting_forms import (
+    SupportingFormCreateView,
+    SupportingFormUpdateView,
 )
 
-from main.views.views import ApprovalFormCreateView, ApprovalFormUpdateView
 
-
-class StatementOfWorkCreateView(ApprovalFormCreateView):
+class StatementOfWorkCreateView(SupportingFormCreateView):
     template_name = "main/statement_of_work.html"
     model = StatementOfWork
     form_class = StatementOfWorkForm
@@ -30,11 +29,11 @@ class StatementOfWorkCreateView(ApprovalFormCreateView):
                 "statement-of-work-module-create", kwargs={"parent_pk": self.object.id}
             )
         else:
-            url = self.object.approval.get_absolute_url()
+            url = self.object.resourcing_request.get_absolute_url()
         return url
 
 
-class StatementOfWorkUpdateView(ApprovalFormUpdateView):
+class StatementOfWorkUpdateView(SupportingFormUpdateView):
     template_name = "main/statement_of_work.html"
     model = StatementOfWork
     form_class = StatementOfWorkForm
@@ -51,11 +50,11 @@ class StatementOfWorkUpdateView(ApprovalFormUpdateView):
                 "statement-of-work-module-create", kwargs={"parent_pk": self.object.id}
             )
         else:
-            url = self.object.approval.get_absolute_url()
+            url = self.object.resourcing_request.get_absolute_url()
         return url
 
 
-class StatementOfWorkModuleCreateView(ApprovalFormCreateView):
+class StatementOfWorkModuleCreateView(SupportingFormCreateView):
     template_name = "main/statement_of_work_module.html"
     model = StatementOfWorkModule
     form_class = StatementOfWorkModuleForm
@@ -78,7 +77,7 @@ class StatementOfWorkModuleCreateView(ApprovalFormCreateView):
         return url
 
 
-class StatementOfWorkModuleUpdateView(ApprovalFormUpdateView):
+class StatementOfWorkModuleUpdateView(SupportingFormUpdateView):
     template_name = "main/statement_of_work_module.html"
     model = StatementOfWorkModule
     form_class = StatementOfWorkModuleForm
@@ -103,7 +102,7 @@ class StatementOfWorkModuleUpdateView(ApprovalFormUpdateView):
         return url
 
 
-class StatementOfWorkModuleDeliverableCreateView(ApprovalFormCreateView):
+class StatementOfWorkModuleDeliverableCreateView(SupportingFormCreateView):
     template_name = "main/form.html"
     model = StatementOfWorkModuleDeliverable
     form_class = StatementOfWorkModuleDeliverableForm
@@ -119,7 +118,7 @@ class StatementOfWorkModuleDeliverableCreateView(ApprovalFormCreateView):
         )
 
 
-class StatementOfWorkModuleDeliverableUpdateView(ApprovalFormUpdateView):
+class StatementOfWorkModuleDeliverableUpdateView(SupportingFormUpdateView):
     template_name = "main/form.html"
     model = StatementOfWorkModuleDeliverable
     form_class = StatementOfWorkModuleDeliverableForm
