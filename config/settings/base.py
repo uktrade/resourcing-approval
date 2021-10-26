@@ -12,8 +12,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+from django.urls import reverse_lazy
 import dj_database_url
 import environ
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 
 # Setup
@@ -23,8 +26,22 @@ env = environ.Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-
 environ.Env.read_env(BASE_DIR / ".env")
+
+APP_ENV = env("APP_ENV")
+
+
+# Sentry
+# https://docs.sentry.io/platforms/python/guides/django/
+def init_sentry():
+    sentry_sdk.init(
+        dsn=env("SENTRY_DSN"),
+        environment=APP_ENV,
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=1.0,
+        send_default_pii=True,
+    )
+
 
 # VCAP services
 # See https://docs.cloudfoundry.org/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES
@@ -54,6 +71,7 @@ SESSION_COOKIE_SECURE = True
 INSTALLED_APPS = [
     "user.apps.UserConfig",
     "main.apps.MainConfig",
+    "dev_tools.apps.DevToolsConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -62,6 +80,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_celery_beat",
     "sass_processor",
+    "authbroker_client",
 ]
 
 MIDDLEWARE = [
@@ -73,6 +92,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "authbroker_client.middleware.ProtectAllViewsMiddleware",
 ]
 
 STATICFILES_FINDERS = [
@@ -98,6 +118,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "dev_tools.views.dev_tools_context",
             ],
         },
     },
@@ -182,3 +203,19 @@ if REDIS_CREDENTIALS:
 
 # GOV.UK Notify
 GOVUK_NOTIFY_API_KEY = env("GOVUK_NOTIFY_API_KEY")
+
+# Authentication
+# https://github.com/uktrade/django-staff-sso-client
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "authbroker_client.backends.AuthbrokerBackend",
+]
+
+AUTHBROKER_URL = env("AUTHBROKER_URL")
+AUTHBROKER_CLIENT_ID = env("AUTHBROKER_CLIENT_ID")
+AUTHBROKER_CLIENT_SECRET = env("AUTHBROKER_CLIENT_SECRET")
+AUTHBROKER_STAFF_SSO_SCOPE = "read"
+
+LOGIN_URL = reverse_lazy("authbroker_client:login")
+LOGIN_REDIRECT_URL = reverse_lazy("index")

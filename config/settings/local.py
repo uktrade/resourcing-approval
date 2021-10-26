@@ -1,7 +1,5 @@
-from .base import *
+from .non_prod import *  # noqa: F403
 
-
-ENV = "local"
 
 DEBUG = True
 

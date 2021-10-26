@@ -1,7 +1,7 @@
-from .base import *
+from .non_prod import *  # noqa: F403
 
 
-ENV = "dev"
+init_sentry()  # noqa: F405
 
 ALLOWED_HOSTS = [
     "resourcing-approval-dev.london.cloudapps.digital",
