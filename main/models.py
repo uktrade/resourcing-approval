@@ -1,6 +1,12 @@
 from django.db import models
 from django.urls import reverse
 
+from chartofaccount.models import (
+    DepartmentalGroup,
+    Directorate,
+    CostCentre,
+)
+
 
 TRUE_FALSE_CHOICES = (
     (True, "Yes"),
@@ -310,7 +316,83 @@ class InterimRequest(models.Model):
         related_name="interim_request",
     )
 
-    todo = models.TextField()
+    CONTRACTOR_TYPE_GENERALIST = 'generalist'
+    CONTRACTOR_TYPE_SPECIALIST = 'specialist'
+    CONTRACTOR_TYPE_CHOICES = [
+        (CONTRACTOR_TYPE_GENERALIST, 'Generalist'),
+        (CONTRACTOR_TYPE_SPECIALIST, 'Specialist'),
+    ]
+    SECURITY_CLEARANCE_BPSS = "BPSS"
+    SECURITY_CLEARANCE_SC = "sc"
+    SECURITY_CLEARANCE_DV = "dv"
+    SECURITY_CLEARANCE_CTC = "ctc"
+    SECURITY_CLEARANCE_CHOICES = [
+        (SECURITY_CLEARANCE_BPSS , "BPSS"),
+        (SECURITY_CLEARANCE_SC , "SC"),
+        (SECURITY_CLEARANCE_DV , "DV"),
+        (SECURITY_CLEARANCE_CTC , "CTC"),
+    ]
+
+    project_name_role_title = models.CharField(
+        max_length=255,
+        verbose_name="Project name/ Title of the Role"
+    )
+    new_requirement = models.BooleanField(verbose_name="New")
+    name_of_contractor = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="If Nominated Worker - please provide Name of the contractor"
+    )
+    uk_based = models.BooleanField(default=True, verbose_name="UK based")
+    overseas_country = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="if Overseas which Country"
+    )
+    start_date = models.DateField(verbose_name="Anticipated Start Date")
+    end_date = models.DateField(verbose_name="Anticipated End Date")
+    type_of_security_clearance = models.CharField(
+        max_length=50,
+        choices=SECURITY_CLEARANCE_CHOICES,
+        verbose_name="Level of Security clearance required"
+    )
+    contractor_type = models.CharField(
+        max_length=50,
+        choices=CONTRACTOR_TYPE_CHOICES,
+        verbose_name="Category of Interim"
+    )
+    part_b_business_case = models.TextField(
+        verbose_name="Business Case: Please detail why the interim resource is required."
+    )
+    part_b_impact = models.TextField(
+        verbose_name="What would be the impact of not filling this requirement."
+    )
+    part_b_main_reason = models.TextField(
+        verbose_name="What are the main reasons why this role has not been filled by a substantive Civil Servant. Please detail the strategic workforce plan for this role after the assignment end date:"
+    )
+
+    directorate = models.ForeignKey(
+        Directorate,
+        on_delete=models.CASCADE,
+        related_name="directorates",
+    )
+
+    group = models.ForeignKey(
+        DepartmentalGroup,
+        on_delete=models.CASCADE,
+        related_name="groups",
+    )
+    cost_centre_code = models.ForeignKey(
+        CostCentre,
+        on_delete=models.CASCADE,
+        related_name="costcentres",
+        verbose_name="Cost Centre/Team"
+    )
+
+    slot_codes = models.CharField(max_length=255)
+
 
     def __str__(self):
         return "Interim request"
