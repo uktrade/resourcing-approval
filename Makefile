@@ -26,6 +26,15 @@ groups:
 
 test-data: groups	
 	$(web) python manage.py loaddata test-users.json
+	$(web) python manage.py loaddata costcentre.json
+
+first-use:
+	docker-compose down
+	$(web) python manage.py migrate
+	$(web) python manage.py loaddata groups.json
+	$(web) python manage.py loaddata test-users.json
+	$(web) python manage.py loaddata costcentre.json
+	docker-compose up
 
 superuser:
 	$(web) python manage.py createsuperuser

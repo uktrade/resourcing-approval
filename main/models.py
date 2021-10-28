@@ -373,17 +373,18 @@ class InterimRequest(models.Model):
         verbose_name="What are the main reasons why this role has not been filled by a substantive Civil Servant. Please detail the strategic workforce plan for this role after the assignment end date:"
     )
 
+    group = models.ForeignKey(
+        DepartmentalGroup,
+        on_delete=models.CASCADE,
+        related_name="groups",
+    )
+
     directorate = models.ForeignKey(
         Directorate,
         on_delete=models.CASCADE,
         related_name="directorates",
     )
 
-    group = models.ForeignKey(
-        DepartmentalGroup,
-        on_delete=models.CASCADE,
-        related_name="groups",
-    )
     cost_centre_code = models.ForeignKey(
         CostCentre,
         on_delete=models.CASCADE,
