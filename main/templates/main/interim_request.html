@@ -1,0 +1,34 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<h2 class="govuk-heading-m">{{ title }}</h2>
+
+<form method="post" id="interimForm" data-directorates-url="{% url 'ajax_load_directorates' %}" novalidate>
+    {% csrf_token %}
+
+    {% include 'main/partials/forms/form.html' %}
+
+    <button class="govuk-button">Submit</button>
+</form>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script>
+    $("#id_group").change(function () {
+      var url = $("#interimForm").attr("data-directorates-url");
+        alert(url);
+      var groupId = $(this).val();  
+        alert(groupId);
+      $.ajax({
+        url: url,
+        data: {
+          'group': groupId
+        },
+        success: function (data) {
+          $("#id_directorate").html(data);
+        }
+      });
+    });
+  </script>
+{% endblock %}

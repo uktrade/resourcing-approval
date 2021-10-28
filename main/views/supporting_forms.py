@@ -3,7 +3,6 @@ from django.views.generic.edit import CreateView, UpdateView
 
 from main.forms.forms import (
     CestRationaleForm,
-    InterimRequestForm,
     JobDescriptionForm,
     SdsStatusDeterminationForm,
 )
@@ -54,18 +53,6 @@ class JobDescriptionUpdateView(SupportingFormUpdateView):
     model = JobDescription
     form_class = JobDescriptionForm
     permission_required = "main.change_jobdescription"
-
-
-class InterimRequestCreateView(SupportingFormCreateView):
-    model = InterimRequest
-    form_class = InterimRequestForm
-    permission_required = "main.add_interimrequest"
-
-
-class InterimRequestUpdateView(SupportingFormUpdateView):
-    model = InterimRequest
-    form_class = InterimRequestForm
-    permission_required = "main.change_interimrequest"
 
 
 class CestRationaleCreateView(SupportingFormCreateView):

@@ -19,11 +19,16 @@ from main.views.statement_of_work_views import (
     StatementOfWorkModuleUpdateView,
     StatementOfWorkUpdateView,
 )
+
+from main.views.interim_request_views import (
+    InterimRequestCreateView,
+    InterimRequestUpdateView,
+    load_directorates,
+)
+
 from main.views.supporting_forms import (
     CestRationaleCreateView,
     CestRationaleUpdateView,
-    InterimRequestCreateView,
-    InterimRequestUpdateView,
     JobDescriptionCreateView,
     JobDescriptionUpdateView,
     SdsStatusDeterminationCreateView,
@@ -145,4 +150,5 @@ urlpatterns = [
     path("interim-request/", include(interim_request_urls)),
     path("cest-rationale/", include(cest_rationale_urls)),
     path("sds-status-determination/", include(sds_status_determination_urls)),
+    path('ajax/load-directorates/', load_directorates, name='ajax_load_directorates')
 ]

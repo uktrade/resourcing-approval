@@ -3,7 +3,6 @@ from django import forms
 from main.models import (
     CestRationale,
     Comment,
-    InterimRequest,
     JobDescription,
     ResourcingRequest,
     SdsStatusDetermination,
@@ -44,18 +43,6 @@ class CommentForm(forms.ModelForm):
 class JobDescriptionForm(forms.ModelForm):
     class Meta:
         model = JobDescription
-        fields = "__all__"
-        widgets = {"resourcing_request": forms.HiddenInput}
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields["resourcing_request"].disabled = True
-
-
-class InterimRequestForm(forms.ModelForm):
-    class Meta:
-        model = InterimRequest
         fields = "__all__"
         widgets = {"resourcing_request": forms.HiddenInput}
 
