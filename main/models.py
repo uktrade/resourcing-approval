@@ -337,14 +337,14 @@ class InterimRequest(models.Model):
         max_length=255,
         verbose_name="Project name/ Title of the Role"
     )
-    new_requirement = models.BooleanField(verbose_name="New")
+    new_requirement = models.BooleanField(verbose_name="New", choices=TRUE_FALSE_CHOICES)
     name_of_contractor = models.CharField(
         max_length=255,
         blank=True,
         null=True,
         verbose_name="If Nominated Worker - please provide Name of the contractor"
     )
-    uk_based = models.BooleanField(default=True, verbose_name="UK based")
+    uk_based = models.BooleanField(default=True, verbose_name="UK based", choices=TRUE_FALSE_CHOICES)
     overseas_country = models.CharField(
         max_length=255,
         blank=True,
