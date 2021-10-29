@@ -24,6 +24,7 @@ from main.views.interim_request_views import (
     InterimRequestCreateView,
     InterimRequestUpdateView,
     load_directorates,
+    load_costcentres,
 )
 
 from main.views.supporting_forms import (
@@ -150,5 +151,6 @@ urlpatterns = [
     path("interim-request/", include(interim_request_urls)),
     path("cest-rationale/", include(cest_rationale_urls)),
     path("sds-status-determination/", include(sds_status_determination_urls)),
-    path('ajax/load-directorates/', load_directorates, name='ajax_load_directorates')
+    path('ajax/load-directorates/', load_directorates, name='ajax_load_directorates'),
+    path('ajax/load-costcentres/', load_costcentres, name='ajax_load_costcentres'),
 ]

@@ -32,3 +32,11 @@ def load_directorates(request):
     group_code = request.GET.get('group')
     directorates = Directorate.objects.filter(group=group_code).order_by('directorate_name')
     return render(request, 'main/partials/directorate_list_options.html', {'directorates': directorates})
+
+
+def load_costcentres(request):
+    directorate_code = request.GET.get('directorate')
+    costcentres = CostCentre.objects.filter(directorate=directorate_code).order_by('cost_centre_name')
+    return render(request, 'main/partials/costcentre_list_options.html', {'costcentres': costcentres})
+
+
