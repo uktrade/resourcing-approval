@@ -10,7 +10,11 @@ class InterimRequestForm(forms.ModelForm):
     class Meta:
         model = InterimRequest
         fields = "__all__"
-        widgets = {"resourcing_request": forms.HiddenInput}
+        widgets = {"resourcing_request": forms.HiddenInput,
+                   "end_date": forms.DateInput(
+                       format=("%Y-%m-%d"),
+                       attrs={'type': 'date'}),
+                   }
 
 
     def __init__(self, *args, **kwargs):
