@@ -25,7 +25,7 @@ def add_gds_input_class(field) -> str:
         # widgets.DateTimeInput,
         widgets.NumberInput,
     )
-
+    # Todo use GDS date fields, with three input texts
     if isinstance(widget, widgets.DateInput):
         add_class(field, "govuk-input")
         field.field.widget.input_type = "date"
