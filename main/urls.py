@@ -151,6 +151,6 @@ urlpatterns = [
     path("interim-request/", include(interim_request_urls)),
     path("cest-rationale/", include(cest_rationale_urls)),
     path("sds-status-determination/", include(sds_status_determination_urls)),
-    path('ajax/load-directorates/', load_directorates, name='ajax_load_directorates'),
-    path('ajax/load-costcentres/', load_costcentres, name='ajax_load_costcentres'),
+    path('htmx/load-directorates/', load_directorates, name="htmx-load-directorates"),
+    path('htmx/load-costcentres/', load_costcentres, name="htmx-load-costcentres"),
 ]
