@@ -1,4 +1,5 @@
 from .base import *  # noqa: F403
+from .paas import *  # noqa: F403
 
 
 init_sentry()  # noqa: F405
