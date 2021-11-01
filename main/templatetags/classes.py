@@ -27,7 +27,7 @@ def add_gds_input_class(field) -> str:
     if isinstance(widget, widgets.DateInput):
         add_class(field, "govuk-input")
         field.field.widget.input_type = "date"
-        field.field.widget.format = '%Y-%m-%d'
+        field.field.widget.format = "%Y-%m-%d"
 
     elif isinstance(widget, input_widgets):
         add_class(field, "govuk-input")
@@ -35,7 +35,5 @@ def add_gds_input_class(field) -> str:
         add_class(field, "govuk-select")
     elif isinstance(widget, widgets.Textarea):
         add_class(field, "govuk-textarea")
-
-
 
     return ""

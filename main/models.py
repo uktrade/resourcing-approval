@@ -282,7 +282,6 @@ class StatementOfWorkModule(models.Model):
         # Check that there is at least one deliverable defined,
         return self.module_count > 0
 
-
     def __str__(self):
         return self.module_title
 
@@ -320,52 +319,52 @@ class InterimRequest(models.Model):
         related_name="interim_request",
     )
 
-    CONTRACTOR_TYPE_GENERALIST = 'generalist'
-    CONTRACTOR_TYPE_SPECIALIST = 'specialist'
+    CONTRACTOR_TYPE_GENERALIST = "generalist"
+    CONTRACTOR_TYPE_SPECIALIST = "specialist"
     CONTRACTOR_TYPE_CHOICES = [
-        (CONTRACTOR_TYPE_GENERALIST, 'Generalist'),
-        (CONTRACTOR_TYPE_SPECIALIST, 'Specialist'),
+        (CONTRACTOR_TYPE_GENERALIST, "Generalist"),
+        (CONTRACTOR_TYPE_SPECIALIST, "Specialist"),
     ]
     SECURITY_CLEARANCE_BPSS = "BPSS"
     SECURITY_CLEARANCE_SC = "sc"
     SECURITY_CLEARANCE_DV = "dv"
     SECURITY_CLEARANCE_CTC = "ctc"
     SECURITY_CLEARANCE_CHOICES = [
-        (SECURITY_CLEARANCE_BPSS , "BPSS"),
-        (SECURITY_CLEARANCE_SC , "SC"),
-        (SECURITY_CLEARANCE_DV , "DV"),
-        (SECURITY_CLEARANCE_CTC , "CTC"),
+        (SECURITY_CLEARANCE_BPSS, "BPSS"),
+        (SECURITY_CLEARANCE_SC, "SC"),
+        (SECURITY_CLEARANCE_DV, "DV"),
+        (SECURITY_CLEARANCE_CTC, "CTC"),
     ]
 
     project_name_role_title = models.CharField(
-        max_length=255,
-        verbose_name="Project name/ Title of the Role"
+        max_length=255, verbose_name="Project name/ Title of the Role"
     )
-    new_requirement = models.BooleanField(verbose_name="New", choices=TRUE_FALSE_CHOICES)
+    new_requirement = models.BooleanField(
+        verbose_name="New", choices=TRUE_FALSE_CHOICES
+    )
     name_of_contractor = models.CharField(
         max_length=255,
         blank=True,
         null=True,
-        verbose_name="If Nominated Worker - please provide Name of the contractor"
+        verbose_name="If Nominated Worker - please provide Name of the contractor",
     )
-    uk_based = models.BooleanField(default=True, verbose_name="UK based", choices=TRUE_FALSE_CHOICES)
+    uk_based = models.BooleanField(
+        default=True, verbose_name="UK based", choices=TRUE_FALSE_CHOICES
+    )
     overseas_country = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
-        verbose_name="if Overseas which Country"
+        max_length=255, blank=True, null=True, verbose_name="if Overseas which Country"
     )
     start_date = models.DateField(verbose_name="Anticipated Start Date")
     end_date = models.DateField(verbose_name="Anticipated End Date")
     type_of_security_clearance = models.CharField(
         max_length=50,
         choices=SECURITY_CLEARANCE_CHOICES,
-        verbose_name="Level of Security clearance required"
+        verbose_name="Level of Security clearance required",
     )
     contractor_type = models.CharField(
         max_length=50,
         choices=CONTRACTOR_TYPE_CHOICES,
-        verbose_name="Category of Interim"
+        verbose_name="Category of Interim",
     )
     part_b_business_case = models.TextField(
         verbose_name="Business Case: Please detail why the interim resource is required."
@@ -393,11 +392,10 @@ class InterimRequest(models.Model):
         CostCentre,
         on_delete=models.CASCADE,
         related_name="costcentres",
-        verbose_name="Cost Centre/Team"
+        verbose_name="Cost Centre/Team",
     )
 
     slot_codes = models.CharField(max_length=255)
-
 
     def __str__(self):
         return "Interim request"

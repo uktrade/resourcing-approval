@@ -89,5 +89,4 @@ class FormWithStartEndDates(forms.ModelForm):
         if end_date and start_date:
             # Only do something if both fields are valid so far.
             if start_date >= end_date:
-               self.add_error(self.end_date_field, self.date_error_msg)
-
+                self.add_error(self.end_date_field, self.date_error_msg)
