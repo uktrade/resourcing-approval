@@ -1,5 +1,5 @@
 from django import forms
-from django.core.exceptions import ValidationError
+from django.urls import reverse_lazy
 
 from chartofaccount.models import Directorate, DepartmentalGroup, CostCentre
 from main.models import (
@@ -12,6 +12,18 @@ class InterimRequestForm(forms.ModelForm):
         model = InterimRequest
         fields = "__all__"
         widgets = {"resourcing_request": forms.HiddenInput,
+                   "group": forms.Select(
+                       attrs={
+                           'hx-get': reverse_lazy("htmx-load-directorates"),
+                           "hx-target":"#id_directorate",
+                       }
+                   ),
+                   "directorate": forms.Select(
+                       attrs={
+                           'hx-get': reverse_lazy("htmx-load-costcentres"),
+                           "hx-target":"#id_cost_centre_code",
+                       }
+                   ),
                    }
 
     def clean(self):
@@ -22,24 +34,37 @@ class InterimRequestForm(forms.ModelForm):
         if end_date and start_date:
             # Only do something if both fields are valid so far.
             if start_date >= end_date:
-                # raise ValidationError(
-                #     "Start date cannot be after end date."
-                # )
                 msg = "Start date cannot be after end date."
                 self.add_error("end_date", msg)
+
+        # The following checks that we have not select cost centres or groups or directorates
+        # not related to each other.
+        # It may never happen, but I'll rather check it.
+        group = cleaned_data.get("group")
+        directorate = cleaned_data.get("directorate")
+        cost_centre_code = cleaned_data.get("cost_centre_code")
+
+        if cost_centre_code and directorate:
+            correct_directorate = CostCentre.objects.get(cost_centre_code=cost_centre_code).directorate
+            if directorate != correct_directorate:
+                msg = "The selected Cost Centre is not part of the selected Directorate"
+                self.add_error("cost_centre_code", msg)
+
+        if directorate and group:
+            correct_group = Directorate.objects.get(directorate= directorate).group
+            if group != correct_group:
+                msg = "The selected Directorate is not part of the selected Group"
+                self.add_error("directorate", msg)
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.fields["resourcing_request"].disabled = True
 
-
         if 'group' in self.data:
             try:
                 group_code  = self.data.get('group')
-                print(f"group_code {group_code}")
-                # print(f"-------- {self.cleaned_data}")
-
                 self.fields['directorate'].queryset = \
                     Directorate.objects.filter(group=group_code).order_by('directorate_name')
             except (ValueError, TypeError):
