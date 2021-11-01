@@ -5,6 +5,7 @@ from main.models import (
     StatementOfWorkModule,
     StatementOfWorkModuleDeliverable,
 )
+from main.forms.forms import FormWithStartEndDates
 
 
 class StatementOfWorkModuleForm(forms.ModelForm):
@@ -21,7 +22,7 @@ class StatementOfWorkModuleDeliverableForm(forms.ModelForm):
         widgets = {"statement_of_work_module": forms.HiddenInput}
 
 
-class StatementOfWorkForm(forms.ModelForm):
+class StatementOfWorkForm(FormWithStartEndDates):
     class Meta:
         model = StatementOfWork
         fields = "__all__"

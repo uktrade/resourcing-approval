@@ -231,7 +231,6 @@ class StatementOfWork(models.Model):
     programme_code = models.CharField(max_length=4)
     project_code = models.CharField(max_length=6, blank=True, null=True)
     start_date = models.DateField()
-    # Todo check end date is after start date
     end_date = models.DateField()
     notice_period = models.TextField()
     fees = models.TextField("Project fee and invoicing")
@@ -249,7 +248,7 @@ class StatementOfWork(models.Model):
         if self.module_count == 0:
             return False
         for module in self.modules.all():
-            if module.deliverable_count == 0:
+            if not module.is_module_valid:
                 return False
         return True
 
@@ -278,6 +277,12 @@ class StatementOfWorkModule(models.Model):
     def deliverable_count(self) -> int:
         return self.deliverables.all().count()
 
+    @property
+    def is_module_valid(self) -> bool:
+        # Check that there is at least one deliverable defined,
+        return self.module_count > 0
+
+
     def __str__(self):
         return self.module_title
 
@@ -287,7 +292,6 @@ class StatementOfWorkModuleDeliverable(models.Model):
     deliverable_description = models.TextField()
 
     start_date = models.DateField()
-    # Todo check end date is after start date
     end_date = models.DateField()
     monthly_fee = models.DecimalField(max_digits=9, decimal_places=2)
     payment_date = models.DateField()
