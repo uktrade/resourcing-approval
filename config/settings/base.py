@@ -219,3 +219,5 @@ AUTHBROKER_STAFF_SSO_SCOPE = "read"
 
 LOGIN_URL = reverse_lazy("authbroker_client:login")
 LOGIN_REDIRECT_URL = reverse_lazy("index")
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
