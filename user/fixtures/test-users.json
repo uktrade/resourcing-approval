@@ -49,7 +49,7 @@
       "is_staff": true,
       "is_active": true,
       "date_joined": "2021-10-19T14:52:38Z",
-      "groups": [2, 3],
+      "groups": [2, 4],
       "user_permissions": []
     }
   },
@@ -67,7 +67,7 @@
       "is_staff": true,
       "is_active": true,
       "date_joined": "2021-10-19T14:52:38Z",
-      "groups": [2, 7],
+      "groups": [2, 5],
       "user_permissions": []
     }
   },
@@ -85,7 +85,7 @@
       "is_staff": true,
       "is_active": true,
       "date_joined": "2021-10-19T14:52:38Z",
-      "groups": [2, 4],
+      "groups": [2, 6],
       "user_permissions": []
     }
   },
@@ -103,7 +103,7 @@
       "is_staff": true,
       "is_active": true,
       "date_joined": "2021-10-19T14:52:38Z",
-      "groups": [2, 5],
+      "groups": [2, 7],
       "user_permissions": []
     }
   },
@@ -121,7 +121,7 @@
       "is_staff": true,
       "is_active": true,
       "date_joined": "2021-10-19T14:52:38Z",
-      "groups": [2, 6],
+      "groups": [2, 8],
       "user_permissions": []
     }
   },
@@ -139,7 +139,7 @@
       "is_staff": true,
       "is_active": true,
       "date_joined": "2021-10-25T10:00:18Z",
-      "groups": [2, 8],
+      "groups": [2, 3],
       "user_permissions": []
     }
   }
