@@ -21,8 +21,6 @@ def add_gds_input_class(field) -> str:
 
     input_widgets = (
         widgets.TextInput,
-        # widgets.DateInput,
-        # widgets.DateTimeInput,
         widgets.NumberInput,
     )
     # Todo use GDS date fields, with three input texts

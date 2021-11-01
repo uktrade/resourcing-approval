@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 
 from chartofaccount.models import Directorate, DepartmentalGroup, CostCentre
 from main.models import (
@@ -11,11 +12,21 @@ class InterimRequestForm(forms.ModelForm):
         model = InterimRequest
         fields = "__all__"
         widgets = {"resourcing_request": forms.HiddenInput,
-                   "end_date": forms.DateInput(
-                       format=("%Y-%m-%d"),
-                       attrs={'type': 'date'}),
                    }
 
+    def clean(self):
+        cleaned_data = super().clean()
+        end_date = cleaned_data.get("end_date")
+        start_date = cleaned_data.get("start_date")
+
+        if end_date and start_date:
+            # Only do something if both fields are valid so far.
+            if start_date >= end_date:
+                # raise ValidationError(
+                #     "Start date cannot be after end date."
+                # )
+                msg = "Start date cannot be after end date."
+                self.add_error("end_date", msg)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
