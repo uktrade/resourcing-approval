@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
 from chartofaccount.models import (
     Directorate,
     DepartmentalGroup,
