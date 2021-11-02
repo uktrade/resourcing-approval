@@ -17,7 +17,7 @@ class StatementOfWorkModuleForm(forms.ModelForm):
         widgets = {"statement_of_work": forms.HiddenInput}
 
 
-class StatementOfWorkModuleDeliverableForm(forms.ModelForm):
+class StatementOfWorkModuleDeliverableForm(FormWithStartEndDates):
     class Meta:
         model = StatementOfWorkModuleDeliverable
         fields = "__all__"
