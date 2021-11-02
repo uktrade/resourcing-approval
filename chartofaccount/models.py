@@ -7,10 +7,10 @@ class DepartmentalGroup(models.Model):
 
     @property
     def full_name(self):
-        return "{self.group_code} - {self.group_name}"
+        return f"{self.group_code} - {self.group_name}"
 
     def __str__(self):
-        return str(self.group_name)
+        return self.group_name
 
     class Meta:
         ordering = ["group_name"]
@@ -26,7 +26,7 @@ class Directorate(models.Model):
     )
 
     def __str__(self):
-        return str(self.directorate_name)
+        return self.directorate_name
 
     class Meta:
         ordering = ["directorate_name"]
@@ -64,7 +64,7 @@ class ProgrammeCode(models.Model):
     )
 
     def __str__(self):
-        return self.programme_code + " - " + self.programme_description
+        return f"{self.programme_code} - {self.programme_description}"
 
     class Meta:
         verbose_name_plural = "Programme Codes"
@@ -82,7 +82,7 @@ class ProjectCode(models.Model):
     )
 
     def __str__(self):
-        return self.project_code + " - " + self.project_description
+        return f"{self.project_code}  - {self.project_description}"
 
     class Meta:
         verbose_name = "Project"
