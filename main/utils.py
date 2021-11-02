@@ -1,4 +1,4 @@
-from chartofaccount.models import Directorate, CostCentre
+from chartofaccount.models import CostCentre, Directorate
 from main.models import Approval
 
 

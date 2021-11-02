@@ -1,10 +1,8 @@
 from django import forms
 from django.urls import reverse_lazy
 
-from main.models import (
-    InterimRequest,
-)
 from main.forms.forms import FormWithStartEndDates
+from main.models import InterimRequest
 from main.utils import syncronise_cost_centre_dropdowns
 
 
