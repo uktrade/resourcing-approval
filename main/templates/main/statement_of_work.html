@@ -4,6 +4,9 @@
 
 {% block content %}
 <h2 class="govuk-heading-m">{{ title }}</h2>
+
+    <script src="https://unpkg.com/htmx.org@1.6.0"></script>
+
 <form method="post">
     {% csrf_token %}
 
