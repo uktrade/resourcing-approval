@@ -15,14 +15,6 @@
 },
 {
    "model": "chartofaccount.directorate",
-   "pk": "11111B",
-   "fields": {
-      "directorate_name": "Television",
-      "group": "1111AA"
-   }
-},
-{
-   "model": "chartofaccount.directorate",
    "pk": "11111C",
    "fields": {
       "directorate_name": "Radio",
@@ -63,9 +55,9 @@
 },
 {
    "model": "chartofaccount.costcentre",
-   "pk": "111111",
+   "pk": "111113",
    "fields": {
-      "cost_centre_name": "Channel 4",
+      "cost_centre_name": "Radio 3",
       "directorate": "11111C"
    }
 },
@@ -73,7 +65,7 @@
    "model": "chartofaccount.costcentre",
    "pk": "111111",
    "fields": {
-      "cost_centre_name": "Channel 4",
+      "cost_centre_name": "Radio 4",
       "directorate": "11111C"
    }
 },
@@ -81,7 +73,7 @@
    "model": "chartofaccount.costcentre",
    "pk": "111112",
    "fields": {
-      "cost_centre_name": "Channel 2",
+      "cost_centre_name": "Radio 2",
       "directorate": "11111C"
    }
 },
@@ -93,9 +85,6 @@
       "directorate": "11111A"
    }
 },
-
-
-
 
 {
    "model": "chartofaccount.costcentre",

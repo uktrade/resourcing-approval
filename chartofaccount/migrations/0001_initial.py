@@ -44,4 +44,33 @@ class Migration(migrations.Migration):
                 'ordering': ['cost_centre_code'],
             },
         ),
+    migrations.CreateModel(
+        name='ProgrammeCode',
+        fields=[
+            ('programme_code',
+             models.CharField(max_length=50, primary_key=True, serialize=False,
+                              verbose_name='Programme Code')),
+            ('programme_description',
+             models.CharField(max_length=100, verbose_name='Programme Name')),
+        ],
+        options={
+            'verbose_name_plural': 'Programme Codes',
+            'ordering': ['programme_code'],
+        },
+    ),
+    migrations.CreateModel(
+        name='ProjectCode',
+        fields=[
+            ('project_code',
+             models.CharField(max_length=50, primary_key=True, serialize=False,
+                              verbose_name='Project Code')),
+            ('project_description',
+             models.CharField(max_length=300, verbose_name='Project Description')),
+        ],
+        options={
+            'verbose_name': 'Project',
+            'verbose_name_plural': 'Projects',
+            'ordering': ['project_code'],
+        },
+    ),
     ]

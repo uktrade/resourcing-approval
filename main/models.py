@@ -5,6 +5,8 @@ from chartofaccount.models import (
     DepartmentalGroup,
     Directorate,
     CostCentre,
+    ProjectCode,
+    ProgrammeCode,
 )
 
 
@@ -224,12 +226,42 @@ class StatementOfWork(models.Model):
     hiring_manager_team_leader = models.CharField(
         "Hiring manager / Team lead (if different)", max_length=255
     )
-    team_directorate = models.CharField("Team/Directorate", max_length=255)
-    project_description = models.TextField()
     role = models.CharField(max_length=255)
-    cost_centre_code = models.CharField(max_length=6)
-    programme_code = models.CharField(max_length=4)
-    project_code = models.CharField(max_length=6, blank=True, null=True)
+    project_description = models.TextField()
+
+    group = models.ForeignKey(
+        DepartmentalGroup,
+        on_delete=models.CASCADE,
+        related_name="statement_of_work_groups",
+    )
+
+    directorate = models.ForeignKey(
+        Directorate,
+        on_delete=models.CASCADE,
+        related_name="statement_of_work_directorates",
+    )
+
+    cost_centre_code = models.ForeignKey(
+        CostCentre,
+        on_delete=models.CASCADE,
+        related_name="statement_of_work_costcentres",
+        verbose_name="Cost Centre/Team",
+    )
+
+    programme_code = models.ForeignKey(
+        ProgrammeCode,
+        on_delete=models.CASCADE,
+        related_name="statement_of_work_programmes",
+    )
+
+    project_code = models.ForeignKey(
+        ProjectCode,
+        on_delete=models.CASCADE,
+        related_name="statement_of_work_projects",
+        blank=True,
+        null=True,
+    )
+
     start_date = models.DateField()
     end_date = models.DateField()
     notice_period = models.TextField()
@@ -379,19 +411,19 @@ class InterimRequest(models.Model):
     group = models.ForeignKey(
         DepartmentalGroup,
         on_delete=models.CASCADE,
-        related_name="groups",
+        related_name="interim_request_groups",
     )
 
     directorate = models.ForeignKey(
         Directorate,
         on_delete=models.CASCADE,
-        related_name="directorates",
+        related_name="interim_request_directorates",
     )
 
     cost_centre_code = models.ForeignKey(
         CostCentre,
         on_delete=models.CASCADE,
-        related_name="costcentres",
+        related_name="interim_request_costcentres",
         verbose_name="Cost Centre/Team",
     )
 
