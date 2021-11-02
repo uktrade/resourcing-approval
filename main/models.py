@@ -232,32 +232,32 @@ class StatementOfWork(models.Model):
     group = models.ForeignKey(
         DepartmentalGroup,
         on_delete=models.CASCADE,
-        related_name="statement_of_work_groups",
+        related_name="+",
     )
 
     directorate = models.ForeignKey(
         Directorate,
         on_delete=models.CASCADE,
-        related_name="statement_of_work_directorates",
+        related_name="+",
     )
 
     cost_centre_code = models.ForeignKey(
         CostCentre,
         on_delete=models.CASCADE,
-        related_name="statement_of_work_costcentres",
+        related_name="+",
         verbose_name="Cost Centre/Team",
     )
 
     programme_code = models.ForeignKey(
         ProgrammeCode,
         on_delete=models.CASCADE,
-        related_name="statement_of_work_programmes",
+        related_name="+",
     )
 
     project_code = models.ForeignKey(
         ProjectCode,
         on_delete=models.CASCADE,
-        related_name="statement_of_work_projects",
+        related_name="+",
         blank=True,
         null=True,
     )
@@ -414,19 +414,19 @@ class InterimRequest(models.Model):
     group = models.ForeignKey(
         DepartmentalGroup,
         on_delete=models.CASCADE,
-        related_name="interim_request_groups",
+        related_name="+",
     )
 
     directorate = models.ForeignKey(
         Directorate,
         on_delete=models.CASCADE,
-        related_name="interim_request_directorates",
+        related_name="+",
     )
 
     cost_centre_code = models.ForeignKey(
         CostCentre,
         on_delete=models.CASCADE,
-        related_name="interim_request_costcentres",
+        related_name="+",
         verbose_name="Cost Centre/Team",
     )
 
