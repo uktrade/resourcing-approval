@@ -31,7 +31,7 @@ test-data: groups
 first-use:
 	docker-compose down
 	$(web) python manage.py migrate
-	$(web) python manage.py loaddata groups.json
+	$(web) python manage.py manage.py create_groups
 	$(web) python manage.py loaddata test-users.json
 	$(web) python manage.py loaddata test-chartofaccount.json
 	docker-compose up
