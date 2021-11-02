@@ -50,3 +50,11 @@ collectstatic:
 
 compilescss:
 	$(web) python manage.py compilescss
+
+black:
+	black .
+
+isort:
+	isort .
+
+all-formatters: isort black
