@@ -62,8 +62,15 @@ DEBUG = False
 ALLOWED_HOSTS = []
 
 CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
+
+
+# Sessions
+# https://docs.djangoproject.com/en/3.2/ref/settings/#sessions
 
 SESSION_COOKIE_SECURE = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 4 * 60 * 60  # 4 hours in seconds
 
 
 # Application definition
@@ -220,3 +227,10 @@ AUTHBROKER_STAFF_SSO_SCOPE = "read"
 
 LOGIN_URL = reverse_lazy("authbroker_client:login")
 LOGIN_REDIRECT_URL = reverse_lazy("index")
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# ITHC
+
+# Set anti XSS header
+SECURE_BROWSER_XSS_FILTER = True

@@ -22,9 +22,9 @@ migrate:
 	$(web) python manage.py migrate
 
 groups:
-	$(web) python manage.py loaddata groups.json
+	$(web) python manage.py create_groups
 
-test-data: groups	
+test-data: groups
 	$(web) python manage.py loaddata test-users.json
 	$(web) python manage.py loaddata test-chartofaccount.json
 
@@ -59,3 +59,11 @@ collectstatic:
 
 compilescss:
 	$(web) python manage.py compilescss
+
+black:
+	black .
+
+isort:
+	isort .
+
+all-formatters: isort black
