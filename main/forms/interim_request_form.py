@@ -2,31 +2,17 @@ from django import forms
 from django.urls import reverse_lazy
 
 from main.models import (
-    StatementOfWork,
-    StatementOfWorkModule,
-    StatementOfWorkModuleDeliverable,
+    InterimRequest,
 )
 from main.forms.forms import FormWithStartEndDates
 from main.utils import syncronise_cost_centre_dropdowns
 
 
-class StatementOfWorkModuleForm(forms.ModelForm):
+class InterimRequestForm(FormWithStartEndDates):
+    date_error_msg = "Anticipated end date cannot be before anticipated start date"
+
     class Meta:
-        model = StatementOfWorkModule
-        fields = "__all__"
-        widgets = {"statement_of_work": forms.HiddenInput}
-
-
-class StatementOfWorkModuleDeliverableForm(FormWithStartEndDates):
-    class Meta:
-        model = StatementOfWorkModuleDeliverable
-        fields = "__all__"
-        widgets = {"statement_of_work_module": forms.HiddenInput}
-
-
-class StatementOfWorkForm(FormWithStartEndDates):
-    class Meta:
-        model = StatementOfWork
+        model = InterimRequest
         fields = "__all__"
         widgets = {
             "resourcing_request": forms.HiddenInput,
@@ -46,5 +32,6 @@ class StatementOfWorkForm(FormWithStartEndDates):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self.fields["resourcing_request"].disabled = True
         syncronise_cost_centre_dropdowns(self)

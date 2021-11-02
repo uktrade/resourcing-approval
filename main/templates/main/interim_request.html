@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<h2 class="govuk-heading-m">{{ title }}</h2>
+
+<script src="https://unpkg.com/htmx.org@1.6.0"
+        integrity="sha384-G4dtlRlMBrk5fEiRXDsLjriPo8Qk5ZeHVVxS8KhX6D7I9XXJlNqbdvRlp9/glk5D"
+        crossorigin="anonymous"></script>
+
+
+<form method="post" novalidate >
+    {% csrf_token %}
+
+    {% include 'main/partials/forms/form.html' %}
+
+    <button class="govuk-button">Submit</button>
+</form>
+
+{% endblock %}

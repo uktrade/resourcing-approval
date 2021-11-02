@@ -1,6 +1,14 @@
 from django.db import models
 from django.urls import reverse
 
+from chartofaccount.models import (
+    DepartmentalGroup,
+    Directorate,
+    CostCentre,
+    ProjectCode,
+    ProgrammeCode,
+)
+
 
 TRUE_FALSE_CHOICES = (
     (True, "Yes"),
@@ -218,14 +226,43 @@ class StatementOfWork(models.Model):
     hiring_manager_team_leader = models.CharField(
         "Hiring manager / Team lead (if different)", max_length=255
     )
-    team_directorate = models.CharField("Team/Directorate", max_length=255)
-    project_description = models.TextField()
     role = models.CharField(max_length=255)
-    cost_centre_code = models.CharField(max_length=6)
-    programme_code = models.CharField(max_length=4)
-    project_code = models.CharField(max_length=6, blank=True, null=True)
+    project_description = models.TextField()
+
+    group = models.ForeignKey(
+        DepartmentalGroup,
+        on_delete=models.CASCADE,
+        related_name="+",
+    )
+
+    directorate = models.ForeignKey(
+        Directorate,
+        on_delete=models.CASCADE,
+        related_name="+",
+    )
+
+    cost_centre_code = models.ForeignKey(
+        CostCentre,
+        on_delete=models.CASCADE,
+        related_name="+",
+        verbose_name="Cost Centre/Team",
+    )
+
+    programme_code = models.ForeignKey(
+        ProgrammeCode,
+        on_delete=models.CASCADE,
+        related_name="+",
+    )
+
+    project_code = models.ForeignKey(
+        ProjectCode,
+        on_delete=models.CASCADE,
+        related_name="+",
+        blank=True,
+        null=True,
+    )
+
     start_date = models.DateField()
-    # Todo check end date is after start date
     end_date = models.DateField()
     notice_period = models.TextField()
     fees = models.TextField("Project fee and invoicing")
@@ -243,7 +280,7 @@ class StatementOfWork(models.Model):
         if self.module_count == 0:
             return False
         for module in self.modules.all():
-            if module.deliverable_count == 0:
+            if not module.is_module_valid:
                 return False
         return True
 
@@ -272,6 +309,11 @@ class StatementOfWorkModule(models.Model):
     def deliverable_count(self) -> int:
         return self.deliverables.all().count()
 
+    @property
+    def is_module_valid(self) -> bool:
+        # Check that there is at least one deliverable defined,
+        return self.module_count > 0
+
     def __str__(self):
         return self.module_title
 
@@ -281,7 +323,6 @@ class StatementOfWorkModuleDeliverable(models.Model):
     deliverable_description = models.TextField()
 
     start_date = models.DateField()
-    # Todo check end date is after start date
     end_date = models.DateField()
     monthly_fee = models.DecimalField(max_digits=9, decimal_places=2)
     payment_date = models.DateField()
@@ -310,7 +351,86 @@ class InterimRequest(models.Model):
         related_name="interim_request",
     )
 
-    todo = models.TextField()
+    CONTRACTOR_TYPE_GENERALIST = "generalist"
+    CONTRACTOR_TYPE_SPECIALIST = "specialist"
+    CONTRACTOR_TYPE_CHOICES = [
+        (CONTRACTOR_TYPE_GENERALIST, "Generalist"),
+        (CONTRACTOR_TYPE_SPECIALIST, "Specialist"),
+    ]
+    SECURITY_CLEARANCE_BPSS = "BPSS"
+    SECURITY_CLEARANCE_SC = "sc"
+    SECURITY_CLEARANCE_DV = "dv"
+    SECURITY_CLEARANCE_CTC = "ctc"
+    SECURITY_CLEARANCE_CHOICES = [
+        (SECURITY_CLEARANCE_BPSS, "BPSS"),
+        (SECURITY_CLEARANCE_SC, "SC"),
+        (SECURITY_CLEARANCE_DV, "DV"),
+        (SECURITY_CLEARANCE_CTC, "CTC"),
+    ]
+
+    project_name_role_title = models.CharField(
+        max_length=255, verbose_name="Project name/ Title of the Role"
+    )
+    new_requirement = models.BooleanField(
+        verbose_name="New", choices=TRUE_FALSE_CHOICES
+    )
+    name_of_contractor = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="If Nominated Worker - please provide Name of the contractor",
+    )
+    uk_based = models.BooleanField(
+        default=True, verbose_name="UK based", choices=TRUE_FALSE_CHOICES
+    )
+    overseas_country = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="if Overseas which Country"
+    )
+    start_date = models.DateField(verbose_name="Anticipated Start Date")
+    end_date = models.DateField(verbose_name="Anticipated End Date")
+    type_of_security_clearance = models.CharField(
+        max_length=50,
+        choices=SECURITY_CLEARANCE_CHOICES,
+        verbose_name="Level of Security clearance required",
+    )
+    contractor_type = models.CharField(
+        max_length=50,
+        choices=CONTRACTOR_TYPE_CHOICES,
+        verbose_name="Category of Interim",
+    )
+    part_b_business_case = models.TextField(
+        verbose_name="Business Case",
+        help_text=("Please detail why the interim resource is required"),
+    )
+    part_b_impact = models.TextField(
+        verbose_name="Impact",
+        help_text="What would be the impact of not filling this requirement.",
+    )
+    part_b_main_reason = models.TextField(
+        verbose_name="",
+        help_text="What are the main reasons why this role has not been filled by a substantive Civil Servant. Please detail the strategic workforce plan for this role after the assignment end date:",
+    )
+
+    group = models.ForeignKey(
+        DepartmentalGroup,
+        on_delete=models.CASCADE,
+        related_name="+",
+    )
+
+    directorate = models.ForeignKey(
+        Directorate,
+        on_delete=models.CASCADE,
+        related_name="+",
+    )
+
+    cost_centre_code = models.ForeignKey(
+        CostCentre,
+        on_delete=models.CASCADE,
+        related_name="+",
+        verbose_name="Cost Centre/Team",
+    )
+
+    slot_codes = models.CharField(max_length=255)
 
     def __str__(self):
         return "Interim request"

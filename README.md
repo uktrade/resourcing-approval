@@ -17,12 +17,10 @@
 
 ## Running
 
-1. `make migrate`
-2. `make up`
-3. `make test-data`
-4. Goto http://localhost:8000/admin and login
+1. `make first-use`
+2. Goto http://localhost:8000/admin and login
    - You can find the login details for test users on confluence
-5. Goto http://localhost:8000
+3. Goto http://localhost:8000
 
 # Deployment
 
