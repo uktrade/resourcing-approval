@@ -399,13 +399,16 @@ class InterimRequest(models.Model):
         verbose_name="Category of Interim",
     )
     part_b_business_case = models.TextField(
-        verbose_name="Business Case: Please detail why the interim resource is required."
+        verbose_name="Business Case",
+        help_text = ("Please detail why the interim resource is required")
     )
     part_b_impact = models.TextField(
-        verbose_name="What would be the impact of not filling this requirement."
+        verbose_name="Impact",
+        help_text="What would be the impact of not filling this requirement."
     )
     part_b_main_reason = models.TextField(
-        verbose_name="What are the main reasons why this role has not been filled by a substantive Civil Servant. Please detail the strategic workforce plan for this role after the assignment end date:"
+        verbose_name = "",
+        help_text="What are the main reasons why this role has not been filled by a substantive Civil Servant. Please detail the strategic workforce plan for this role after the assignment end date:"
     )
 
     group = models.ForeignKey(
