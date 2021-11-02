@@ -52,12 +52,16 @@ class CostCentre(models.Model):
         ordering = ["cost_centre_code"]
 
 
-
 class ProgrammeCode(models.Model):
     programme_code = models.CharField(
-        "Programme Code", primary_key=True, max_length=50,
+        "Programme Code",
+        primary_key=True,
+        max_length=50,
     )
-    programme_description = models.CharField("Programme Name", max_length=100,)
+    programme_description = models.CharField(
+        "Programme Name",
+        max_length=100,
+    )
 
     def __str__(self):
         return self.programme_code + " - " + self.programme_description
@@ -68,7 +72,11 @@ class ProgrammeCode(models.Model):
 
 
 class ProjectCode(models.Model):
-    project_code = models.CharField("Project Code", primary_key=True, max_length=50,)
+    project_code = models.CharField(
+        "Project Code",
+        primary_key=True,
+        max_length=50,
+    )
     project_description = models.CharField(
         max_length=300, verbose_name="Project Description"
     )
