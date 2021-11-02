@@ -1,11 +1,11 @@
 from django.contrib import admin
 
 from chartofaccount.models import (
-    Directorate,
-    DepartmentalGroup,
     CostCentre,
-    ProjectCode,
+    DepartmentalGroup,
+    Directorate,
     ProgrammeCode,
+    ProjectCode,
 )
 
 

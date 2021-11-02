@@ -8,6 +8,7 @@ urlpatterns = [
     path("", include("main.urls")),
     path("auth/", include("authbroker_client.urls")),
     path("dev-tools/", include("dev_tools.urls")),
+    path("healthcheck/", include("healthcheck.urls")),
     # Remove admin login page.
     path("admin/login/", RedirectView.as_view(url=settings.LOGIN_URL)),
     # Remove admin set password page.

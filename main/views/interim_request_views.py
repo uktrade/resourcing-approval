@@ -1,12 +1,8 @@
-from main.forms.interim_request_form import InterimRequestForm
-from django.urls import reverse
 from django.shortcuts import render
 
-from main.models import (
-    InterimRequest,
-)
-from chartofaccount.models import Directorate, DepartmentalGroup, CostCentre
-
+from chartofaccount.models import CostCentre, Directorate
+from main.forms.interim_request_form import InterimRequestForm
+from main.models import InterimRequest
 from main.views.supporting_forms import (
     SupportingFormCreateView,
     SupportingFormUpdateView,

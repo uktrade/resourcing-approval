@@ -2,11 +2,11 @@ from django.db import models
 from django.urls import reverse
 
 from chartofaccount.models import (
+    CostCentre,
     DepartmentalGroup,
     Directorate,
-    CostCentre,
-    ProjectCode,
     ProgrammeCode,
+    ProjectCode,
 )
 
 

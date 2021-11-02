@@ -1,12 +1,12 @@
 from django import forms
 from django.urls import reverse_lazy
 
+from main.forms.forms import FormWithStartEndDates
 from main.models import (
     StatementOfWork,
     StatementOfWorkModule,
     StatementOfWorkModuleDeliverable,
 )
-from main.forms.forms import FormWithStartEndDates
 from main.utils import syncronise_cost_centre_dropdowns
 
 

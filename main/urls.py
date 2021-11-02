@@ -2,6 +2,12 @@ from django.urls import path
 from django.urls.conf import include
 
 from main.views.dashboard import DashboardView, index
+from main.views.interim_request_views import (
+    InterimRequestCreateView,
+    InterimRequestUpdateView,
+    load_costcentres,
+    load_directorates,
+)
 from main.views.resourcing_request import (
     ResourcingRequestAddApproval,
     ResourcingRequestAddComment,
@@ -19,14 +25,6 @@ from main.views.statement_of_work_views import (
     StatementOfWorkModuleUpdateView,
     StatementOfWorkUpdateView,
 )
-
-from main.views.interim_request_views import (
-    InterimRequestCreateView,
-    InterimRequestUpdateView,
-    load_directorates,
-    load_costcentres,
-)
-
 from main.views.supporting_forms import (
     CestRationaleCreateView,
     CestRationaleUpdateView,
