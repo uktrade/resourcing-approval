@@ -57,4 +57,25 @@ class Migration(migrations.Migration):
             name='project_code',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='statement_of_work_projects', to='chartofaccount.projectcode'),
         ),
+        migrations.AlterField(
+            model_name='interimrequest',
+            name='part_b_business_case',
+            field=models.TextField(
+                help_text='Please detail why the interim resource is required',
+                verbose_name='Business Case'),
+        ),
+        migrations.AlterField(
+            model_name='interimrequest',
+            name='part_b_impact',
+            field=models.TextField(
+                help_text='What would be the impact of not filling this requirement.',
+                verbose_name='Impact'),
+        ),
+        migrations.AlterField(
+            model_name='interimrequest',
+            name='part_b_main_reason',
+            field=models.TextField(
+                help_text='What are the main reasons why this role has not been filled by a substantive Civil Servant. Please detail the strategic workforce plan for this role after the assignment end date:',
+                verbose_name=''),
+        ),
     ]
