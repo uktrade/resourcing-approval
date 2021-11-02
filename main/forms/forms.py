@@ -79,7 +79,7 @@ class SdsStatusDeterminationForm(forms.ModelForm):
 class FormWithStartEndDates(forms.ModelForm):
     start_date_field = "start_date"
     end_date_field = "end_date"
-    date_error_msg = "End date cannot be before start date date"
+    date_error_msg = "End date cannot be before start date"
 
     def clean(self):
         cleaned_data = super().clean()
