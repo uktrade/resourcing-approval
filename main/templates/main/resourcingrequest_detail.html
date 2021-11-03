@@ -26,7 +26,7 @@
         <dd class="govuk-summary-list__actions">
             {% if object.is_ir35 %}
                 {% if perms.main.view_jobdescription and object.job_description %}
-                    <a class="govuk-button govuk-button--secondary mb-0" href="#">View</a>
+                    <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'job-description-detail' object.job_description.pk %}">View</a>
                 {% endif %}
                 {% if perms.main.change_jobdescription and object.job_description and object.can_update %}
                     <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'job-description-update' object.job_description.pk %}">Update</a>

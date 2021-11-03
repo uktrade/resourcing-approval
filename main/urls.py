@@ -33,6 +33,7 @@ from main.views.supporting_forms import (
     SdsStatusDeterminationCreateView,
     SdsStatusDeterminationUpdateView,
 )
+from main.views.detail_views import JobDescriptionDetailView
 
 
 request_urls = [
@@ -71,6 +72,12 @@ request_urls = [
         ResourcingRequestAddComment.as_view(),
         name="resourcing-request-add-comment",
     ),
+    path(
+        "<int:pk>/",
+        JobDescriptionDetailView.as_view(),
+        name="job-description-detail",
+    ),
+
 ]
 
 
@@ -85,11 +92,32 @@ def document_urls(create_view, update_view, name_prefix, parent_key=""):
             "<int:pk>/update",
             update_view.as_view(),
             name=f"{name_prefix}-update",
+        )
+    ]
+
+
+def details_document_urls(detail_view, create_view, update_view, name_prefix, parent_key=""):
+    return [
+        path(
+            f"create{parent_key}",
+            create_view.as_view(),
+            name=f"{name_prefix}-create",
+        ),
+        path(
+            "<int:pk>/update",
+            update_view.as_view(),
+            name=f"{name_prefix}-update",
+        ),
+        path(
+            "<int:pk>/detail",
+            detail_view.as_view(),
+            name=f"{name_prefix}-detail",
         ),
     ]
 
 
-job_description_urls = document_urls(
+job_description_urls = details_document_urls(
+    JobDescriptionDetailView,
     JobDescriptionCreateView,
     JobDescriptionUpdateView,
     "job-description",

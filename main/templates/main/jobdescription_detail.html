@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ object.name }}{% endblock %}
+
+{% block content %}
+<h1 class="govuk-heading-l">{{ object.title }}</h1>
+
+<dl class="govuk-summary-list">
+    {% include 'main/partials/summary-row.html' with key='Role purpose' value=object.role_purpose %}
+    {% include 'main/partials/summary-row.html' with key='Key accountabilities' value=object.key_accountabilities %}
+    {% include 'main/partials/summary-row.html' with key='Line management responsibility' value=object.line_management_responsibility %}
+    {% include 'main/partials/summary-row.html' with key='Skills' value=object.personal_attributes_and_skills %}
+    {% include 'main/partials/summary-row.html' with key='Preferred experience' value=object.essential_and_preferred_experience %}
+</dl>
+
+{% endblock %}
