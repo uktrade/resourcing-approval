@@ -15,8 +15,21 @@ class JobDescriptionDetailView(
 ):
     model = JobDescription
     permission_required = "main.view_jobdescription"
+    title = "Job description"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        object = context["object"]
+        context["detail_title"] = self.title
+        return context
+
+class InterimRequestDetailView(
+    PermissionRequiredMixin, DetailView
+):
+    model = JobDescription
+    permission_required = "main.view_jobdescription"
+    title = "Interim Request"
+    # template_name = ""
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["detail_title"] = self.title
         return context
