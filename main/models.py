@@ -210,12 +210,6 @@ class JobDescription(models.Model):
     def __str__(self):
         return self.title
 
-    def get_detail_list(self):
-        exclude_list = ["id", "resourcing_request"]
-        for field in self._meta.fields:
-            if field.name not in exclude_list:
-                yield (field.verbose_name.capitalize(), field.value_to_string(self))
-
 
 class StatementOfWork(models.Model):
     resourcing_request = models.OneToOneField(

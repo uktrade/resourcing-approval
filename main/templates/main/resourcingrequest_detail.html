@@ -3,7 +3,7 @@
 {% block title %}{{ object.name }}{% endblock %}
 
 {% block content %}
-<h1 class="govuk-heading-l">{{ object.name }}</h2>
+<h1 class="govuk-heading-l">{{ object.name }}</h1>
 
 <dl class="govuk-summary-list">
     {% include 'main/partials/summary-row.html' with key='Requestor' value=object.requestor %}
@@ -73,7 +73,7 @@
         </dd>
         <dd class="govuk-summary-list__actions">
             {% if perms.main.view_interimrequest and object.interim_request %}
-                <a class="govuk-button govuk-button--secondary mb-0" href="#">View</a>
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'interim-request-detail' object.interim_request.pk %}">View</a>
             {% endif %}
             {% if perms.main.change_interimrequest and object.interim_request and object.can_update %}
                 <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'interim-request-update' object.interim_request.pk %}">Update</a>
