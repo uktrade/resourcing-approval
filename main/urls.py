@@ -33,6 +33,7 @@ from main.views.supporting_forms import (
     SdsStatusDeterminationCreateView,
     SdsStatusDeterminationUpdateView,
 )
+from main.views.detail_views import JobDescriptionDetailView, InterimRequestDetailView
 
 
 request_urls = [
@@ -89,7 +90,30 @@ def document_urls(create_view, update_view, name_prefix, parent_key=""):
     ]
 
 
-job_description_urls = document_urls(
+def details_document_urls(
+    detail_view, create_view, update_view, name_prefix, parent_key=""
+):
+    return [
+        path(
+            f"create{parent_key}",
+            create_view.as_view(),
+            name=f"{name_prefix}-create",
+        ),
+        path(
+            "<int:pk>/update",
+            update_view.as_view(),
+            name=f"{name_prefix}-update",
+        ),
+        path(
+            "<int:pk>/detail",
+            detail_view.as_view(),
+            name=f"{name_prefix}-detail",
+        ),
+    ]
+
+
+job_description_urls = details_document_urls(
+    JobDescriptionDetailView,
     JobDescriptionCreateView,
     JobDescriptionUpdateView,
     "job-description",
@@ -117,7 +141,8 @@ statement_of_work__module_deliverable_urls = document_urls(
 )
 
 
-interim_request_urls = document_urls(
+interim_request_urls = details_document_urls(
+    InterimRequestDetailView,
     InterimRequestCreateView,
     InterimRequestUpdateView,
     "interim-request",

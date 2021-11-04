@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 
 from main.forms.forms import (
@@ -41,6 +42,22 @@ class SupportingFormUpdateView(
 
     def get_resourcing_request(self):
         return self.get_object().resourcing_request
+
+
+class SupportingFormDetailView(PermissionRequiredMixin, DetailView):
+    template_name = "main/detail.html"
+    exclude_list = ["id", "resourcing_request"]
+
+    def get_detail_list(self, object):
+        for field in object._meta.fields:
+            if field.name not in self.exclude_list:
+                yield (field.verbose_name.capitalize(), getattr(object, field.name))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["detail_title"] = self.title
+        context["display_list"] = self.get_detail_list(context["object"])
+        return context
 
 
 class JobDescriptionCreateView(SupportingFormCreateView):

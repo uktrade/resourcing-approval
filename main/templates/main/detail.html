@@ -1,0 +1,20 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ object.name }}{% endblock %}
+
+{% block content %}
+<h1 class="govuk-heading-l">{{ detail_title }}</h1>
+
+
+<dl class="govuk-summary-list">
+    {% for label, display_value in display_list %}
+        {% include 'main/partials/summary-row.html' with key=label value=display_value %}
+    {% endfor %}
+</dl>
+
+    <a class="govuk-button govuk-button--secondary mb-0"
+       href="{% url 'resourcing-request-detail' object.resourcing_request_id %}">
+        Back</a>
+
+{% endblock %}
+
