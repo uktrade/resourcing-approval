@@ -442,7 +442,6 @@ class InterimRequest(models.Model):
                 yield (field.verbose_name.capitalize(), field.value_to_string(self))
 
 
-
 class CestRationale(models.Model):
     resourcing_request = models.OneToOneField(
         "ResourcingRequest",

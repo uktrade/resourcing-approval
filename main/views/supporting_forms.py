@@ -44,16 +44,14 @@ class SupportingFormUpdateView(
         return self.get_object().resourcing_request
 
 
-
 class SupportingFormDetailView(PermissionRequiredMixin, DetailView):
     template_name = "main/detail.html"
+    exclude_list = ["id", "resourcing_request"]
 
     def get_detail_list(self, object):
-        exclude_list = ["id", "resourcing_request"]
         for field in object._meta.fields:
-            if field.name not in exclude_list:
+            if field.name not in self.exclude_list:
                 yield (field.verbose_name.capitalize(), getattr(object, field.name))
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

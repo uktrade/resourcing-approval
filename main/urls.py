@@ -77,7 +77,6 @@ request_urls = [
         JobDescriptionDetailView.as_view(),
         name="job-description-detail",
     ),
-
 ]
 
 
@@ -92,11 +91,13 @@ def document_urls(create_view, update_view, name_prefix, parent_key=""):
             "<int:pk>/update",
             update_view.as_view(),
             name=f"{name_prefix}-update",
-        )
+        ),
     ]
 
 
-def details_document_urls(detail_view, create_view, update_view, name_prefix, parent_key=""):
+def details_document_urls(
+    detail_view, create_view, update_view, name_prefix, parent_key=""
+):
     return [
         path(
             f"create{parent_key}",
