@@ -444,7 +444,7 @@ class CestRationale(models.Model):
     )
     role_start_date = models.DateField()
     role_end_date = models.DateField()
-    worker_name = models.CharField(max_length=50,blank=True,null=True)
+    worker_name = models.CharField(max_length=50, blank=True, null=True)
     cover_for_perm_role = models.BooleanField(choices=TRUE_FALSE_CHOICES)
     role_description = models.TextField()
     what = models.CharField(max_length=50, verbose_name="Control & Direction: what")

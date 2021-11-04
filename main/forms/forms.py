@@ -8,6 +8,7 @@ from main.models import (
     SdsStatusDetermination,
 )
 
+
 class FormWithStartEndDates(forms.ModelForm):
     start_date_field = "start_date"
     end_date_field = "end_date"
@@ -70,6 +71,7 @@ class JobDescriptionForm(forms.ModelForm):
 class CestRationaleForm(FormWithStartEndDates):
     start_date_field = "role_start_date"
     end_date_field = "role_end_date"
+
     class Meta:
         model = CestRationale
         fields = "__all__"
@@ -91,5 +93,3 @@ class SdsStatusDeterminationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields["resourcing_request"].disabled = True
-
-

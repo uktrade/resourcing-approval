@@ -6,90 +6,86 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0006_merge_0003_data_groups_0005_auto_20211102_1156'),
+        ("main", "0006_merge_0003_data_groups_0005_auto_20211102_1156"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='cestrationale',
-            old_name='todo',
-            new_name='business_on_own_account',
+            model_name="cestrationale",
+            old_name="todo",
+            new_name="business_on_own_account",
         ),
         migrations.AddField(
-            model_name='cestrationale',
-            name='cover_for_perm_role',
-            field=models.BooleanField(choices=[(True, 'Yes'), (False, 'No')]),
-            
+            model_name="cestrationale",
+            name="cover_for_perm_role",
+            field=models.BooleanField(choices=[(True, "Yes"), (False, "No")]),
         ),
         migrations.AddField(
-            model_name='cestrationale',
-            name='financial_risk',
+            model_name="cestrationale",
+            name="financial_risk",
             field=models.TextField(),
-            
         ),
         migrations.AddField(
-            model_name='cestrationale',
-            name='how',
-            field=models.CharField(max_length=50, verbose_name='Control & Direction: how'),
-            
+            model_name="cestrationale",
+            name="how",
+            field=models.CharField(
+                max_length=50, verbose_name="Control & Direction: how"
+            ),
         ),
         migrations.AddField(
-            model_name='cestrationale',
-            name='part_and_parcel',
+            model_name="cestrationale",
+            name="part_and_parcel",
             field=models.TextField(),
-            
         ),
         migrations.AddField(
-            model_name='cestrationale',
-            name='personal_service',
+            model_name="cestrationale",
+            name="personal_service",
             field=models.TextField(),
-            
         ),
         migrations.AddField(
-            model_name='cestrationale',
-            name='role_description',
+            model_name="cestrationale",
+            name="role_description",
             field=models.TextField(),
-            
         ),
         migrations.AddField(
-            model_name='cestrationale',
-            name='role_end_date',
+            model_name="cestrationale",
+            name="role_end_date",
             field=models.DateField(),
-            
         ),
         migrations.AddField(
-            model_name='cestrationale',
-            name='role_start_date',
+            model_name="cestrationale",
+            name="role_start_date",
             field=models.DateField(),
-            
         ),
         migrations.AddField(
-            model_name='cestrationale',
-            name='supply_chain',
+            model_name="cestrationale",
+            name="supply_chain",
             field=models.CharField(max_length=255),
-            
         ),
         migrations.AddField(
-            model_name='cestrationale',
-            name='what',
-            field=models.CharField(max_length=50, verbose_name='Control & Direction: what'),
-            
+            model_name="cestrationale",
+            name="what",
+            field=models.CharField(
+                max_length=50, verbose_name="Control & Direction: what"
+            ),
         ),
         migrations.AddField(
-            model_name='cestrationale',
-            name='when',
-            field=models.CharField(max_length=50, verbose_name='Control & Direction: when'),
-            
+            model_name="cestrationale",
+            name="when",
+            field=models.CharField(
+                max_length=50, verbose_name="Control & Direction: when"
+            ),
         ),
         migrations.AddField(
-            model_name='cestrationale',
-            name='where',
-            field=models.CharField(max_length=50, verbose_name='Control & Direction: where'),
-            
+            model_name="cestrationale",
+            name="where",
+            field=models.CharField(
+                max_length=50, verbose_name="Control & Direction: where"
+            ),
         ),
         migrations.AddField(
-            model_name='cestrationale',
-            name='worker_name',
+            model_name="cestrationale",
+            name="worker_name",
             field=models.CharField(blank=True, max_length=50, null=True),
         ),
     ]
