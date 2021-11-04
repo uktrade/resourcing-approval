@@ -10,5 +10,5 @@ class JobDescriptionDetailView(SupportingFormDetailView):
 
 class InterimRequestDetailView(SupportingFormDetailView):
     model = InterimRequest
-    permission_required = "main.view_jobdescription"
+    permission_required = "main.view_interimrequest"
     title = "Interim Request"
