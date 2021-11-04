@@ -69,7 +69,20 @@ class Command(BaseCommand):
 
         CestRationale.objects.create(
             resourcing_request=resourcing_request,
-            todo=lorem_ipsum.paragraph(),
+            role_start_date=datetime.date.today(),
+            role_end_date=datetime.date.today() + datetime.timedelta(days=30 * 6),
+            worker_name=name,
+            cover_for_perm_role=True,
+            role_description=lorem_ipsum.paragraph(),
+            what="Python Developer",
+            how="From agency",
+            where="Remote",
+            when="Soon",
+            personal_service=lorem_ipsum.paragraph(),
+            part_and_parcel=lorem_ipsum.paragraph(),
+            financial_risk=lorem_ipsum.paragraph(),
+            business_on_own_account=lorem_ipsum.paragraph(),
+            supply_chain="Test supply chain",
         )
 
         SdsStatusDetermination.objects.create(

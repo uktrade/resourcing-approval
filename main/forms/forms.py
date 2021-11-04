@@ -9,6 +9,22 @@ from main.models import (
 )
 
 
+class FormWithStartEndDates(forms.ModelForm):
+    start_date_field = "start_date"
+    end_date_field = "end_date"
+    date_error_msg = "End date cannot be before start date"
+
+    def clean(self):
+        cleaned_data = super().clean()
+        end_date = cleaned_data.get(self.end_date_field)
+        start_date = cleaned_data.get(self.start_date_field)
+
+        if end_date and start_date:
+            # Only do something if both fields are valid so far.
+            if start_date >= end_date:
+                self.add_error(self.end_date_field, self.date_error_msg)
+
+
 class ResourcingRequestForm(forms.ModelForm):
     class Meta:
         model = ResourcingRequest
@@ -52,7 +68,10 @@ class JobDescriptionForm(forms.ModelForm):
         self.fields["resourcing_request"].disabled = True
 
 
-class CestRationaleForm(forms.ModelForm):
+class CestRationaleForm(FormWithStartEndDates):
+    start_date_field = "role_start_date"
+    end_date_field = "role_end_date"
+
     class Meta:
         model = CestRationale
         fields = "__all__"
@@ -74,19 +93,3 @@ class SdsStatusDeterminationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields["resourcing_request"].disabled = True
-
-
-class FormWithStartEndDates(forms.ModelForm):
-    start_date_field = "start_date"
-    end_date_field = "end_date"
-    date_error_msg = "End date cannot be before start date"
-
-    def clean(self):
-        cleaned_data = super().clean()
-        end_date = cleaned_data.get(self.end_date_field)
-        start_date = cleaned_data.get(self.start_date_field)
-
-        if end_date and start_date:
-            # Only do something if both fields are valid so far.
-            if start_date >= end_date:
-                self.add_error(self.end_date_field, self.date_error_msg)
