@@ -7,16 +7,8 @@
 
 
 <dl class="govuk-summary-list">
-    {% for key, value in display_list %}
-<div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">
-        {{ key }}
-    </dt>
-    <dd class="govuk-summary-list__value">
-        {{ value }}
-    </dd>
-    <dd class="govuk-summary-list__actions"></dd>
-</div>
+    {% for label, display_value in display_list %}
+        {% include 'main/partials/summary-row.html' with key=label value=display_value %}
     {% endfor %}
 </dl>
 

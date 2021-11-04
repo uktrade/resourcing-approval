@@ -72,11 +72,6 @@ request_urls = [
         ResourcingRequestAddComment.as_view(),
         name="resourcing-request-add-comment",
     ),
-    path(
-        "<int:pk>/",
-        JobDescriptionDetailView.as_view(),
-        name="job-description-detail",
-    ),
 ]
 
 

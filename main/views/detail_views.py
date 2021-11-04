@@ -1,10 +1,3 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
-from django.core.exceptions import ValidationError
-from django.shortcuts import redirect
-from django.urls import reverse, reverse_lazy
-from django.views import View
-from django.views.generic.detail import DetailView
-
 from main.views.supporting_forms import SupportingFormDetailView
 from main.models import JobDescription, InterimRequest
 
