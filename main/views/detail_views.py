@@ -1,5 +1,5 @@
 from main.views.supporting_forms import SupportingFormDetailView
-from main.models import JobDescription, InterimRequest
+from main.models import JobDescription, InterimRequest, CestRationale
 
 
 class JobDescriptionDetailView(SupportingFormDetailView):
@@ -12,3 +12,10 @@ class InterimRequestDetailView(SupportingFormDetailView):
     model = InterimRequest
     permission_required = "main.view_interimrequest"
     title = "Interim Request"
+
+
+class CestRationaleDetailView(SupportingFormDetailView):
+    model = CestRationale
+    permission_required = "main.view_cestrationale"
+    title = "CEST Rationale"
+
