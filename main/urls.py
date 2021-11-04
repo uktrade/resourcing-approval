@@ -33,7 +33,11 @@ from main.views.supporting_forms import (
     SdsStatusDeterminationCreateView,
     SdsStatusDeterminationUpdateView,
 )
-from main.views.detail_views import JobDescriptionDetailView, InterimRequestDetailView
+from main.views.detail_views import (
+    JobDescriptionDetailView,
+    InterimRequestDetailView,
+    CestRationaleDetailView,
+)
 
 
 request_urls = [
@@ -148,7 +152,8 @@ interim_request_urls = details_document_urls(
     "interim-request",
 )
 
-cest_rationale_urls = document_urls(
+cest_rationale_urls = details_document_urls(
+    CestRationaleDetailView,
     CestRationaleCreateView,
     CestRationaleUpdateView,
     "cest-rationale",

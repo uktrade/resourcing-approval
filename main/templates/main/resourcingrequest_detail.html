@@ -93,7 +93,7 @@
         </dd>
         <dd class="govuk-summary-list__actions">
             {% if perms.main.view_cestrationale and object.cest_rationale %}
-                <a class="govuk-button govuk-button--secondary mb-0" href="#">View</a>
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'cest-rationale-detail' object.cest_rationale.pk %}">View</a>
             {% endif %}
             {% if perms.main.change_cestrationale and object.cest_rationale and object.can_update %}
                 <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'cest-rationale-update' object.cest_rationale.pk %}">Update</a>
