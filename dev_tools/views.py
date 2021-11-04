@@ -3,10 +3,12 @@ from functools import wraps
 from django.conf import settings
 from django.contrib.auth import get_user_model, login, logout
 from django.core.exceptions import SuspiciousOperation, ValidationError
+from django.core.management import call_command
+from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from dev_tools.forms import ChangeUserForm
+from dev_tools.forms import ChangeUserForm, CreateTestResourcingRequestForm
 
 
 User = get_user_model()
@@ -35,6 +37,7 @@ def check_dev_tools_enabled(func):
 def index(request):
     context = {
         "change_user_form": ChangeUserForm(initial={"user": request.user.pk}),
+        "create_test_resourcing_request_form": CreateTestResourcingRequestForm(),
     }
 
     return render(request, "dev_tools/index.html", context=context)
@@ -53,5 +56,19 @@ def change_user(request):
         login(request, new_user)
     else:
         logout(request)
+
+    return redirect(reverse("dev_tools:index"))
+
+
+# TODO: Come up with a mechanism to have project specific dev tools kept out of the
+# dev_tools app.
+@check_dev_tools_enabled
+def create_test_resourcing_request(request):
+    form = CreateTestResourcingRequestForm(data=request.POST)
+
+    if not form.is_valid():
+        raise ValidationError("Invalid create test resourcing request form")
+
+    call_command("create_test_resourcing_request", name=form.cleaned_data["name"])
 
     return redirect(reverse("dev_tools:index"))
