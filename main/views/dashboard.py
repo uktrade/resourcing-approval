@@ -21,13 +21,23 @@ class DashboardView(TemplateView):
         context["your_resourcing_requests"] = user.resourcing_requests.all()
         context["awaiting_your_approval"] = self.get_awaiting_approval_context_data()
 
+        if user.is_superuser:
+            context["all_resourcing_requests"] = ResourcingRequest.objects.all()
+
         return context
 
     def get_awaiting_approval_context_data(self):
+        approval_filter = Q()
+
+        for approval_type in get_user_related_approval_types(self.request.user):
+            approval_filter |= (
+                Q(**{f"{approval_type}_approval__isnull": True})
+                | Q(**{f"{approval_type}_approval__approved__isnull": True})
+                | Q(**{f"{approval_type}_approval__approved": False})
+            )
+
         query = ResourcingRequest.objects.filter(
-            Q(state=ResourcingRequest.State.AWAITING_APPROVALS)
-            & Q(approvals__type__in=get_user_related_approval_types(self.request.user))
-            & (Q(approvals__approved__isnull=True) | Q(approvals__approved=False))
+            Q(state=ResourcingRequest.State.AWAITING_APPROVALS) & approval_filter & Q()
         ).distinct()
 
         return query

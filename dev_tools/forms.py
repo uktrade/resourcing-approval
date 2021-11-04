@@ -14,3 +14,7 @@ def get_user_choices():
 
 class ChangeUserForm(forms.Form):
     user = forms.ChoiceField(choices=get_user_choices, required=False)
+
+
+class CreateTestResourcingRequestForm(forms.Form):
+    name = forms.CharField()
