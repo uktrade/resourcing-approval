@@ -84,10 +84,18 @@ class Command(BaseCommand):
             business_on_own_account=lorem_ipsum.paragraph(),
             supply_chain="Test supply chain",
         )
-
         SdsStatusDetermination.objects.create(
             resourcing_request=resourcing_request,
-            todo=lorem_ipsum.paragraph(),
+            company_name="A Company",
+            worker_name=name,
+            agency="Five Stars",
+            start_date=datetime.date.today(),
+            end_date=datetime.date.today() + datetime.timedelta(days=30 * 6),
+            completed_by="Hiring Manager",
+            on_behalf_of="DIT",
+            date_completed=datetime.date.today(),
+            reasons=lorem_ipsum.paragraph()
+
         )
 
         self.stdout.write(

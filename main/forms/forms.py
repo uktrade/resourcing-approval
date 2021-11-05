@@ -83,7 +83,7 @@ class CestRationaleForm(FormWithStartEndDates):
         self.fields["resourcing_request"].disabled = True
 
 
-class SdsStatusDeterminationForm(forms.ModelForm):
+class SdsStatusDeterminationForm(FormWithStartEndDates):
     class Meta:
         model = SdsStatusDetermination
         fields = "__all__"
