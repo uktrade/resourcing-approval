@@ -7,53 +7,53 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0007_auto_20211104_1416'),
+        ("main", "0007_auto_20211104_1416"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='sdsstatusdetermination',
-            old_name='todo',
-            new_name='reasons',
+            model_name="sdsstatusdetermination",
+            old_name="todo",
+            new_name="reasons",
         ),
         migrations.AddField(
-            model_name='sdsstatusdetermination',
-            name='agency',
+            model_name="sdsstatusdetermination",
+            name="agency",
             field=models.CharField(max_length=255),
         ),
         migrations.AddField(
-            model_name='sdsstatusdetermination',
-            name='company_name',
+            model_name="sdsstatusdetermination",
+            name="company_name",
             field=models.CharField(max_length=255),
         ),
         migrations.AddField(
-            model_name='sdsstatusdetermination',
-            name='completed_by',
+            model_name="sdsstatusdetermination",
+            name="completed_by",
             field=models.CharField(max_length=255),
         ),
         migrations.AddField(
-            model_name='sdsstatusdetermination',
-            name='date_completed',
+            model_name="sdsstatusdetermination",
+            name="date_completed",
             field=models.DateField(default=datetime.date.today),
         ),
         migrations.AddField(
-            model_name='sdsstatusdetermination',
-            name='end_date',
-            field=models.DateField(verbose_name='Contract End Date'),
+            model_name="sdsstatusdetermination",
+            name="end_date",
+            field=models.DateField(verbose_name="Contract End Date"),
         ),
         migrations.AddField(
-            model_name='sdsstatusdetermination',
-            name='on_behalf_of',
+            model_name="sdsstatusdetermination",
+            name="on_behalf_of",
             field=models.CharField(max_length=255),
         ),
         migrations.AddField(
-            model_name='sdsstatusdetermination',
-            name='start_date',
-            field=models.DateField(verbose_name='Contract/Extension Start Date'),
+            model_name="sdsstatusdetermination",
+            name="start_date",
+            field=models.DateField(verbose_name="Contract/Extension Start Date"),
         ),
         migrations.AddField(
-            model_name='sdsstatusdetermination',
-            name='worker_name',
+            model_name="sdsstatusdetermination",
+            name="worker_name",
             field=models.CharField(max_length=255),
         ),
     ]

@@ -94,8 +94,7 @@ class Command(BaseCommand):
             completed_by="Hiring Manager",
             on_behalf_of="DIT",
             date_completed=datetime.date.today(),
-            reasons=lorem_ipsum.paragraph()
-
+            reasons=lorem_ipsum.paragraph(),
         )
 
         self.stdout.write(

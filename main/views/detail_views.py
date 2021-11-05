@@ -24,8 +24,8 @@ class CestRationaleDetailView(SupportingFormDetailView):
     permission_required = "main.view_cestrationale"
     title = "CEST Rationale"
 
+
 class SdsStatusDeterminationDetailView(SupportingFormDetailView):
     model = SdsStatusDetermination
     permission_required = "main.view_sdsstatusdetermination"
     title = "SDS Status Determination"
-
