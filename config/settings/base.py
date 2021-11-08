@@ -49,6 +49,9 @@ def init_sentry():
 VCAP_SERVICES = env.json("VCAP_SERVICES", {})
 
 REDIS_CREDENTIALS = VCAP_SERVICES["redis"][0]["credentials"] if VCAP_SERVICES else None
+AWS_S3_CREDENTIALS = (
+    VCAP_SERVICES["aws-s3-bucket"][0]["credentials"] if VCAP_SERVICES else None
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -89,6 +92,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "sass_processor",
     "authbroker_client",
+    "django_chunk_upload_handlers",
 ]
 
 MIDDLEWARE = [
@@ -208,6 +212,15 @@ if REDIS_CREDENTIALS:
             **REDIS_CREDENTIALS
         )
     )
+
+# AWS S3
+if AWS_S3_CREDENTIALS:
+    AWS_REGION_NAME = AWS_S3_CREDENTIALS["aws_region"]
+    AWS_S3_REGION_NAME = AWS_S3_CREDENTIALS["aws_region"]
+    AWS_ACCESS_KEY_ID = AWS_S3_CREDENTIALS["aws_access_key_id"]
+    AWS_SECRET_ACCESS_KEY = AWS_S3_CREDENTIALS["aws_secret_access_key"]
+    AWS_STORAGE_BUCKET_NAME = AWS_S3_CREDENTIALS["bucket_name"]
+
 
 # GOV.UK Notify
 GOVUK_NOTIFY_API_KEY = env("GOVUK_NOTIFY_API_KEY")
