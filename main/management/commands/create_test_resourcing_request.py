@@ -91,7 +91,8 @@ class Command(BaseCommand):
             agency="Five Stars",
             start_date=datetime.date.today(),
             end_date=datetime.date.today() + datetime.timedelta(days=30 * 6),
-            completed_by="Hiring Manager",
+            # Chief Rache
+            completed_by_id=3,
             on_behalf_of="DIT",
             date_completed=datetime.date.today(),
             reasons=lorem_ipsum.paragraph(),

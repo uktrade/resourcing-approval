@@ -474,7 +474,7 @@ class SdsStatusDetermination(models.Model):
     agency = models.CharField(max_length=255)
     start_date = models.DateField(verbose_name="Contract/Extension Start Date")
     end_date = models.DateField(verbose_name="Contract End Date")
-    completed_by = models.CharField(max_length=255)
+    completed_by  = models.ForeignKey("user.User", models.CASCADE, related_name="+")
     on_behalf_of = models.CharField(max_length=255)
     date_completed = models.DateField(default=datetime.date.today)
     reasons = models.TextField()
