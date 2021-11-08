@@ -141,3 +141,6 @@ staticfiles/*
 
 # Generated front end files
 main/static/main/css/styles.css
+
+# Django media
+media

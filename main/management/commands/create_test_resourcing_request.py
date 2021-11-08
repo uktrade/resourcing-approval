@@ -3,8 +3,10 @@ import datetime
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import lorem_ipsum
+from django.core.files.base import ContentFile
 
 from main.models import (
+    CestDocument,
     CestRationale,
     InterimRequest,
     JobDescription,
@@ -84,6 +86,12 @@ class Command(BaseCommand):
             business_on_own_account=lorem_ipsum.paragraph(),
             supply_chain="Test supply chain",
         )
+
+        cest_document = CestDocument(resourcing_request=resourcing_request)
+        cest_document.file.save(
+            "lorem-ipsum.txt", ContentFile(lorem_ipsum.paragraph().encode("utf-8"))
+        )
+
         SdsStatusDetermination.objects.create(
             resourcing_request=resourcing_request,
             company_name="A Company",

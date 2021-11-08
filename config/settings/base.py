@@ -49,9 +49,7 @@ def init_sentry():
 VCAP_SERVICES = env.json("VCAP_SERVICES", {})
 
 REDIS_CREDENTIALS = VCAP_SERVICES["redis"][0]["credentials"] if VCAP_SERVICES else None
-AWS_S3_CREDENTIALS = (
-    VCAP_SERVICES["aws-s3-bucket"][0]["credentials"] if VCAP_SERVICES else None
-)
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -187,6 +185,12 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "/static/"
 
+# Media files
+# https://docs.djangoproject.com/en/3.2/ref/settings/#media-root
+
+MEDIA_ROOT = ""
+MEDIA_URL = "/media/"
+
 # django-sass-processor
 # https://github.com/jrief/django-sass-processor#using-manifeststaticfilesstorage
 SASS_PROCESSOR_STORAGE = "django.contrib.staticfiles.storage.FileSystemStorage"
@@ -212,14 +216,6 @@ if REDIS_CREDENTIALS:
             **REDIS_CREDENTIALS
         )
     )
-
-# AWS S3
-if AWS_S3_CREDENTIALS:
-    AWS_REGION_NAME = AWS_S3_CREDENTIALS["aws_region"]
-    AWS_S3_REGION_NAME = AWS_S3_CREDENTIALS["aws_region"]
-    AWS_ACCESS_KEY_ID = AWS_S3_CREDENTIALS["aws_access_key_id"]
-    AWS_SECRET_ACCESS_KEY = AWS_S3_CREDENTIALS["aws_secret_access_key"]
-    AWS_STORAGE_BUCKET_NAME = AWS_S3_CREDENTIALS["bucket_name"]
 
 
 # GOV.UK Notify

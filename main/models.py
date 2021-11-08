@@ -1,7 +1,9 @@
 import datetime
+from django.core import validators
 
 from django.db import models
 from django.urls import reverse
+from django.core.validators import FileExtensionValidator
 
 from chartofaccount.models import (
     CostCentre,
@@ -99,6 +101,7 @@ class ResourcingRequest(models.Model):
         yield from (
             self.interim_request,
             self.cest_rationale,
+            self.cest_document,
             self.sds_status_determination,
         )
 
@@ -463,6 +466,30 @@ class CestRationale(models.Model):
         return "CEST rationale"
 
 
+def resourcing_request_directory_path(instance, filename):
+    return f"resourcing_request/{instance.resourcing_request.pk}/{filename}"
+
+
+class CestDocument(models.Model):
+    resourcing_request = models.OneToOneField(
+        "ResourcingRequest",
+        models.CASCADE,
+        related_name="cest_document",
+    )
+
+    file = models.FileField(
+        upload_to=resourcing_request_directory_path,
+        validators=[FileExtensionValidator(["pdf"])],
+        help_text=(
+            "The link to the document is only valid for 5 minutes."
+            " After this, you will need to refresh the page to get a new link."
+        ),
+    )
+
+    def __str__(self):
+        return self.file.name
+
+
 class SdsStatusDetermination(models.Model):
     resourcing_request = models.OneToOneField(
         "ResourcingRequest",
@@ -474,7 +501,7 @@ class SdsStatusDetermination(models.Model):
     agency = models.CharField(max_length=255)
     start_date = models.DateField(verbose_name="Contract/Extension Start Date")
     end_date = models.DateField(verbose_name="Contract End Date")
-    completed_by  = models.ForeignKey("user.User", models.CASCADE, related_name="+")
+    completed_by = models.ForeignKey("user.User", models.CASCADE, related_name="+")
     on_behalf_of = models.CharField(max_length=255)
     date_completed = models.DateField(default=datetime.date.today)
     reasons = models.TextField()

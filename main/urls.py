@@ -28,6 +28,8 @@ from main.views.statement_of_work_views import (
 from main.views.supporting_forms import (
     CestRationaleCreateView,
     CestRationaleUpdateView,
+    CestDocumentCreateView,
+    CestDocumentUpdateView,
     JobDescriptionCreateView,
     JobDescriptionUpdateView,
     SdsStatusDeterminationCreateView,
@@ -160,6 +162,12 @@ cest_rationale_urls = details_document_urls(
     "cest-rationale",
 )
 
+cest_document_urls = document_urls(
+    CestDocumentCreateView,
+    CestDocumentUpdateView,
+    "cest-document",
+)
+
 sds_status_determination_urls = details_document_urls(
     SdsStatusDeterminationDetailView,
     SdsStatusDeterminationCreateView,
@@ -180,6 +188,7 @@ urlpatterns = [
     path("statement-of-work-module/", include(statement_of_work__module_urls)),
     path("interim-request/", include(interim_request_urls)),
     path("cest-rationale/", include(cest_rationale_urls)),
+    path("cest-document/", include(cest_document_urls)),
     path("sds-status-determination/", include(sds_status_determination_urls)),
     path("htmx/load-directorates/", load_directorates, name="htmx-load-directorates"),
     path("htmx/load-costcentres/", load_costcentres, name="htmx-load-costcentres"),

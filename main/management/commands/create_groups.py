@@ -45,6 +45,11 @@ class Command(BaseCommand):
                     "view_cestrationale",
                     "change_cestrationale",
                     "delete_cestrationale",
+                    # cestdocument
+                    "add_cestdocument",
+                    "view_cestdocument",
+                    "change_cestdocument",
+                    "delete_cestdocument",
                     # sdsstatusdetermination
                     "add_sdsstatusdetermination",
                     "view_sdsstatusdetermination",
@@ -68,6 +73,7 @@ class Command(BaseCommand):
                     "view_statementofwork",
                     "view_interimrequest",
                     "view_cestrationale",
+                    "view_cestdocument",
                     "view_sdsstatusdetermination",
                     # comment
                     "add_comment",
