@@ -1,5 +1,10 @@
 from main.views.supporting_forms import SupportingFormDetailView
-from main.models import JobDescription, InterimRequest, CestRationale
+from main.models import (
+    JobDescription,
+    InterimRequest,
+    CestRationale,
+    SdsStatusDetermination,
+)
 
 
 class JobDescriptionDetailView(SupportingFormDetailView):
@@ -19,3 +24,8 @@ class CestRationaleDetailView(SupportingFormDetailView):
     permission_required = "main.view_cestrationale"
     title = "CEST Rationale"
 
+
+class SdsStatusDeterminationDetailView(SupportingFormDetailView):
+    model = SdsStatusDetermination
+    permission_required = "main.view_sdsstatusdetermination"
+    title = "SDS Status Determination"

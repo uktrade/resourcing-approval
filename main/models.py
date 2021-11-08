@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.urls import reverse
 
@@ -467,8 +469,15 @@ class SdsStatusDetermination(models.Model):
         models.CASCADE,
         related_name="sds_status_determination",
     )
-
-    todo = models.TextField()
+    company_name = models.CharField(max_length=255)
+    worker_name = models.CharField(max_length=255)
+    agency = models.CharField(max_length=255)
+    start_date = models.DateField(verbose_name="Contract/Extension Start Date")
+    end_date = models.DateField(verbose_name="Contract End Date")
+    completed_by  = models.ForeignKey("user.User", models.CASCADE, related_name="+")
+    on_behalf_of = models.CharField(max_length=255)
+    date_completed = models.DateField(default=datetime.date.today)
+    reasons = models.TextField()
 
     def __str__(self):
         return "SDS status determination"

@@ -37,6 +37,7 @@ from main.views.detail_views import (
     JobDescriptionDetailView,
     InterimRequestDetailView,
     CestRationaleDetailView,
+    SdsStatusDeterminationDetailView,
 )
 
 
@@ -159,7 +160,8 @@ cest_rationale_urls = details_document_urls(
     "cest-rationale",
 )
 
-sds_status_determination_urls = document_urls(
+sds_status_determination_urls = details_document_urls(
+    SdsStatusDeterminationDetailView,
     SdsStatusDeterminationCreateView,
     SdsStatusDeterminationUpdateView,
     "sds-status-determination",

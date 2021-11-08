@@ -113,7 +113,7 @@
         </dd>
         <dd class="govuk-summary-list__actions">
             {% if perms.main.view_sdsstatusdetermination and object.sds_status_determination %}
-                <a class="govuk-button govuk-button--secondary mb-0" href="#">View</a>
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'sds-status-determination-detail' object.sds_status_determination.pk %}">View</a>
             {% endif %}
             {% if perms.main.change_sdsstatusdetermination and object.sds_status_determination and object.can_update %}
                 <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'sds-status-determination-update' object.sds_status_determination.pk %}">Update</a>
