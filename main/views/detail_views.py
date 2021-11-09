@@ -4,6 +4,7 @@ from main.models import (
     InterimRequest,
     CestRationale,
     SdsStatusDetermination,
+    StatementOfWork,
 )
 
 
@@ -29,3 +30,18 @@ class SdsStatusDeterminationDetailView(SupportingFormDetailView):
     model = SdsStatusDetermination
     permission_required = "main.view_sdsstatusdetermination"
     title = "SDS Status Determination"
+
+
+class StatementOfWorkDetailView(SupportingFormDetailView):
+    model = StatementOfWork
+    permission_required = "main.view_statementofwork"
+    title = "Statement of Work"
+    template_name = "main/statement_of_work_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["my_modules"] = self.object.modules.all()
+        return context
+
+
+

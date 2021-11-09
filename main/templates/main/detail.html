@@ -10,8 +10,11 @@
     {% for label, display_value in display_list %}
         {% include 'main/partials/summary-row.html' with key=label value=display_value %}
     {% endfor %}
-</dl>
 
+
+    {% block children %}
+    {% endblock %}
+</dl>
     <a class="govuk-button govuk-button--secondary mb-0"
        href="{% url 'resourcing-request-detail' object.resourcing_request_id %}">
         Back</a>
