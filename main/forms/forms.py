@@ -1,6 +1,7 @@
 from django import forms
 
 from main.models import (
+    CestDocument,
     CestRationale,
     Comment,
     JobDescription,
@@ -74,6 +75,18 @@ class CestRationaleForm(FormWithStartEndDates):
 
     class Meta:
         model = CestRationale
+        fields = "__all__"
+        widgets = {"resourcing_request": forms.HiddenInput}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["resourcing_request"].disabled = True
+
+
+class CestDocumentForm(forms.ModelForm):
+    class Meta:
+        model = CestDocument
         fields = "__all__"
         widgets = {"resourcing_request": forms.HiddenInput}
 

@@ -103,6 +103,26 @@
         </dd>
     </div>
 
+    <!-- CEST document -->
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            CEST document
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ object.cest_document|default:'No CEST document' }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            {% if perms.main.view_cestdocument and object.cest_document %}
+                <a class="govuk-button govuk-button--secondary mb-0" href="{{ object.cest_document.file.url }}">View</a>
+            {% endif %}
+            {% if perms.main.change_cestdocument and object.cest_document and object.can_update %}
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'cest-document-update' object.cest_document.pk %}">Update</a>
+            {% elif perms.main.add_cestdocument and not object.cest_document %}
+                <a class="govuk-button govuk-button mb-0" href="{% url 'cest-document-create' %}?resourcing_request={{ object.pk }}">Create</a>
+            {% endif %}
+        </dd>
+    </div>
+
     <!-- SDS status determination -->
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
