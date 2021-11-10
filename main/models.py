@@ -38,7 +38,9 @@ class ResourcingRequest(models.Model):
     class State(models.IntegerChoices):
         DRAFT = 0, "Draft"
         AWAITING_APPROVALS = 1, "Awaiting approvals"
-        APPROVED = 2, "Approved"
+        AMENDING = 2, "Amending"
+        AMENDMENTS_REVIEW = 3, "Amendments review"
+        APPROVED = 4, "Approved"
 
     requestor = models.ForeignKey(
         "user.User", models.CASCADE, related_name="resourcing_requests"
@@ -83,12 +85,24 @@ class ResourcingRequest(models.Model):
         return reverse("resourcing-request-detail", kwargs={"pk": self.pk})
 
     @property
-    def is_draft(self):
+    def is_draft(self) -> bool:
+        """Return whether the resourcing request is in draft."""
         return self.state == self.State.DRAFT
 
     @property
-    def is_awaiting_approvals(self):
+    def is_awaiting_approvals(self) -> bool:
+        """Return whether the resourcing request is awaiting approvals."""
         return self.state == self.State.AWAITING_APPROVALS
+
+    @property
+    def is_amending(self) -> bool:
+        """Return whether the resourcing request is being amended."""
+        return self.state == self.State.AMENDING
+
+    @property
+    def is_amendments_review(self) -> bool:
+        """Return whether the resourcing request is in amendments review."""
+        return self.state == self.State.AMENDMENTS_REVIEW
 
     @property
     def is_approved(self) -> bool:
@@ -118,8 +132,14 @@ class ResourcingRequest(models.Model):
         return self.is_complete and self.state == self.State.DRAFT
 
     @property
-    def can_update(self):
-        return self.state == self.State.DRAFT
+    def can_update(self) -> bool:
+        """Return whether we can update this resourcing request."""
+        return self.state in (self.State.DRAFT, self.State.AMENDING)
+
+    @property
+    def can_amend(self) -> bool:
+        """Retruen whether we can amend this resourcing request."""
+        return self.state == self.State.AWAITING_APPROVALS
 
     @property
     def can_approve(self):

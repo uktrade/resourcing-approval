@@ -138,6 +138,14 @@ class ResourcingRequestSendForApprovalView(ResourcingRequestActionView):
         )
 
 
+class ResourcingRequestAmendView(ResourcingRequestActionView):
+    permission_required = "main.change_resourcingrequest"
+
+    def action(self, resourcing_request):
+        resourcing_request.state = ResourcingRequest.State.AMENDING
+        resourcing_request.save()
+
+
 class ResourcingRequestAddApproval(ResourcingRequestActionView):
     def get_permission_required(self):
         approval_type = self.request.POST["type"]
