@@ -1,5 +1,12 @@
 @import "./node_modules/govuk-frontend/govuk/all";
 
+html,
+body,
+main {
+  margin: 0;
+  padding: 0;
+}
+
 .govuk-header__logo {
   width: 100% !important;
 }

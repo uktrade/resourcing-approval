@@ -155,7 +155,7 @@
 
     <!-- FIXME -->
     {% if object.can_amend %}
-        <form class="inline" action="">
+        <form class="inline" action="{% url 'resourcing-request-amend' object.pk %}" method="post">
             {% csrf_token %}
             <button class="govuk-button govuk-button--secondary">Amend</button>
         </form>
@@ -191,7 +191,7 @@
                     {% endif %}
                 </dd>
                 <dd class="govuk-summary-list__actions">
-                    {% if approval.has_permission and not is_approved %}
+                    {% if object.can_approve and approval.has_permission and not is_approved %}
                         <!-- Approve -->
                         <form class="inline" action="{% url 'resourcing-request-add-approval' object.pk %}" method="post">
                             {% csrf_token %}

@@ -1,6 +1,6 @@
 import logging
-from typing import Optional
 from functools import partial
+from typing import Optional
 
 from celery import group, shared_task
 from django.conf import settings

@@ -17,6 +17,7 @@ from main.views.interim_request_views import (
 from main.views.resourcing_request import (
     ResourcingRequestAddApproval,
     ResourcingRequestAddComment,
+    ResourcingRequestAmendView,
     ResourcingRequestCreateView,
     ResourcingRequestDeleteView,
     ResourcingRequestDetailView,
@@ -68,6 +69,11 @@ request_urls = [
         "<int:pk>/send-for-approval",
         ResourcingRequestSendForApprovalView.as_view(),
         name="resourcing-request-send-for-approval",
+    ),
+    path(
+        "<int:pk>/amend",
+        ResourcingRequestAmendView.as_view(),
+        name="resourcing-request-amend",
     ),
     path(
         "<int:pk>/add-approval",
