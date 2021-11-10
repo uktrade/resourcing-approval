@@ -1,9 +1,8 @@
 import datetime
-from django.core import validators
 
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.urls import reverse
-from django.core.validators import FileExtensionValidator
 
 from chartofaccount.models import (
     CostCentre,
@@ -92,6 +91,11 @@ class ResourcingRequest(models.Model):
         return self.state == self.State.AWAITING_APPROVALS
 
     @property
+    def is_approved(self) -> bool:
+        """Return whether the resourcing request has been approved."""
+        return self.state == self.State.APPROVED
+
+    @property
     def required_supporting_forms(self):
         if self.is_ir35:
             yield self.job_description
@@ -133,6 +137,33 @@ class ResourcingRequest(models.Model):
 
     def get_is_approved(self):
         return all(x and x.approved for x in self.get_approvals().values())
+
+    def has_prerequisite_approvals(self, approval_type: "Approval.Type") -> bool:
+        """Check if the required approvals have records for the given approval type.
+
+        Only check if the previous approval is there, not that it was accepted.
+        """
+
+        if approval_type == Approval.Type.HEAD_OF_PROFESSION:
+            return True
+        elif approval_type == Approval.Type.CHIEF:
+            return bool(self.head_of_profession_approval)
+        elif approval_type == Approval.Type.BUSOPS:
+            return all([self.head_of_profession_approval, self.chief_approval])
+        elif approval_type in [
+            Approval.Type.HRBP,
+            Approval.Type.FINANCE,
+            Approval.Type.COMMERCIAL,
+        ]:
+            return all(
+                [
+                    self.head_of_profession_approval,
+                    self.chief_approval,
+                    self.busops_approval,
+                ]
+            )
+        else:
+            raise ValueError("Unknown approval type")
 
 
 class Approval(models.Model):

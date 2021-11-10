@@ -2,19 +2,24 @@
 
 import django.core.validators
 from django.db import migrations, models
+
 import main.models
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0010_alter_cestdocument_file'),
+        ("main", "0010_alter_cestdocument_file"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='cestdocument',
-            name='file',
-            field=models.FileField(help_text='The link to the document is only valid for 5 minutes. After this, you will need to refresh the page to get a new link.', upload_to=main.models.resourcing_request_directory_path, validators=[django.core.validators.FileExtensionValidator(['pdf'])]),
+            model_name="cestdocument",
+            name="file",
+            field=models.FileField(
+                help_text="The link to the document is only valid for 5 minutes. After this, you will need to refresh the page to get a new link.",
+                upload_to=main.models.resourcing_request_directory_path,
+                validators=[django.core.validators.FileExtensionValidator(["pdf"])],
+            ),
         ),
     ]
