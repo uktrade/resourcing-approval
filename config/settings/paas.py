@@ -1,5 +1,6 @@
 from .base import env
 
+
 # HSTS
 SECURE_HSTS_SECONDS = 3600
 SECURE_HSTS_PRELOAD = True
