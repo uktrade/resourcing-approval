@@ -1,0 +1,6 @@
+{#    {% for label, display_value in display_list %}#}
+{#        {% include 'main/partials/summary-row.html' with key=label value=display_value %}#}
+{#    {% endfor %}#}
+   {% for t in display_list %}
+        {% include 'main/partials/summary-row.html' with key=t.0 value=t.1 %}
+    {% endfor %}

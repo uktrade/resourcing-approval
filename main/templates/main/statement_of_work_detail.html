@@ -1,4 +1,6 @@
 {% extends 'main/detail.html' %}
+{% load list_object %}
+
 {% block children %}
 <h2>Modules</h2>
            {% for module in my_modules %}
@@ -6,12 +8,12 @@
                {% include 'main/partials/summary-row.html' with key='Completion date' value=module.completion_date %}
                 <h3>Deliverables for {{ module.module_title }} </h3>
                 {% for deliverable in module.get_deliverables %}
-                    {% include 'main/partials/summary-row.html' with key='Title' value=deliverable.deliverable_title %}
-
+                    {% object_as_list deliverable deliverable_exclude_list %}
+                {% empty %}
+                    <h4>No deliverables for {{ module.module_title }} </h4>
                {% endfor %}
-               {% empty %}
-                    <h3>Deliverables for {{ module.module_title }} </h3>
-                {% endfor %}
            {% endfor %}
+    <h1>====================</h1>
+             {% object_as_list object %}
 {% endblock children %}
 
