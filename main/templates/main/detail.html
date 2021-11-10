@@ -1,15 +1,15 @@
 {% extends 'main/base.html' %}
 
 {% block title %}{{ object.name }}{% endblock %}
+{% load list_object %}
 
 {% block content %}
 <h1 class="govuk-heading-l">{{ detail_title }}</h1>
 
 
 <dl class="govuk-summary-list">
-    {% for label, display_value in display_list %}
-        {% include 'main/partials/summary-row.html' with key=label value=display_value %}
-    {% endfor %}
+
+    {% object_as_list object exclude_list %}
 
 
     {% block children %}
