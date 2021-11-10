@@ -132,7 +132,10 @@ class ResourcingRequestSendForApprovalView(ResourcingRequestActionView):
         resourcing_request.state = ResourcingRequest.State.AWAITING_APPROVALS
         resourcing_request.save()
 
-        notify_approvers.delay(resourcing_request.pk)
+        notify_approvers.delay(
+            resourcing_request.pk,
+            self.request.build_absolute_uri(resourcing_request.get_absolute_url()),
+        )
 
 
 class ResourcingRequestAddApproval(ResourcingRequestActionView):
@@ -186,7 +189,11 @@ class ResourcingRequestAddApproval(ResourcingRequestActionView):
 
         resourcing_request.save()
 
-        notify_approvers.delay(resourcing_request.pk, approval.pk)
+        notify_approvers.delay(
+            resourcing_request.pk,
+            self.request.build_absolute_uri(resourcing_request.get_absolute_url()),
+            approval.pk,
+        )
 
 
 class ResourcingRequestAddComment(PermissionRequiredMixin, CreateView):
