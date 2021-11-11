@@ -4,15 +4,26 @@
 {% block children %}
 <h2>Modules</h2>
            {% for module in my_modules %}
-               {% include 'main/partials/summary-row.html' with key='Title' value=module.module_title %}
-               {% include 'main/partials/summary-row.html' with key='Completion date' value=module.completion_date %}
-                <h3>Deliverables for {{ module.module_title }} </h3>
-                {% for deliverable in module.get_deliverables %}
-                    {% object_as_list deliverable deliverable_exclude_list %}
-                {% empty %}
-                    <h4>No deliverables for {{ module.module_title }} </h4>
-               {% endfor %}
+               <fieldset style=width:960px;>
+               {% include 'main/partials/summary-row.html' with key="Module" value=module.completion_date %}
+               {% include 'main/partials/summary-row.html' with key="Completion date" value=module.completion_date %}
+
+
+               {% for deliverable in module.get_deliverables %}
+
+
+                     <details class="govuk-details" data-module="govuk-details">
+                      <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            {% include 'main/partials/summary-row.html' with key="Deliverable" value=deliverable.deliverable_title %}
+                        </span>
+                      </summary>
+                      <div class="govuk-details__text">
+                            {% object_as_list deliverable deliverable_exclude_list %}
+                      </div>
+                    </details>
+              {% endfor %}
+            </fieldset>
            {% endfor %}
-{#             {% object_as_list object %}#}
 {% endblock children %}
 
