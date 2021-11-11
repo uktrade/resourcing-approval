@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
+from main.models import TRUE_FALSE_CHOICES
 
 User = get_user_model()
 
@@ -18,3 +19,4 @@ class ChangeUserForm(forms.Form):
 
 class CreateTestResourcingRequestForm(forms.Form):
     name = forms.CharField()
+    inside_IR35 = forms.ChoiceField(choices=TRUE_FALSE_CHOICES)

@@ -69,6 +69,8 @@ def create_test_resourcing_request(request):
     if not form.is_valid():
         raise ValidationError("Invalid create test resourcing request form")
 
-    call_command("create_test_resourcing_request", name=form.cleaned_data["name"])
+    call_command("create_test_resourcing_request",
+                 name=form.cleaned_data["name"],
+                 insideir35=form.cleaned_data["inside_IR35"])
 
     return redirect(reverse("dev_tools:index"))
