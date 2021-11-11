@@ -41,7 +41,7 @@ class Command(BaseCommand):
             # Chief Rache
             chief_id=3,
         )
-        
+
         JobDescription.objects.create(
             resourcing_request=resourcing_request,
             title="Python Developer",
