@@ -41,6 +41,9 @@ class StatementOfWorkDetailView(SupportingFormDetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["my_modules"] = self.object.modules.all()
-        exclude_list = ["id", "statement_of_work_module", "deliverable_title"]
-        context["deliverable_exclude_list"] = exclude_list
+        context["deliverable_exclude_list"] = [
+            "id",
+            "statement_of_work_module",
+            "deliverable_title",
+        ]
         return context
