@@ -1,6 +1,6 @@
 import logging
 from functools import partial
-from typing import Optional
+from typing import Any, Optional
 
 from celery import group, shared_task
 from django.conf import settings
@@ -39,6 +39,30 @@ def send_notification(to, template_id, personalisation=None):
     )
 
 
+def send_group_notification(
+    approver_group: ApproverGroup,
+    *,
+    template_id: str,
+    personalisation: Optional[dict[str, Any]] = None,
+) -> None:
+    if personalisation is None:
+        personalisation = {}
+
+    tasks = [
+        send_notification.s(
+            to=user.email,
+            template_id=template_id,
+            personalisation={
+                **personalisation,
+                "first_name": user.first_name,
+            },
+        )
+        for user in User.objects.filter(groups__name=approver_group.value)
+    ]
+
+    group(tasks).apply_async()
+
+
 @shared_task
 def notify_approvers(
     resourcing_request_pk: int,
@@ -62,13 +86,15 @@ def notify_approvers(
 
     personalisation = {"resourcing_request_url": resourcing_request_url}
 
-    send_to_group = partial(
-        _send_ready_for_approval_notification_to_group, personalisation=personalisation
+    send_ready_for_approval_group_notification = partial(
+        send_group_notification,
+        template_id=settings.GOVUK_NOTIFY_READY_FOR_APPROVAL_TEMPLATE_ID,
+        personalisation=personalisation,
     )
 
     # Notify the head of profession group that the request has been send for approval.
     if not approval:
-        send_to_group(ApproverGroup.HEAD_OF_PROFESSION)
+        send_ready_for_approval_group_notification(ApproverGroup.HEAD_OF_PROFESSION)
 
         return
 
@@ -105,32 +131,11 @@ def notify_approvers(
     elif (
         approval.type == approval.Type.CHIEF and not resourcing_request.busops_approval
     ):
-        send_to_group(ApproverGroup.BUSOPS)
+        send_ready_for_approval_group_notification(ApproverGroup.BUSOPS)
     elif approval.type == approval.Type.BUSOPS:
         if not resourcing_request.hrbp_approval:
-            send_to_group(ApproverGroup.HRBP)
+            send_ready_for_approval_group_notification(ApproverGroup.HRBP)
         if not resourcing_request.finance_approval:
-            send_to_group(ApproverGroup.FINANCE)
+            send_ready_for_approval_group_notification(ApproverGroup.FINANCE)
         if not resourcing_request.commercial_approval:
-            send_to_group(ApproverGroup.COMMERCIAL)
-
-
-def _send_ready_for_approval_notification_to_group(
-    approver_group: ApproverGroup, personalisation=None
-) -> None:
-    if personalisation is None:
-        personalisation = {}
-
-    group(
-        (
-            send_notification.s(
-                to=user.email,
-                template_id=settings.GOVUK_NOTIFY_READY_FOR_APPROVAL_TEMPLATE_ID,
-                personalisation={
-                    **personalisation,
-                    "first_name": user.first_name,
-                },
-            )
-            for user in User.objects.filter(groups__name=approver_group.value)
-        )
-    ).apply_async()
+            send_ready_for_approval_group_notification(ApproverGroup.COMMERCIAL)

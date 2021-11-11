@@ -153,7 +153,6 @@
         </form>
     {% endif %}
 
-    <!-- FIXME -->
     {% if object.can_amend %}
         <form class="inline" action="{% url 'resourcing-request-amend' object.pk %}" method="post">
             {% csrf_token %}
@@ -161,9 +160,23 @@
         </form>
     {% endif %}
 
+    {% if object.can_send_for_review %}
+        <form class="inline" action="{% url 'resourcing-request-send-for-review' object.pk %}" method="post">
+            {% csrf_token %}
+            <button class="govuk-button">Send for review</button>
+        </form>
+    {% endif %}
+
     {% if object.can_update %}
         <a class="govuk-button govuk-button--secondary" href="{% url 'resourcing-request-update' object.pk %}">Update</a>
     {% endif %}
+{% endif %}
+
+{% if perms.main.can_give_busops_approval and object.can_finish_amendments_review %}
+    <form class="inline" action="{% url 'resourcing-request-finish-amendments-review' object.pk %}" method="post">
+        {% csrf_token %}
+        <button class="govuk-button">Finish amendments review</button>
+    </form>
 {% endif %}
 
 {% if perms.main.delete_resourcingrequest %}
@@ -187,7 +200,7 @@
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {% if approval.object %}
-                        {{ approval.object.approved }} - {{ approval.object.user }} - {{ approval.object.timestamp }}
+                        {{ approval.object.approved|default_if_none:"Cleared" }} - {{ approval.object.user }} - {{ approval.object.timestamp }}
                     {% endif %}
                 </dd>
                 <dd class="govuk-summary-list__actions">
@@ -207,16 +220,14 @@
                             <input type="hidden" name="approved" value="false">
                             <button class="govuk-button govuk-button--warning mb-0">Reject</button>
                         </form>
-
-                        {% comment %}
+                    {% endif %}
+                    {% if object.can_clear_approval and perms.main.can_give_busops_approval %}
                         <!-- Clear form -->
-                        <form class="inline" action="{% url 'resourcing-request-add-approval' object.pk %}" method="post">
+                        <form class="inline" action="{% url 'resourcing-request-clear-approval' object.pk %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="type" value="{{ approval.type }}">
-                            <input type="hidden" name="approved" value="unknown">
-                            <button class="govuk-button govuk-button--secondary mb-0">Clear</button>
+                            <button class="govuk-button govuk-button--warning mb-0">Clear</button>
                         </form>
-                        {% endcomment %}
                     {% endif %}
                 </dd>
             </div>
@@ -232,7 +243,7 @@
         </summary>
         <div class="govuk-details__text">
             {% for approval in object.approvals.all %}
-                <div>{{ approval.get_type_display }} - {{ approval.approved }} - {{ approval.user }} - {{ approval.timestamp }}</div>
+                <div>{{ approval.get_type_display }} - {{ approval.approved|default_if_none:"Cleared" }} - {{ approval.user }} - {{ approval.timestamp }}</div>
             {% empty %}
                 No approval history.
             {% endfor %}

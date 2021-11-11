@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
@@ -6,9 +7,10 @@ from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
+from main.constants import ApproverGroup, APPROVAL_TYPE_TO_GROUP
 from main.forms.forms import CommentForm, ResourcingRequestForm
 from main.models import Approval, Comment, ResourcingRequest
-from main.tasks import notify_approvers
+from main.tasks import notify_approvers, send_group_notification, send_notification
 
 
 def get_approvals_context_data(user, resourcing_request):
@@ -110,40 +112,73 @@ class ResourcingRequestDeleteView(
 
 
 class ResourcingRequestActionView(PermissionRequiredMixin, View):
+    def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
+        """Return `True` if the action can be performed else `False`."""
+        raise NotImplementedError
+
     def action(self, resourcing_request):
         raise NotImplementedError
 
     def post(self, request, pk, **kwargs):
-        resourcing_request = ResourcingRequest.objects.select_related_approvals().get(
-            pk=pk
+        self.resourcing_request = (
+            ResourcingRequest.objects.select_related_approvals().get(pk=pk)
         )
 
-        self.action(resourcing_request)
+        self.resourcing_request_url = self.request.build_absolute_uri(
+            self.resourcing_request.get_absolute_url()
+        )
+
+        if not self.can_do_action(self.resourcing_request):
+            raise ValidationError("Cannot perform this action")
+
+        self.action(self.resourcing_request)
 
         return redirect(
-            reverse("resourcing-request-detail", kwargs={"pk": resourcing_request.pk})
+            reverse(
+                "resourcing-request-detail", kwargs={"pk": self.resourcing_request.pk}
+            )
         )
 
 
 class ResourcingRequestSendForApprovalView(ResourcingRequestActionView):
     permission_required = "main.change_resourcingrequest"
 
+    def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
+        return resourcing_request.can_send_for_approval
+
     def action(self, resourcing_request):
         resourcing_request.state = ResourcingRequest.State.AWAITING_APPROVALS
         resourcing_request.save()
 
-        notify_approvers.delay(
-            resourcing_request.pk,
-            self.request.build_absolute_uri(resourcing_request.get_absolute_url()),
-        )
+        notify_approvers.delay(resourcing_request.pk, self.resourcing_request_url)
 
 
 class ResourcingRequestAmendView(ResourcingRequestActionView):
     permission_required = "main.change_resourcingrequest"
 
+    def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
+        return resourcing_request.can_amend
+
     def action(self, resourcing_request):
         resourcing_request.state = ResourcingRequest.State.AMENDING
         resourcing_request.save()
+
+
+class ResourcingRequestSendForReviewView(ResourcingRequestActionView):
+    permission_required = "main.change_resourcingrequest"
+
+    def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
+        return resourcing_request.can_send_for_review
+
+    def action(self, resourcing_request):
+        resourcing_request.state = ResourcingRequest.State.AMENDMENTS_REVIEW
+        resourcing_request.save()
+
+        send_group_notification(
+            ApproverGroup.BUSOPS,
+            template_id=settings.GOVUK_NOTIFY_AMENDED_TEMPLATE_ID,
+            personalisation={"resourcing_request_url": self.resourcing_request_url},
+        )
 
 
 class ResourcingRequestAddApproval(ResourcingRequestActionView):
@@ -151,6 +186,9 @@ class ResourcingRequestAddApproval(ResourcingRequestActionView):
         approval_type = self.request.POST["type"]
 
         return (f"main.can_give_{approval_type}_approval",)
+
+    def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
+        return resourcing_request.can_approve
 
     def action(self, resourcing_request):
         approval_type = self.request.POST["type"]
@@ -199,9 +237,66 @@ class ResourcingRequestAddApproval(ResourcingRequestActionView):
 
         notify_approvers.delay(
             resourcing_request.pk,
-            self.request.build_absolute_uri(resourcing_request.get_absolute_url()),
+            self.resourcing_request_url,
             approval.pk,
         )
+
+
+class ResourcingRequestClearApprovalView(ResourcingRequestActionView):
+    permission_required = "main.can_give_busops_approval"
+
+    def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
+        return resourcing_request.can_clear_approval
+
+    def action(self, resourcing_request):
+        approval_type = self.request.POST["type"]
+
+        if approval_type not in Approval.Type:
+            raise ValidationError("Invalid approval type")
+
+        approval = Approval.objects.create(
+            resourcing_request=resourcing_request,
+            user=self.request.user,
+            reason=None,
+            type=approval_type,
+            approved=None,
+        )
+
+        setattr(resourcing_request, f"{approval_type}_approval", approval)
+
+        resourcing_request.save()
+
+
+class ResourcingRequestFinishAmendmentsReviewView(ResourcingRequestActionView):
+    permission_required = "main.can_give_busops_approval"
+
+    def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
+        return resourcing_request.can_finish_amendments_review
+
+    def action(self, resourcing_request):
+        resourcing_request.state = ResourcingRequest.State.AWAITING_APPROVALS
+        resourcing_request.save()
+
+        # Notify the requestor that the amendments have been reviewed.
+        send_notification.delay(
+            to=resourcing_request.requestor.email,
+            template_id=settings.GOVUK_NOTIFY_FINISHED_AMENDMENTS_REVIEW_TEMPLATE_ID,
+            personalisation={"resourcing_request_url": self.resourcing_request_url},
+        )
+
+        # Notify all the approval groups which had their approvals cleared.
+        re_approval_groups = [
+            APPROVAL_TYPE_TO_GROUP[approval.type]
+            for approval in resourcing_request.get_approvals().values()
+            if approval and approval.approved is None
+        ]
+
+        for group in re_approval_groups:
+            send_group_notification(
+                group,
+                template_id=settings.GOVUK_NOTIFY_RE_APPROVAL_TEMPLATE_ID,
+                personalisation={"resourcing_request_url": self.resourcing_request_url},
+            )
 
 
 class ResourcingRequestAddComment(PermissionRequiredMixin, CreateView):
