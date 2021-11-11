@@ -1,5 +1,6 @@
 import datetime
 
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.urls import reverse
 
@@ -37,7 +38,9 @@ class ResourcingRequest(models.Model):
     class State(models.IntegerChoices):
         DRAFT = 0, "Draft"
         AWAITING_APPROVALS = 1, "Awaiting approvals"
-        APPROVED = 2, "Approved"
+        AMENDING = 2, "Amending"
+        AMENDMENTS_REVIEW = 3, "Amendments review"
+        APPROVED = 4, "Approved"
 
     requestor = models.ForeignKey(
         "user.User", models.CASCADE, related_name="resourcing_requests"
@@ -82,12 +85,29 @@ class ResourcingRequest(models.Model):
         return reverse("resourcing-request-detail", kwargs={"pk": self.pk})
 
     @property
-    def is_draft(self):
+    def is_draft(self) -> bool:
+        """Return whether the resourcing request is in draft."""
         return self.state == self.State.DRAFT
 
     @property
-    def is_awaiting_approvals(self):
+    def is_awaiting_approvals(self) -> bool:
+        """Return whether the resourcing request is awaiting approvals."""
         return self.state == self.State.AWAITING_APPROVALS
+
+    @property
+    def is_amending(self) -> bool:
+        """Return whether the resourcing request is being amended."""
+        return self.state == self.State.AMENDING
+
+    @property
+    def is_amendments_review(self) -> bool:
+        """Return whether the resourcing request is in amendments review."""
+        return self.state == self.State.AMENDMENTS_REVIEW
+
+    @property
+    def is_approved(self) -> bool:
+        """Return whether the resourcing request has been approved."""
+        return self.state == self.State.APPROVED
 
     @property
     def required_supporting_forms(self):
@@ -99,6 +119,7 @@ class ResourcingRequest(models.Model):
         yield from (
             self.interim_request,
             self.cest_rationale,
+            self.cest_document,
             self.sds_status_determination,
         )
 
@@ -111,8 +132,14 @@ class ResourcingRequest(models.Model):
         return self.is_complete and self.state == self.State.DRAFT
 
     @property
-    def can_update(self):
-        return self.state == self.State.DRAFT
+    def can_update(self) -> bool:
+        """Return whether we can update this resourcing request."""
+        return self.state in (self.State.DRAFT, self.State.AMENDING)
+
+    @property
+    def can_amend(self) -> bool:
+        """Retruen whether we can amend this resourcing request."""
+        return self.state == self.State.AWAITING_APPROVALS
 
     @property
     def can_approve(self):
@@ -130,6 +157,33 @@ class ResourcingRequest(models.Model):
 
     def get_is_approved(self):
         return all(x and x.approved for x in self.get_approvals().values())
+
+    def has_prerequisite_approvals(self, approval_type: "Approval.Type") -> bool:
+        """Check if the required approvals have records for the given approval type.
+
+        Only check if the previous approval is there, not that it was accepted.
+        """
+
+        if approval_type == Approval.Type.HEAD_OF_PROFESSION:
+            return True
+        elif approval_type == Approval.Type.CHIEF:
+            return bool(self.head_of_profession_approval)
+        elif approval_type == Approval.Type.BUSOPS:
+            return all([self.head_of_profession_approval, self.chief_approval])
+        elif approval_type in [
+            Approval.Type.HRBP,
+            Approval.Type.FINANCE,
+            Approval.Type.COMMERCIAL,
+        ]:
+            return all(
+                [
+                    self.head_of_profession_approval,
+                    self.chief_approval,
+                    self.busops_approval,
+                ]
+            )
+        else:
+            raise ValueError("Unknown approval type")
 
 
 class Approval(models.Model):
@@ -467,6 +521,30 @@ class CestRationale(models.Model):
         return "CEST rationale"
 
 
+def resourcing_request_directory_path(instance, filename):
+    return f"resourcing_request/{instance.resourcing_request.pk}/{filename}"
+
+
+class CestDocument(models.Model):
+    resourcing_request = models.OneToOneField(
+        "ResourcingRequest",
+        models.CASCADE,
+        related_name="cest_document",
+    )
+
+    file = models.FileField(
+        upload_to=resourcing_request_directory_path,
+        validators=[FileExtensionValidator(["pdf"])],
+        help_text=(
+            "The link to the document is only valid for 5 minutes."
+            " After this, you will need to refresh the page to get a new link."
+        ),
+    )
+
+    def __str__(self):
+        return self.file.name
+
+
 class SdsStatusDetermination(models.Model):
     resourcing_request = models.OneToOneField(
         "ResourcingRequest",
@@ -478,7 +556,7 @@ class SdsStatusDetermination(models.Model):
     agency = models.CharField(max_length=255)
     start_date = models.DateField(verbose_name="Contract/Extension Start Date")
     end_date = models.DateField(verbose_name="Contract End Date")
-    completed_by  = models.ForeignKey("user.User", models.CASCADE, related_name="+")
+    completed_by = models.ForeignKey("user.User", models.CASCADE, related_name="+")
     on_behalf_of = models.CharField(max_length=255)
     date_completed = models.DateField(default=datetime.date.today)
     reasons = models.TextField()

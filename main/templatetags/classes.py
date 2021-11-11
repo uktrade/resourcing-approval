@@ -28,7 +28,8 @@ def add_gds_input_class(field) -> str:
         add_class(field, "govuk-input")
         field.field.widget.input_type = "date"
         field.field.widget.format = "%Y-%m-%d"
-
+    elif isinstance(widget, widgets.FileInput):
+        add_class(field, "govuk-file-upload")
     elif isinstance(widget, input_widgets):
         add_class(field, "govuk-input")
     elif isinstance(widget, widgets.Select):

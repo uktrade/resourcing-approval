@@ -3,13 +3,14 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 
 from main.forms.forms import (
+    CestDocumentForm,
     CestRationaleForm,
     JobDescriptionForm,
     SdsStatusDeterminationForm,
 )
 from main.models import (
+    CestDocument,
     CestRationale,
-    InterimRequest,
     JobDescription,
     SdsStatusDetermination,
 )
@@ -77,6 +78,18 @@ class CestRationaleUpdateView(SupportingFormUpdateView):
     model = CestRationale
     form_class = CestRationaleForm
     permission_required = "main.change_cestrationale"
+
+
+class CestDocumentCreateView(SupportingFormCreateView):
+    model = CestDocument
+    form_class = CestDocumentForm
+    permission_required = "main.add_cestdocument"
+
+
+class CestDocumentUpdateView(SupportingFormUpdateView):
+    model = CestDocument
+    form_class = CestDocumentForm
+    permission_required = "main.change_cestdocument"
 
 
 class SdsStatusDeterminationCreateView(SupportingFormCreateView):

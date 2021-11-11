@@ -1,11 +1,11 @@
-from main.views.supporting_forms import SupportingFormDetailView
 from main.models import (
-    JobDescription,
-    InterimRequest,
     CestRationale,
+    InterimRequest,
+    JobDescription,
     SdsStatusDetermination,
     StatementOfWork,
 )
+from main.views.supporting_forms import SupportingFormDetailView
 
 
 class JobDescriptionDetailView(SupportingFormDetailView):

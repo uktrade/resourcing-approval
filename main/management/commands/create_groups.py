@@ -1,6 +1,8 @@
 from django.contrib.auth.models import Group, Permission
 from django.core.management.base import BaseCommand
 
+from main.constants import ApproverGroup
+
 
 class Command(BaseCommand):
     help = "Create the required groups"
@@ -10,12 +12,22 @@ class Command(BaseCommand):
             pk=1, name="Hiring Manager"
         )
         approver_group, _ = Group.objects.get_or_create(pk=2, name="Approver")
-        hop_group, _ = Group.objects.get_or_create(pk=3, name="Head of Profession")
-        chief_group, _ = Group.objects.get_or_create(pk=4, name="Chief")
-        busops_group, _ = Group.objects.get_or_create(pk=5, name="BusOps")
-        hrbp_group, _ = Group.objects.get_or_create(pk=6, name="HRBP")
-        finance_group, _ = Group.objects.get_or_create(pk=7, name="Finance")
-        commercial_group, _ = Group.objects.get_or_create(pk=8, name="Commercial")
+        hop_group, _ = Group.objects.get_or_create(
+            pk=3, name=ApproverGroup.HEAD_OF_PROFESSION.value
+        )
+        chief_group, _ = Group.objects.get_or_create(
+            pk=4, name=ApproverGroup.CHIEF.value
+        )
+        busops_group, _ = Group.objects.get_or_create(
+            pk=5, name=ApproverGroup.BUSOPS.value
+        )
+        hrbp_group, _ = Group.objects.get_or_create(pk=6, name=ApproverGroup.HRBP.value)
+        finance_group, _ = Group.objects.get_or_create(
+            pk=7, name=ApproverGroup.FINANCE.value
+        )
+        commercial_group, _ = Group.objects.get_or_create(
+            pk=8, name=ApproverGroup.COMMERCIAL.value
+        )
 
         hiring_manager_group.permissions.set(
             Permission.objects.filter(
@@ -45,6 +57,11 @@ class Command(BaseCommand):
                     "view_cestrationale",
                     "change_cestrationale",
                     "delete_cestrationale",
+                    # cestdocument
+                    "add_cestdocument",
+                    "view_cestdocument",
+                    "change_cestdocument",
+                    "delete_cestdocument",
                     # sdsstatusdetermination
                     "add_sdsstatusdetermination",
                     "view_sdsstatusdetermination",
@@ -68,6 +85,7 @@ class Command(BaseCommand):
                     "view_statementofwork",
                     "view_interimrequest",
                     "view_cestrationale",
+                    "view_cestdocument",
                     "view_sdsstatusdetermination",
                     # comment
                     "add_comment",

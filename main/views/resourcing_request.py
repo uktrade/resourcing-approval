@@ -8,6 +8,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from main.forms.forms import CommentForm, ResourcingRequestForm
 from main.models import Approval, Comment, ResourcingRequest
+from main.tasks import notify_approvers
 
 
 def get_approvals_context_data(user, resourcing_request):
@@ -119,8 +120,6 @@ class ResourcingRequestActionView(PermissionRequiredMixin, View):
 
         self.action(resourcing_request)
 
-        resourcing_request.save()
-
         return redirect(
             reverse("resourcing-request-detail", kwargs={"pk": resourcing_request.pk})
         )
@@ -131,8 +130,20 @@ class ResourcingRequestSendForApprovalView(ResourcingRequestActionView):
 
     def action(self, resourcing_request):
         resourcing_request.state = ResourcingRequest.State.AWAITING_APPROVALS
+        resourcing_request.save()
 
-        # TODO: Notify next person
+        notify_approvers.delay(
+            resourcing_request.pk,
+            self.request.build_absolute_uri(resourcing_request.get_absolute_url()),
+        )
+
+
+class ResourcingRequestAmendView(ResourcingRequestActionView):
+    permission_required = "main.change_resourcingrequest"
+
+    def action(self, resourcing_request):
+        resourcing_request.state = ResourcingRequest.State.AMENDING
+        resourcing_request.save()
 
 
 class ResourcingRequestAddApproval(ResourcingRequestActionView):
@@ -181,12 +192,16 @@ class ResourcingRequestAddApproval(ResourcingRequestActionView):
 
         is_approved = resourcing_request.get_is_approved()
 
-        # TODO: Notify next person
-
         if is_approved:
             resourcing_request.state = resourcing_request.State.APPROVED
 
-            # TODO: Notify about approval
+        resourcing_request.save()
+
+        notify_approvers.delay(
+            resourcing_request.pk,
+            self.request.build_absolute_uri(resourcing_request.get_absolute_url()),
+            approval.pk,
+        )
 
 
 class ResourcingRequestAddComment(PermissionRequiredMixin, CreateView):

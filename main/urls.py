@@ -2,6 +2,13 @@ from django.urls import path
 from django.urls.conf import include
 
 from main.views.dashboard import DashboardView, index
+from main.views.detail_views import (
+    CestRationaleDetailView,
+    InterimRequestDetailView,
+    JobDescriptionDetailView,
+    SdsStatusDeterminationDetailView,
+    StatementOfWorkDetailView,
+)
 from main.views.interim_request_views import (
     InterimRequestCreateView,
     InterimRequestUpdateView,
@@ -11,6 +18,7 @@ from main.views.interim_request_views import (
 from main.views.resourcing_request import (
     ResourcingRequestAddApproval,
     ResourcingRequestAddComment,
+    ResourcingRequestAmendView,
     ResourcingRequestCreateView,
     ResourcingRequestDeleteView,
     ResourcingRequestDetailView,
@@ -26,19 +34,14 @@ from main.views.statement_of_work_views import (
     StatementOfWorkUpdateView,
 )
 from main.views.supporting_forms import (
+    CestDocumentCreateView,
+    CestDocumentUpdateView,
     CestRationaleCreateView,
     CestRationaleUpdateView,
     JobDescriptionCreateView,
     JobDescriptionUpdateView,
     SdsStatusDeterminationCreateView,
     SdsStatusDeterminationUpdateView,
-)
-from main.views.detail_views import (
-    JobDescriptionDetailView,
-    InterimRequestDetailView,
-    CestRationaleDetailView,
-    SdsStatusDeterminationDetailView,
-    StatementOfWorkDetailView,
 )
 
 
@@ -67,6 +70,11 @@ request_urls = [
         "<int:pk>/send-for-approval",
         ResourcingRequestSendForApprovalView.as_view(),
         name="resourcing-request-send-for-approval",
+    ),
+    path(
+        "<int:pk>/amend",
+        ResourcingRequestAmendView.as_view(),
+        name="resourcing-request-amend",
     ),
     path(
         "<int:pk>/add-approval",
@@ -162,6 +170,12 @@ cest_rationale_urls = details_document_urls(
     "cest-rationale",
 )
 
+cest_document_urls = document_urls(
+    CestDocumentCreateView,
+    CestDocumentUpdateView,
+    "cest-document",
+)
+
 sds_status_determination_urls = details_document_urls(
     SdsStatusDeterminationDetailView,
     SdsStatusDeterminationCreateView,
@@ -182,6 +196,7 @@ urlpatterns = [
     path("statement-of-work-module/", include(statement_of_work__module_urls)),
     path("interim-request/", include(interim_request_urls)),
     path("cest-rationale/", include(cest_rationale_urls)),
+    path("cest-document/", include(cest_document_urls)),
     path("sds-status-determination/", include(sds_status_determination_urls)),
     path("htmx/load-directorates/", load_directorates, name="htmx-load-directorates"),
     path("htmx/load-costcentres/", load_costcentres, name="htmx-load-costcentres"),
