@@ -11,10 +11,10 @@
 
     {% object_as_list object exclude_list %}
 
-
+</dl>
     {% block children %}
     {% endblock %}
-</dl>
+
     <a class="govuk-button govuk-button--secondary mb-0"
        href="{% url 'resourcing-request-detail' object.resourcing_request_id %}">
         Back</a>

@@ -2,28 +2,25 @@
 {% load list_object %}
 
 {% block children %}
-<h2>Modules</h2>
            {% for module in my_modules %}
-               <fieldset style=width:960px;>
-               {% include 'main/partials/summary-row.html' with key="Module" value=module.completion_date %}
+               <dl class="govuk-summary-list">
+               {% include 'main/partials/summary-row.html' with key="Module" value=module.module_title %}
                {% include 'main/partials/summary-row.html' with key="Completion date" value=module.completion_date %}
-
-
+                </dl>
                {% for deliverable in module.get_deliverables %}
-
-
                      <details class="govuk-details" data-module="govuk-details">
                       <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
-                            {% include 'main/partials/summary-row.html' with key="Deliverable" value=deliverable.deliverable_title %}
+                            {{ deliverable.deliverable_title }}
                         </span>
                       </summary>
                       <div class="govuk-details__text">
+                          <dl class="govuk-summary-list">
                             {% object_as_list deliverable deliverable_exclude_list %}
+                          </dl>
                       </div>
                     </details>
               {% endfor %}
-            </fieldset>
            {% endfor %}
 {% endblock children %}
 

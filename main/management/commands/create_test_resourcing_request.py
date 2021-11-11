@@ -32,7 +32,7 @@ class Command(BaseCommand):
         ), "Command can only be ran in a dev environment"
 
         name = options["name"]
-        inside_ir35 = options["insideir35"]
+        inside_ir35 = options["insideir35"] == "True"
         resourcing_request = ResourcingRequest.objects.create(
             # Hiring Manager Helen
             requestor_id=2,
