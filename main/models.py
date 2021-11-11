@@ -371,7 +371,7 @@ class StatementOfWorkModule(models.Model):
         return self.module_count > 0
 
     @property
-    def get_deliverables(self) :
+    def get_deliverables(self):
         return self.deliverables.all()
 
     def __str__(self):

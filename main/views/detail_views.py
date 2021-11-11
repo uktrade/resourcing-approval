@@ -44,6 +44,3 @@ class StatementOfWorkDetailView(SupportingFormDetailView):
         exclude_list = ["id", "statement_of_work_module", "deliverable_title"]
         context["deliverable_exclude_list"] = exclude_list
         return context
-
-
-
