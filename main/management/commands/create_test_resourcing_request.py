@@ -12,6 +12,9 @@ from main.models import (
     JobDescription,
     ResourcingRequest,
     SdsStatusDetermination,
+    StatementOfWork,
+    StatementOfWorkModule,
+    StatementOfWorkModuleDeliverable,
 )
 
 
@@ -20,6 +23,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--name", default="John Smith")
+        parser.add_argument("--insideir35", default=True)
 
     def handle(self, *args, **options):
         assert settings.APP_ENV in (
@@ -28,25 +32,62 @@ class Command(BaseCommand):
         ), "Command can only be ran in a dev environment"
 
         name = options["name"]
-
+        inside_ir35 = options["insideir35"]
         resourcing_request = ResourcingRequest.objects.create(
             # Hiring Manager Helen
             requestor_id=2,
             name=name,
-            is_ir35=True,
+            is_ir35=inside_ir35,
             # Chief Rache
             chief_id=3,
         )
-
-        JobDescription.objects.create(
-            resourcing_request=resourcing_request,
-            title="Python Developer",
-            role_purpose=lorem_ipsum.paragraph(),
-            key_accountabilities=lorem_ipsum.paragraph(),
-            line_management_responsibility=lorem_ipsum.paragraph(),
-            personal_attributes_and_skills=lorem_ipsum.paragraph(),
-            essential_and_preferred_experience=lorem_ipsum.paragraph(),
-        )
+        if inside_ir35:
+            JobDescription.objects.create(
+                resourcing_request=resourcing_request,
+                title="Python Developer",
+                role_purpose=lorem_ipsum.paragraph(),
+                key_accountabilities=lorem_ipsum.paragraph(),
+                line_management_responsibility=lorem_ipsum.paragraph(),
+                personal_attributes_and_skills=lorem_ipsum.paragraph(),
+                essential_and_preferred_experience=lorem_ipsum.paragraph(),
+            )
+        else:
+            statement_of_work = StatementOfWork.objects.create (
+                resourcing_request = resourcing_request,
+                company_name = "Supplier company",
+                slot_code = "1234abcd",
+                is_nominated_worker = True,
+                hiring_manager_team_leader= "Mr Anthony Manager",
+                role="Testing",
+                project_description=lorem_ipsum.paragraph(),
+                group_id="1111AA",
+                directorate_id="11111A",
+                cost_centre_code_id="111113",
+                programme_code_id="1234",
+                start_date=datetime.date.today(),
+                end_date=datetime.date.today() + datetime.timedelta(days=30 * 6),
+                notice_period= lorem_ipsum.paragraph(),
+                fees = 2365,
+                exceptional_expenses=lorem_ipsum.paragraph(),
+                deliverable_notes=lorem_ipsum.paragraph(),
+            )
+            for i in range(0,3):
+                module = StatementOfWorkModule.objects.create(
+                    statement_of_work = statement_of_work,
+                    module_title = f"Project part {i}",
+                    completion_date= datetime.date.today() + datetime.timedelta(days=7 * i),
+                )
+                for j in range(0,4):
+                    StatementOfWorkModuleDeliverable.objects.create(
+                        statement_of_work_module=module,
+                        deliverable_title=f"Report part {j}",
+                        deliverable_description=lorem_ipsum.paragraph(),
+                        start_date=datetime.date.today(),
+                        end_date=datetime.date.today() + datetime.timedelta(
+                            days=30 * 6),
+                        monthly_fee= 654,
+                        payment_date = datetime.date.today()
+                    )
 
         InterimRequest.objects.create(
             resourcing_request=resourcing_request,
