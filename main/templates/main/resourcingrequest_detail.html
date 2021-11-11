@@ -52,7 +52,7 @@
         <dd class="govuk-summary-list__actions">
             {% if not object.is_ir35 %}
                 {% if perms.main.view_statementofwork and object.statement_of_work %}
-                    <a class="govuk-button govuk-button--secondary mb-0" href="#">View</a>
+                    <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'statement-of-work-detail' object.statement_of_work.pk %}">View</a>
                 {% endif %}
                 {% if perms.main.change_statementofwork and object.statement_of_work and object.can_update %}
                     <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'statement-of-work-update' object.statement_of_work.pk %}">Update</a>

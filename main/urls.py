@@ -7,6 +7,7 @@ from main.views.detail_views import (
     InterimRequestDetailView,
     JobDescriptionDetailView,
     SdsStatusDeterminationDetailView,
+    StatementOfWorkDetailView,
 )
 from main.views.interim_request_views import (
     InterimRequestCreateView,
@@ -132,7 +133,8 @@ job_description_urls = details_document_urls(
     "job-description",
 )
 
-statement_of_work_urls = document_urls(
+statement_of_work_urls = details_document_urls(
+    StatementOfWorkDetailView,
     StatementOfWorkCreateView,
     StatementOfWorkUpdateView,
     "statement-of-work",

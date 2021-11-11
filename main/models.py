@@ -370,6 +370,10 @@ class StatementOfWorkModule(models.Model):
         # Check that there is at least one deliverable defined,
         return self.module_count > 0
 
+    @property
+    def get_deliverables(self):
+        return self.deliverables.all()
+
     def __str__(self):
         return self.module_title
 
