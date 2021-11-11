@@ -19,10 +19,13 @@ from main.views.resourcing_request import (
     ResourcingRequestAddApproval,
     ResourcingRequestAddComment,
     ResourcingRequestAmendView,
+    ResourcingRequestClearApprovalView,
     ResourcingRequestCreateView,
     ResourcingRequestDeleteView,
     ResourcingRequestDetailView,
+    ResourcingRequestFinishAmendmentsReviewView,
     ResourcingRequestSendForApprovalView,
+    ResourcingRequestSendForReviewView,
     ResourcingRequestUpdateView,
 )
 from main.views.statement_of_work_views import (
@@ -75,6 +78,21 @@ request_urls = [
         "<int:pk>/amend",
         ResourcingRequestAmendView.as_view(),
         name="resourcing-request-amend",
+    ),
+    path(
+        "<int:pk>/send-for-review",
+        ResourcingRequestSendForReviewView.as_view(),
+        name="resourcing-request-send-for-review",
+    ),
+    path(
+        "<int:pk>/clear-approval",
+        ResourcingRequestClearApprovalView.as_view(),
+        name="resourcing-request-clear-approval",
+    ),
+    path(
+        "<int:pk>/finish-amendments-review",
+        ResourcingRequestFinishAmendmentsReviewView.as_view(),
+        name="resourcing-request-finish-amendments-review",
     ),
     path(
         "<int:pk>/add-approval",

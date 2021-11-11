@@ -114,7 +114,7 @@ class ResourcingRequest(models.Model):
         if self.is_ir35:
             yield self.job_description
         else:
-            yield self.statement_of_work
+            yield self.statement_of_work and self.statement_of_work.is_statement_of_work_valid
 
         yield from (
             self.interim_request,
@@ -128,7 +128,8 @@ class ResourcingRequest(models.Model):
         return all(self.required_supporting_forms)
 
     @property
-    def can_send_for_approval(self):
+    def can_send_for_approval(self) -> bool:
+        """Return whether we can send this resourcing request for approval."""
         return self.is_complete and self.state == self.State.DRAFT
 
     @property
@@ -138,8 +139,26 @@ class ResourcingRequest(models.Model):
 
     @property
     def can_amend(self) -> bool:
-        """Retruen whether we can amend this resourcing request."""
-        return self.state == self.State.AWAITING_APPROVALS
+        """Return whether we can amend this resourcing request."""
+        return self.state in (
+            self.State.AWAITING_APPROVALS,
+            self.State.AMENDMENTS_REVIEW,
+        )
+
+    @property
+    def can_send_for_review(self) -> bool:
+        """Return whether we can send this resourcing request for review."""
+        return self.state == self.State.AMENDING
+
+    @property
+    def can_clear_approval(self) -> bool:
+        """Return whether an approval can be cleared."""
+        return self.state == self.State.AMENDMENTS_REVIEW
+
+    @property
+    def can_finish_amendments_review(self) -> bool:
+        """Return whether we can finish the amendments review"""
+        return self.state == self.State.AMENDMENTS_REVIEW
 
     @property
     def can_approve(self):
@@ -368,7 +387,7 @@ class StatementOfWorkModule(models.Model):
     @property
     def is_module_valid(self) -> bool:
         # Check that there is at least one deliverable defined,
-        return self.module_count > 0
+        return self.deliverable_count > 0
 
     @property
     def get_deliverables(self):
