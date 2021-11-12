@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model, login, logout
 from django.core.exceptions import SuspiciousOperation, ValidationError
 from django.core.management import call_command
-from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 

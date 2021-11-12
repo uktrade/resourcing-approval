@@ -7,7 +7,7 @@ from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from main.constants import ApproverGroup, APPROVAL_TYPE_TO_GROUP
+from main.constants import APPROVAL_TYPE_TO_GROUP, ApproverGroup
 from main.forms.forms import CommentForm, ResourcingRequestForm
 from main.models import Approval, Comment, ResourcingRequest
 from main.tasks import notify_approvers, send_group_notification, send_notification

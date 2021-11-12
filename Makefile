@@ -7,7 +7,7 @@ up:
 down:
 	docker-compose down
 
-web = docker-compose run --rm web
+web = docker-compose run --rm --no-deps web
 
 bash:
 	$(web) /bin/bash
@@ -51,8 +51,13 @@ check-black:
 check-isort:
 	$(web) isort --check .
 
-flake8:
+check-flake8:
 	$(web) flake8 $(file)
+
+check-migrations:
+	$(web) python manage.py makemigrations --check
+
+check: check-black check-isort check-flake8 check-migrations
 
 collectstatic:
 	$(web) python manage.py collectstatic

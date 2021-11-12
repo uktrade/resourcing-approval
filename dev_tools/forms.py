@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 
 from main.models import TRUE_FALSE_CHOICES
 
+
 User = get_user_model()
 
 
