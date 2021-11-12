@@ -24,6 +24,7 @@ from main.views.resourcing_request import (
     ResourcingRequestDeleteView,
     ResourcingRequestDetailView,
     ResourcingRequestFinishAmendmentsReviewView,
+    ResourcingRequestListView,
     ResourcingRequestSendForApprovalView,
     ResourcingRequestSendForReviewView,
     ResourcingRequestUpdateView,
@@ -49,6 +50,11 @@ from main.views.supporting_forms import (
 
 
 request_urls = [
+    path(
+        "",
+        ResourcingRequestListView.as_view(),
+        name="resourcing-request-list",
+    ),
     path(
         "create/",
         ResourcingRequestCreateView.as_view(),

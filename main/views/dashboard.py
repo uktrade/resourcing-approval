@@ -21,8 +21,10 @@ class DashboardView(TemplateView):
         context["your_resourcing_requests"] = user.resourcing_requests.all()
         context["awaiting_your_approval"] = self.get_awaiting_approval_context_data()
 
-        if user.is_superuser:
-            context["all_resourcing_requests"] = ResourcingRequest.objects.all()
+        if user.has_perm("main.can_give_busops_approval"):
+            context["amended_resourcing_requests"] = ResourcingRequest.objects.filter(
+                state=ResourcingRequest.State.AMENDMENTS_REVIEW
+            )
 
         return context
 
@@ -36,8 +38,11 @@ class DashboardView(TemplateView):
                 | Q(**{f"{approval_type}_approval__approved": False})
             )
 
+        if not approval_filter:
+            return
+
         query = ResourcingRequest.objects.filter(
-            Q(state=ResourcingRequest.State.AWAITING_APPROVALS) & approval_filter & Q()
+            Q(state=ResourcingRequest.State.AWAITING_APPROVALS) & approval_filter
         ).distinct()
 
         return query
