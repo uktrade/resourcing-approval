@@ -116,12 +116,13 @@ class Command(BaseCommand):
         )
 
         busops_group.permissions.set(
-            [
-                Permission.objects.get(
-                    codename="can_give_busops_approval",
-                    content_type__app_label="main",
-                )
-            ]
+            Permission.objects.filter(
+                codename__in=[
+                    "can_give_busops_approval",
+                    "view_all_resourcingrequests",
+                ],
+                content_type__app_label="main",
+            )
         )
 
         hrbp_group.permissions.set(

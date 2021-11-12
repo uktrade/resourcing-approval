@@ -33,6 +33,9 @@ class ResourcingRequestQuerySet(models.QuerySet):
 
 class ResourcingRequest(models.Model):
     class Meta:
+        permissions = (
+            ("view_all_resourcingrequests", "Can view all resourcing requests"),
+        )
         indexes = [models.Index(name="state_index", fields=["state"])]
 
     class State(models.IntegerChoices):

@@ -6,6 +6,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.list import ListView
 
 from main.constants import APPROVAL_TYPE_TO_GROUP, ApproverGroup
 from main.forms.forms import CommentForm, ResourcingRequestForm
@@ -109,6 +110,11 @@ class ResourcingRequestDeleteView(
     success_url = reverse_lazy("dashboard")
     permission_required = "main.delete_resourcingrequest"
     template_name = "main/form.html"
+
+
+class ResourcingRequestListView(PermissionRequiredMixin, ListView):
+    model = ResourcingRequest
+    permission_required = "main.view_all_resourcingrequests"
 
 
 class ResourcingRequestActionView(PermissionRequiredMixin, View):

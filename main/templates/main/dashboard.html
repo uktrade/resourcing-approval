@@ -9,63 +9,22 @@
     <a class="govuk-button" href="{% url 'resourcing-request-create' %}">Create resourcing request</a>
 {% endif %}
 
-<h1 class="govuk-heading-m">Your resourcing requests</h1>
+{% if your_resourcing_requests %}
+    <h1 class="govuk-heading-m">Your resourcing requests</h1>
 
-<table class="govuk-table">
-    <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th class="govuk-table__header">Name</th>
-            <th class="govuk-table__header">Status</th>
-        </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-        {% for object in your_resourcing_requests %}
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell"><a href="{% url 'resourcing-request-detail' object.pk %}">{{ object }}</a></td>
-                <td class="govuk-table__cell">{{ object.get_state_display }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    {% include 'main/partials/resourcing_request_table.html' with resourcing_requests=your_resourcing_requests %}
+{% endif %}
 
-<h1 class="govuk-heading-m">Awaiting your approval</h1>
+{% if amended_resourcing_requests %}
+    <h1 class="govuk-heading-m">Amended and ready for review</h1>
 
-<table class="govuk-table">
-    <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th class="govuk-table__header">Name</th>
-            <th class="govuk-table__header">Status</th>
-        </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-        {% for object in awaiting_your_approval %}
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell"><a href="{% url 'resourcing-request-detail' object.pk %}">{{ object }}</a></td>
-                <td class="govuk-table__cell">{{ object.get_state_display }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    {% include 'main/partials/resourcing_request_table.html' with resourcing_requests=amended_resourcing_requests %}
+{% endif %}
 
-{% if all_resourcing_requests %}
-    <h1 class="govuk-heading-m">All resourcing requests</h1>
+{% if awaiting_your_approval %}
+    <h1 class="govuk-heading-m">Awaiting your approval</h1>
 
-    <table class="govuk-table">
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th class="govuk-table__header">Name</th>
-                <th class="govuk-table__header">Status</th>
-            </tr>
-        </thead>
-        <tbody class="govuk-table__body">
-            {% for object in all_resourcing_requests %}
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell"><a href="{% url 'resourcing-request-detail' object.pk %}">{{ object }}</a></td>
-                    <td class="govuk-table__cell">{{ object.get_state_display }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% include 'main/partials/resourcing_request_table.html' with resourcing_requests=awaiting_your_approval %}
 {% endif %}
 
 {% endblock %}

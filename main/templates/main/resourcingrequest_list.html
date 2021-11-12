@@ -1,19 +1,9 @@
 {% extends 'main/base.html' %}
 
-{% block title %}Approvals{% endblock %}
+{% block title %}Requests{% endblock %}
 
 {% block content %}
-<h1 class="govuk-heading-l">Approvals</h1>
+<h1 class="govuk-heading-l">Requests</h1>
 
-{% if perms.main.add_resourcingrequest %}
-    <a class="govuk-button" href="{% url 'approval-create' %}">Create approval</a>
-{% endif %}
-
-{% for approval in approvals %}
-    <div>
-        <h2 class="govuk-heading-m">{{ approval.name }}</h2>
-        <p class="govuk-body">{{ approval.get_state_display }}</p>
-        <a class="govuk-button govuk-button--secondary" href="{{ approval.get_absolute_url }}">View approval</a>
-    </div>
-{% endfor %}
+{% include 'main/partials/resourcing_request_table.html' with resourcing_requests=object_list %}
 {% endblock %}
