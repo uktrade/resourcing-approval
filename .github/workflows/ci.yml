@@ -1,0 +1,23 @@
+name: Resourcing Approval CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Create a .env file
+        run: cp .env.example .env
+
+      - name: Build the web image
+        run: docker-compose build web
+
+      - name: Run check
+        run: make check

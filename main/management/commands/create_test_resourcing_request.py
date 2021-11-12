@@ -75,8 +75,7 @@ class Command(BaseCommand):
             module = StatementOfWorkModule.objects.create(
                 statement_of_work=statement_of_work,
                 module_title=f"Project part {i}",
-                completion_date=datetime.date.today()
-                + datetime.timedelta(days=7 * i),
+                completion_date=datetime.date.today() + datetime.timedelta(days=7 * i),
             )
             for j in range(0, 4):
                 StatementOfWorkModuleDeliverable.objects.create(
@@ -84,8 +83,7 @@ class Command(BaseCommand):
                     deliverable_title=f"Report part {j}",
                     deliverable_description=lorem_ipsum.paragraph(),
                     start_date=datetime.date.today(),
-                    end_date=datetime.date.today()
-                    + datetime.timedelta(days=30 * 6),
+                    end_date=datetime.date.today() + datetime.timedelta(days=30 * 6),
                     monthly_fee=654,
                     payment_date=datetime.date.today(),
                 )
