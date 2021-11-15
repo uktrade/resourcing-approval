@@ -180,7 +180,12 @@
 {% endif %}
 
 {% if perms.main.delete_resourcingrequest %}
-    <form class="inline" action="{% url 'resourcing-request-delete' object.pk %}" method="post">
+    <form
+        class="inline"
+        action="{% url 'resourcing-request-delete' object.pk %}"
+        method="post"
+        data-confirm="Are you sure you want to delete this resourcing request?"
+    >
         {% csrf_token %}
         <button class="govuk-button govuk-button--warning">Delete</button>
     </form>
@@ -272,4 +277,22 @@
         <button class="govuk-button">Add comment</button>
     </form>
 {% endif %}
+
+<script>
+function handleFormConfirmSubmit(event) {
+    event.preventDefault();
+
+    form = event.target;
+
+    if (confirm(form.dataset.confirm)) {
+        form.submit();
+    } else {
+        return;
+    }
+}
+
+document.querySelectorAll("form[data-confirm]").forEach(function (form) {
+    form.addEventListener('submit', handleFormConfirmSubmit);
+})
+</script>
 {% endblock %}
