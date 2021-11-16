@@ -29,7 +29,16 @@ class FormWithStartEndDates(forms.ModelForm):
 class ResourcingRequestForm(forms.ModelForm):
     class Meta:
         model = ResourcingRequest
-        fields = ["requestor", "name", "is_ir35", "chief"]
+        fields = [
+            "requestor",
+            "full_name",
+            "job_title",
+            "project_name",
+            "start_date",
+            "end_date",
+            "is_ir35",
+            "chief",
+        ]
         widgets = {
             "requestor": forms.HiddenInput,
         }
