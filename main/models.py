@@ -51,12 +51,17 @@ class ResourcingRequest(models.Model):
 
     state = models.SmallIntegerField(choices=State.choices, default=State.DRAFT)
 
-    name = models.CharField(max_length=255)
+    full_name = models.CharField(max_length=255)
+    job_title = models.CharField(max_length=255)
+    project_name = models.CharField(max_length=255)
+    start_date = models.DateField()
+    end_date = models.DateField()
     is_ir35 = models.BooleanField(
         "Is the role inside IR35?", null=True, choices=TRUE_FALSE_CHOICES
     )
     chief = models.ForeignKey("user.User", models.CASCADE, related_name="+")
 
+    # Approvals
     head_of_profession_approval = models.OneToOneField(
         "Approval",
         models.SET_NULL,
@@ -82,7 +87,7 @@ class ResourcingRequest(models.Model):
     objects = ResourcingRequestQuerySet.as_manager()
 
     def __str__(self):
-        return self.name
+        return self.full_name
 
     def get_absolute_url(self):
         return reverse("resourcing-request-detail", kwargs={"pk": self.pk})

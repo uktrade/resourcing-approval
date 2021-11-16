@@ -1,15 +1,19 @@
 {% extends 'main/base.html' %}
 
-{% block title %}{{ object.name }}{% endblock %}
+{% block title %}{{ object.full_name }}{% endblock %}
 
 {% block content %}
-<h1 class="govuk-heading-l">{{ object.name }}</h1>
+<h1 class="govuk-heading-l">{{ object.full_name }}</h1>
 
 <dl class="govuk-summary-list">
-    {% include 'main/partials/summary-row.html' with key='Requestor' value=object.requestor %}
-    {% include 'main/partials/summary-row.html' with key='Status' value=object.get_state_display %}
+    {% include 'main/partials/summary-row.html' with key='Job title' value=object.job_title %}
+    {% include 'main/partials/summary-row.html' with key='Project name' value=object.project_name %}
+    {% include 'main/partials/summary-row.html' with key='Start date' value=object.start_date %}
+    {% include 'main/partials/summary-row.html' with key='End date' value=object.end_date %}
     {% include 'main/partials/summary-row.html' with key='Is IR35' value=object.get_is_ir35_display %}
     {% include 'main/partials/summary-row.html' with key='Chief' value=object.chief %}
+    {% include 'main/partials/summary-row.html' with key='Requestor' value=object.requestor %}
+    {% include 'main/partials/summary-row.html' with key='Status' value=object.get_state_display %}
 
     <!-- Job description -->
     <div class="govuk-summary-list__row">
