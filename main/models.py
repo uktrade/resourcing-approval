@@ -231,8 +231,8 @@ class Approval(models.Model):
 
     class Type(models.TextChoices):
         HEAD_OF_PROFESSION = "head_of_profession", "Head of Profession"
-        BUSOPS = "busops", "BusOps"
         CHIEF = "chief", "Chief"
+        BUSOPS = "busops", "BusOps"
         HRBP = "hrbp", "HRBP"
         FINANCE = "finance", "Finance"
         COMMERCIAL = "commercial", "Commercial"
