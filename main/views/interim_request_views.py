@@ -1,24 +1,34 @@
 from django.shortcuts import render
 
 from chartofaccount.models import CostCentre, Directorate
-from main.forms.interim_request_form import InterimRequestForm
-from main.models import InterimRequest
+from main.forms.interim_request_form import InterimRequestNewForm
+from main.models import InterimRequest, ResourcingRequest
 from main.views.supporting_forms import (
     SupportingFormCreateView,
     SupportingFormUpdateView,
 )
 
 
-class InterimRequestCreateView(SupportingFormCreateView):
+RESOURCING_REQUEST_TYPE_TO_FORM = {
+    ResourcingRequest.Type.NEW: InterimRequestNewForm,
+}
+
+
+class InterimRequestViewMixin:
+    def get_form_class(self):
+        resourcing_request = self.get_resourcing_request()
+
+        return RESOURCING_REQUEST_TYPE_TO_FORM[resourcing_request.type]
+
+
+class InterimRequestCreateView(InterimRequestViewMixin, SupportingFormCreateView):
     model = InterimRequest
-    form_class = InterimRequestForm
     permission_required = "main.add_interimrequest"
     template_name = "main/interim_request.html"
 
 
-class InterimRequestUpdateView(SupportingFormUpdateView):
+class InterimRequestUpdateView(InterimRequestViewMixin, SupportingFormUpdateView):
     model = InterimRequest
-    form_class = InterimRequestForm
     permission_required = "main.change_interimrequest"
     template_name = "main/interim_request.html"
 

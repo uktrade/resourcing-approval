@@ -31,6 +31,7 @@ class ResourcingRequestForm(forms.ModelForm):
         model = ResourcingRequest
         fields = [
             "requestor",
+            "type",
             "full_name",
             "job_title",
             "project_name",

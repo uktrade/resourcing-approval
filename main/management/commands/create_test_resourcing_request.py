@@ -36,6 +36,7 @@ class Command(BaseCommand):
         resourcing_request = ResourcingRequest.objects.create(
             # Hiring Manager Helen
             requestor_id=2,
+            type=ResourcingRequest.Type.NEW,
             full_name=name,
             job_title="Python Developer",
             project_name="JML",

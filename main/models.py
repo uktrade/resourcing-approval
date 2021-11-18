@@ -45,12 +45,18 @@ class ResourcingRequest(models.Model):
         AMENDMENTS_REVIEW = 3, "Amendments review"
         APPROVED = 4, "Approved"
 
+    class Type(models.IntegerChoices):
+        NEW = 1, "New"
+        EXTENSION = 2, "Extension"
+        REPLACEMENT = 3, "Replacement"
+
     requestor = models.ForeignKey(
         "user.User", models.CASCADE, related_name="resourcing_requests"
     )
 
     state = models.SmallIntegerField(choices=State.choices, default=State.DRAFT)
 
+    type = models.SmallIntegerField(choices=Type.choices, default=Type.NEW)
     full_name = models.CharField(max_length=255)
     job_title = models.CharField(max_length=255)
     project_name = models.CharField(max_length=255)
