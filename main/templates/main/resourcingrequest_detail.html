@@ -6,6 +6,7 @@
 <h1 class="govuk-heading-l">{{ object.full_name }}</h1>
 
 <dl class="govuk-summary-list">
+    {% include 'main/partials/summary-row.html' with key='Type' value=object.get_type_display %}
     {% include 'main/partials/summary-row.html' with key='Job title' value=object.job_title %}
     {% include 'main/partials/summary-row.html' with key='Project name' value=object.project_name %}
     {% include 'main/partials/summary-row.html' with key='Start date' value=object.start_date %}

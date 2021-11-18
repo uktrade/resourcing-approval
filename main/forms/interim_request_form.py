@@ -6,7 +6,7 @@ from main.models import InterimRequest
 from main.utils import syncronise_cost_centre_dropdowns
 
 
-class InterimRequestForm(FormWithStartEndDates):
+class InterimRequestNewForm(FormWithStartEndDates):
     date_error_msg = "Anticipated end date cannot be before anticipated start date"
 
     class Meta:

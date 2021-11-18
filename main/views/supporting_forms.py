@@ -12,6 +12,7 @@ from main.models import (
     CestDocument,
     CestRationale,
     JobDescription,
+    ResourcingRequest,
     SdsStatusDetermination,
 )
 
@@ -28,6 +29,11 @@ class SupportingFormCreateView(PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         return self.object.resourcing_request.get_absolute_url()
+
+    def get_resourcing_request(self):
+        return ResourcingRequest.objects.get(
+            pk=self.request.GET.get("resourcing_request")
+        )
 
 
 class SupportingFormUpdateView(

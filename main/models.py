@@ -45,12 +45,18 @@ class ResourcingRequest(models.Model):
         AMENDMENTS_REVIEW = 3, "Amendments review"
         APPROVED = 4, "Approved"
 
+    class Type(models.IntegerChoices):
+        NEW = 1, "New"
+        EXTENSION = 2, "Extension"
+        REPLACEMENT = 3, "Replacement"
+
     requestor = models.ForeignKey(
         "user.User", models.CASCADE, related_name="resourcing_requests"
     )
 
     state = models.SmallIntegerField(choices=State.choices, default=State.DRAFT)
 
+    type = models.SmallIntegerField(choices=Type.choices, default=Type.NEW)
     full_name = models.CharField(max_length=255)
     job_title = models.CharField(max_length=255)
     project_name = models.CharField(max_length=255)
@@ -458,14 +464,16 @@ class InterimRequest(models.Model):
     project_name_role_title = models.CharField(
         max_length=255, verbose_name="Project name/ Title of the Role"
     )
-    new_requirement = models.BooleanField(
-        verbose_name="New", choices=TRUE_FALSE_CHOICES
-    )
     name_of_contractor = models.CharField(
         max_length=255,
         blank=True,
         null=True,
         verbose_name="If Nominated Worker - please provide Name of the contractor",
+    )
+    contractor_type = models.CharField(
+        max_length=50,
+        choices=CONTRACTOR_TYPE_CHOICES,
+        verbose_name="Category of Interim",
     )
     uk_based = models.BooleanField(
         default=True, verbose_name="UK based", choices=TRUE_FALSE_CHOICES
@@ -475,15 +483,20 @@ class InterimRequest(models.Model):
     )
     start_date = models.DateField(verbose_name="Anticipated Start Date")
     end_date = models.DateField(verbose_name="Anticipated End Date")
+    supplier = models.CharField(max_length=20, choices=Supplier.choices)
+
+    # New only fields
+
+    # Extension only fields
+    extension_number = models.IntegerField(null=True)
+    overall_assignment_duration = models.SmallIntegerField(null=True)
+
+    # Replacement only fields
+
     type_of_security_clearance = models.CharField(
         max_length=50,
         choices=SECURITY_CLEARANCE_CHOICES,
         verbose_name="Level of Security clearance required",
-    )
-    contractor_type = models.CharField(
-        max_length=50,
-        choices=CONTRACTOR_TYPE_CHOICES,
-        verbose_name="Category of Interim",
     )
     part_b_business_case = models.TextField(
         verbose_name="Business Case",
@@ -496,25 +509,6 @@ class InterimRequest(models.Model):
     part_b_main_reason = models.TextField(
         verbose_name="",
         help_text="What are the main reasons why this role has not been filled by a substantive Civil Servant. Please detail the strategic workforce plan for this role after the assignment end date:",
-    )
-
-    group = models.ForeignKey(
-        DepartmentalGroup,
-        on_delete=models.CASCADE,
-        related_name="+",
-    )
-
-    directorate = models.ForeignKey(
-        Directorate,
-        on_delete=models.CASCADE,
-        related_name="+",
-    )
-
-    cost_centre_code = models.ForeignKey(
-        CostCentre,
-        on_delete=models.CASCADE,
-        related_name="+",
-        verbose_name="Cost Centre/Team",
     )
 
     slot_codes = models.CharField(max_length=255)
