@@ -8,6 +8,7 @@ from django.utils import lorem_ipsum
 from main.models import (
     CestDocument,
     CestRationale,
+    FinancialInformation,
     InterimRequest,
     JobDescription,
     ResourcingRequest,
@@ -33,6 +34,7 @@ class Command(BaseCommand):
 
         name = options["name"]
         inside_ir35 = options["insideir35"] == "True"
+
         resourcing_request = ResourcingRequest.objects.create(
             # Hiring Manager Helen
             requestor_id=2,
@@ -46,6 +48,27 @@ class Command(BaseCommand):
             # Chief Rache
             chief_id=3,
         )
+
+        financial_information = FinancialInformation(
+            resourcing_request=resourcing_request,
+            # ID's are taken from the test-chartofaccount.json fixture.
+            group_id="1111AA",
+            directorate_id="11111A",
+            cost_centre_code_id="111113",
+            programme_code_id="1111",
+            area_of_work=FinancialInformation.AreaOfWork.INVESTMENT,
+            total_budget=500_000,
+            timesheet_and_expenses_validator="Mr Anthony Manager",
+        )
+
+        if inside_ir35:
+            financial_information.min_day_rate = 650
+            financial_information.max_day_rate = 750
+            financial_information.days_required = 120
+        else:
+            financial_information.project_fees = 100_000
+
+        financial_information.save()
 
         JobDescription.objects.create(
             resourcing_request=resourcing_request,
@@ -95,22 +118,13 @@ class Command(BaseCommand):
 
         InterimRequest.objects.create(
             resourcing_request=resourcing_request,
-            project_name_role_title="Testing",
-            new_requirement=True,
-            name_of_contractor=name,
             uk_based=True,
             overseas_country=None,
-            start_date=datetime.date.today(),
-            end_date=datetime.date.today() + datetime.timedelta(days=30 * 6),
             type_of_security_clearance="sc",
             contractor_type="generalist",
             part_b_business_case=lorem_ipsum.paragraph(),
             part_b_impact=lorem_ipsum.paragraph(),
             part_b_main_reason=lorem_ipsum.paragraph(),
-            # ID's are taken from the test-chartofaccount.json fixture.
-            group_id="1111AA",
-            directorate_id="11111A",
-            cost_centre_code_id="111113",
             slot_codes="1234abcd",
         )
 

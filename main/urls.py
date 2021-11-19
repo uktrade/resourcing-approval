@@ -42,6 +42,9 @@ from main.views.supporting_forms import (
     CestDocumentUpdateView,
     CestRationaleCreateView,
     CestRationaleUpdateView,
+    FinancialInformationCreateView,
+    FinancialInformationDetailView,
+    FinancialInformationUpdateView,
     JobDescriptionCreateView,
     JobDescriptionUpdateView,
     SdsStatusDeterminationCreateView,
@@ -150,6 +153,14 @@ def details_document_urls(
     ]
 
 
+financial_information_urls = details_document_urls(
+    FinancialInformationDetailView,
+    FinancialInformationCreateView,
+    FinancialInformationUpdateView,
+    "financial-information",
+)
+
+
 job_description_urls = details_document_urls(
     JobDescriptionDetailView,
     JobDescriptionCreateView,
@@ -211,6 +222,7 @@ urlpatterns = [
     path("", index, name="index"),
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
     path("resourcing-request/", include(request_urls)),
+    path("financial-information/", include(financial_information_urls)),
     path("job-description/", include(job_description_urls)),
     path("statement-of-work/", include(statement_of_work_urls)),
     path(

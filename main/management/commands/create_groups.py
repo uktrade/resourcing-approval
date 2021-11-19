@@ -32,6 +32,11 @@ class Command(BaseCommand):
         hiring_manager_group.permissions.set(
             Permission.objects.filter(
                 codename__in=[
+                    # financialinformation
+                    "add_financialinformation",
+                    "view_financialinformation",
+                    "change_financialinformation",
+                    "delete_financialinformation",
                     # resourcingrequest
                     "add_resourcingrequest",
                     "view_resourcingrequest",
@@ -80,6 +85,7 @@ class Command(BaseCommand):
         approver_group.permissions.set(
             Permission.objects.filter(
                 codename__in=[
+                    "view_financialinformation",
                     "view_resourcingrequest",
                     "view_jobdescription",
                     "view_statementofwork",

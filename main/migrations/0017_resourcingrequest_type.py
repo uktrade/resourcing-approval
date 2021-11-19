@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0016_alter_approval_type'),
+        ("main", "0016_alter_approval_type"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='resourcingrequest',
-            name='type',
-            field=models.SmallIntegerField(choices=[(1, 'New'), (2, 'Extension'), (3, 'Replacement')], default=1),
+            model_name="resourcingrequest",
+            name="type",
+            field=models.SmallIntegerField(
+                choices=[(1, "New"), (2, "Extension"), (3, "Replacement")], default=1
+            ),
         ),
     ]
