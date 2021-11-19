@@ -5,12 +5,14 @@ from django.views.generic.edit import CreateView, UpdateView
 from main.forms.forms import (
     CestDocumentForm,
     CestRationaleForm,
+    FinancialInformationForm,
     JobDescriptionForm,
     SdsStatusDeterminationForm,
 )
 from main.models import (
     CestDocument,
     CestRationale,
+    FinancialInformation,
     JobDescription,
     ResourcingRequest,
     SdsStatusDetermination,
@@ -60,6 +62,24 @@ class SupportingFormDetailView(PermissionRequiredMixin, DetailView):
         context["detail_title"] = self.title
         context["exclude_list"] = self.exclude_list
         return context
+
+
+class FinancialInformationCreateView(SupportingFormCreateView):
+    model = FinancialInformation
+    form_class = FinancialInformationForm
+    permission_required = "main.add_financialinformation"
+
+
+class FinancialInformationDetailView(SupportingFormDetailView):
+    model = FinancialInformation
+    permission_required = "main.view_financialinformation"
+    title = "Financial information"
+
+
+class FinancialInformationUpdateView(SupportingFormUpdateView):
+    model = FinancialInformation
+    form_class = FinancialInformationForm
+    permission_required = "main.change_financialinformation"
 
 
 class JobDescriptionCreateView(SupportingFormCreateView):

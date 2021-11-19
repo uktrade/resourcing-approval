@@ -16,6 +16,26 @@
     {% include 'main/partials/summary-row.html' with key='Requestor' value=object.requestor %}
     {% include 'main/partials/summary-row.html' with key='Status' value=object.get_state_display %}
 
+    <!-- Financial information -->
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Financial information
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ object.financial_information|default:'No financial information' }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            {% if perms.main.view_financialinformation and object.financial_information %}
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'financial-information-detail' object.financial_information.pk %}">View</a>
+            {% endif %}
+            {% if perms.main.change_financialinformation and object.financial_information and object.can_update %}
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'financial-information-update' object.financial_information.pk %}">Update</a>
+            {% elif perms.main.add_financialinformation and not object.financial_information %}
+                <a class="govuk-button govuk-button mb-0" href="{% url 'financial-information-create' %}?resourcing_request={{ object.pk }}">Create</a>
+            {% endif %}
+        </dd>
+    </div>
+
     <!-- Job description -->
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">

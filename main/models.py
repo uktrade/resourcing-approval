@@ -125,6 +125,8 @@ class ResourcingRequest(models.Model):
 
     @property
     def required_supporting_forms(self):
+        yield self.financial_information
+
         if self.is_ir35:
             yield self.job_description
         else:
@@ -300,6 +302,66 @@ class JobDescription(models.Model):
         return self.title
 
 
+class FinancialInformation(models.Model):
+    class AreaOfWork(models.TextChoices):
+        INVESTMENT = "investment", "Investment"
+        TRADE = "trade", "Trade"
+        DDAT = "ddat", "DDaT"
+        CORPORATE = "corporate", "Corporate"
+
+    resourcing_request = models.OneToOneField(
+        "ResourcingRequest",
+        models.CASCADE,
+        related_name="financial_information",
+    )
+
+    group = models.ForeignKey(
+        DepartmentalGroup,
+        on_delete=models.PROTECT,
+        related_name="+",
+    )
+    directorate = models.ForeignKey(
+        Directorate,
+        on_delete=models.PROTECT,
+        related_name="+",
+    )
+    cost_centre_code = models.ForeignKey(
+        CostCentre,
+        models.PROTECT,
+        verbose_name="Cost Centre/Team",
+        related_name="+",
+    )
+    programme_code = models.ForeignKey(
+        ProgrammeCode,
+        models.PROTECT,
+        related_name="+",
+    )
+    area_of_work = models.CharField(
+        "Area of work for VAT reclaim", max_length=255, choices=AreaOfWork.choices
+    )
+    total_budget = models.IntegerField(
+        "Total Budget, including sourcing fees, expenses and interim labour cost"
+    )
+    timesheet_and_expenses_validator = models.CharField(
+        "Name of the Timesheet & Expenses Validator", max_length=255
+    )
+    min_day_rate = models.IntegerField(
+        "Minimum anticipated day rate", null=True, blank=True
+    )
+    max_day_rate = models.IntegerField(
+        "Maximum anticipated day rate", null=True, blank=True
+    )
+    days_required = models.IntegerField(
+        "Total number of days required", null=True, blank=True
+    )
+    project_fees = models.IntegerField(
+        "Total project fees (exclude VAT)", null=True, blank=True
+    )
+
+    def __str__(self) -> str:
+        return "Financial information"
+
+
 class StatementOfWork(models.Model):
     resourcing_request = models.OneToOneField(
         "ResourcingRequest",
@@ -461,26 +523,12 @@ class InterimRequest(models.Model):
         (SECURITY_CLEARANCE_CTC, "CTC"),
     ]
 
-    project_name_role_title = models.CharField(
-        max_length=255, verbose_name="Project name/ Title of the Role"
-    )
-    new_requirement = models.BooleanField(
-        verbose_name="New", choices=TRUE_FALSE_CHOICES
-    )
-    name_of_contractor = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
-        verbose_name="If Nominated Worker - please provide Name of the contractor",
-    )
     uk_based = models.BooleanField(
         default=True, verbose_name="UK based", choices=TRUE_FALSE_CHOICES
     )
     overseas_country = models.CharField(
         max_length=255, blank=True, null=True, verbose_name="if Overseas which Country"
     )
-    start_date = models.DateField(verbose_name="Anticipated Start Date")
-    end_date = models.DateField(verbose_name="Anticipated End Date")
     type_of_security_clearance = models.CharField(
         max_length=50,
         choices=SECURITY_CLEARANCE_CHOICES,
@@ -503,26 +551,6 @@ class InterimRequest(models.Model):
         verbose_name="",
         help_text="What are the main reasons why this role has not been filled by a substantive Civil Servant. Please detail the strategic workforce plan for this role after the assignment end date:",
     )
-
-    group = models.ForeignKey(
-        DepartmentalGroup,
-        on_delete=models.CASCADE,
-        related_name="+",
-    )
-
-    directorate = models.ForeignKey(
-        Directorate,
-        on_delete=models.CASCADE,
-        related_name="+",
-    )
-
-    cost_centre_code = models.ForeignKey(
-        CostCentre,
-        on_delete=models.CASCADE,
-        related_name="+",
-        verbose_name="Cost Centre/Team",
-    )
-
     slot_codes = models.CharField(max_length=255)
 
     def __str__(self):

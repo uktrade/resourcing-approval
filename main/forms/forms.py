@@ -1,13 +1,16 @@
 from django import forms
+from django.urls import reverse_lazy
 
 from main.models import (
     CestDocument,
     CestRationale,
     Comment,
+    FinancialInformation,
     JobDescription,
     ResourcingRequest,
     SdsStatusDetermination,
 )
+from main.utils import syncronise_cost_centre_dropdowns
 
 
 class FormWithStartEndDates(forms.ModelForm):
@@ -65,6 +68,58 @@ class CommentForm(forms.ModelForm):
         self.fields["resourcing_request"].disabled = True
         self.fields["user"].disabled = True
         self.fields["text"].widget.attrs.update({"rows": 5})
+
+
+class FinancialInformationForm(forms.ModelForm):
+    class Meta:
+        model = FinancialInformation
+        fields = "__all__"
+        widgets = {
+            "resourcing_request": forms.HiddenInput,
+            "group": forms.Select(
+                attrs={
+                    "hx-get": reverse_lazy("htmx-load-directorates"),
+                    "hx-target": "#id_directorate",
+                }
+            ),
+            "directorate": forms.Select(
+                attrs={
+                    "hx-get": reverse_lazy("htmx-load-costcentres"),
+                    "hx-target": "#id_cost_centre_code",
+                }
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["resourcing_request"].disabled = True
+        syncronise_cost_centre_dropdowns(self)
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        inside_ir35_fields = ["min_day_rate", "max_day_rate", "days_required"]
+        outside_ir35_fields = ["project_fees"]
+
+        if cleaned_data.get("resourcing_request").is_ir35 is True:
+            # Check inside fields.
+            for field in inside_ir35_fields:
+                if cleaned_data.get(field) is None:
+                    self.add_error(field, "Required if inside IR35")
+            # Clear outside fields.
+            for field in outside_ir35_fields:
+                cleaned_data[field] = None
+        elif cleaned_data.get("resourcing_request").is_ir35 is False:
+            # Check outside fields.
+            for field in outside_ir35_fields:
+                if cleaned_data.get(field) is None:
+                    self.add_error(field, "Required if outside IR35")
+            # Clear inside fields.
+            for field in inside_ir35_fields:
+                cleaned_data[field] = None
+
+        return cleaned_data
 
 
 class JobDescriptionForm(forms.ModelForm):
