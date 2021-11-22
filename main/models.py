@@ -377,7 +377,6 @@ class StatementOfWork(models.Model):
     hiring_manager_team_leader = models.CharField(
         "Hiring manager / Team lead (if different)", max_length=255
     )
-    role = models.CharField(max_length=255)
     project_description = models.TextField()
 
     project_code = models.ForeignKey(
