@@ -6,13 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0022_auto_20211122_1142'),
+        ("main", "0022_auto_20211122_1142"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='interimrequest',
-            name='equivalent_civil_servant_grade',
-            field=models.CharField(choices=[('AO', 'AO'), ('EO', 'EO'), ('HEO', 'HEO'), ('SEO', 'SEO'), ('G6', 'G6'), ('G7', 'G7')], max_length=4),
+            model_name="interimrequest",
+            name="equivalent_civil_servant_grade",
+            field=models.CharField(
+                choices=[
+                    ("AO", "AO"),
+                    ("EO", "EO"),
+                    ("HEO", "HEO"),
+                    ("SEO", "SEO"),
+                    ("G6", "G6"),
+                    ("G7", "G7"),
+                ],
+                max_length=4,
+            ),
         ),
     ]

@@ -20,6 +20,7 @@ class FormWithStartEndDates(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+
         end_date = cleaned_data.get(self.end_date_field)
         start_date = cleaned_data.get(self.start_date_field)
 
@@ -28,8 +29,10 @@ class FormWithStartEndDates(forms.ModelForm):
             if start_date >= end_date:
                 self.add_error(self.end_date_field, self.date_error_msg)
 
+        return cleaned_data
 
-class ResourcingRequestForm(forms.ModelForm):
+
+class ResourcingRequestForm(FormWithStartEndDates):
     class Meta:
         model = ResourcingRequest
         fields = [
@@ -134,7 +137,7 @@ class JobDescriptionForm(forms.ModelForm):
         self.fields["resourcing_request"].disabled = True
 
 
-class CestRationaleForm(FormWithStartEndDates):
+class CestRationaleForm(forms.ModelForm):
     start_date_field = "role_start_date"
     end_date_field = "role_end_date"
 
@@ -161,7 +164,7 @@ class CestDocumentForm(forms.ModelForm):
         self.fields["resourcing_request"].disabled = True
 
 
-class SdsStatusDeterminationForm(FormWithStartEndDates):
+class SdsStatusDeterminationForm(forms.ModelForm):
     class Meta:
         model = SdsStatusDetermination
         fields = "__all__"
