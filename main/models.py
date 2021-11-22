@@ -500,6 +500,18 @@ class StatementOfWorkModuleDeliverable(models.Model):
 
 
 class InterimRequest(models.Model):
+    class CivilServantGrade(models.TextChoices):
+        AO = "AO", "AO"
+        EO = "EO", "EO"
+        HEO = "HEO", "HEO"
+        SEO = "SEO", "SEO"
+        G6 = "G6", "G6"
+        G7 = "G7", "G7"
+
+    class Supplier(models.TextChoices):
+        GREEN_PARK = "green park", "Green Park"
+        PSR = "psr", "PSR"
+
     resourcing_request = models.OneToOneField(
         "ResourcingRequest",
         models.CASCADE,
@@ -539,19 +551,27 @@ class InterimRequest(models.Model):
         choices=CONTRACTOR_TYPE_CHOICES,
         verbose_name="Category of Interim",
     )
+    slot_codes = models.CharField(max_length=255)
+    equivalent_civil_servant_grade = models.CharField(
+        max_length=4, choices=CivilServantGrade.choices
+    )
+    supplier = models.CharField(max_length=20, choices=Supplier.choices)
     part_b_business_case = models.TextField(
-        verbose_name="Business Case",
-        help_text=("Please detail why the interim resource is required"),
+        verbose_name="Business case",
+        help_text="Please detail why the interim resource is required",
     )
     part_b_impact = models.TextField(
         verbose_name="Impact",
         help_text="What would be the impact of not filling this requirement.",
     )
     part_b_main_reason = models.TextField(
-        verbose_name="",
-        help_text="What are the main reasons why this role has not been filled by a substantive Civil Servant. Please detail the strategic workforce plan for this role after the assignment end date:",
+        verbose_name="Min reason",
+        help_text=(
+            "What are the main reasons why this role has not been filled by a"
+            " substantive Civil Servant. Please detail the strategic workforce plan for"
+            " this role after the assignment end date:"
+        ),
     )
-    slot_codes = models.CharField(max_length=255)
 
     def __str__(self):
         return "Interim request"
