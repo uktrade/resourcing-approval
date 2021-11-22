@@ -380,31 +380,6 @@ class StatementOfWork(models.Model):
     role = models.CharField(max_length=255)
     project_description = models.TextField()
 
-    group = models.ForeignKey(
-        DepartmentalGroup,
-        on_delete=models.CASCADE,
-        related_name="+",
-    )
-
-    directorate = models.ForeignKey(
-        Directorate,
-        on_delete=models.CASCADE,
-        related_name="+",
-    )
-
-    cost_centre_code = models.ForeignKey(
-        CostCentre,
-        on_delete=models.CASCADE,
-        related_name="+",
-        verbose_name="Cost Centre/Team",
-    )
-
-    programme_code = models.ForeignKey(
-        ProgrammeCode,
-        on_delete=models.CASCADE,
-        related_name="+",
-    )
-
     project_code = models.ForeignKey(
         ProjectCode,
         on_delete=models.CASCADE,
@@ -413,8 +388,6 @@ class StatementOfWork(models.Model):
         null=True,
     )
 
-    start_date = models.DateField()
-    end_date = models.DateField()
     notice_period = models.TextField()
     fees = models.TextField("Project fee and invoicing")
     exceptional_expenses = models.TextField()
@@ -440,13 +413,14 @@ class StatementOfWork(models.Model):
 
 
 class StatementOfWorkModule(models.Model):
-    module_title = models.CharField(max_length=255)
-    completion_date = models.DateField()
     statement_of_work = models.ForeignKey(
         StatementOfWork,
         on_delete=models.CASCADE,
         related_name="modules",
     )
+
+    module_title = models.CharField(max_length=255)
+    completion_date = models.DateField()
 
     @property
     def resourcing_request(self):
@@ -474,18 +448,18 @@ class StatementOfWorkModule(models.Model):
 
 
 class StatementOfWorkModuleDeliverable(models.Model):
-    deliverable_title = models.CharField(max_length=255)
-    deliverable_description = models.TextField()
-
-    start_date = models.DateField()
-    end_date = models.DateField()
-    monthly_fee = models.DecimalField(max_digits=9, decimal_places=2)
-    payment_date = models.DateField()
     statement_of_work_module = models.ForeignKey(
         StatementOfWorkModule,
         on_delete=models.CASCADE,
         related_name="deliverables",
     )
+
+    deliverable_title = models.CharField(max_length=255)
+    deliverable_description = models.TextField()
+    start_date = models.DateField()
+    end_date = models.DateField()
+    monthly_fee = models.DecimalField(max_digits=9, decimal_places=2)
+    payment_date = models.DateField()
 
     @property
     def resourcing_request(self):
@@ -583,9 +557,7 @@ class CestRationale(models.Model):
         models.CASCADE,
         related_name="cest_rationale",
     )
-    role_start_date = models.DateField()
-    role_end_date = models.DateField()
-    worker_name = models.CharField(max_length=50, blank=True, null=True)
+
     cover_for_perm_role = models.BooleanField(choices=TRUE_FALSE_CHOICES)
     role_description = models.TextField()
     what = models.CharField(max_length=50, verbose_name="Control & Direction: what")
@@ -632,11 +604,9 @@ class SdsStatusDetermination(models.Model):
         models.CASCADE,
         related_name="sds_status_determination",
     )
+
     company_name = models.CharField(max_length=255)
-    worker_name = models.CharField(max_length=255)
     agency = models.CharField(max_length=255)
-    start_date = models.DateField(verbose_name="Contract/Extension Start Date")
-    end_date = models.DateField(verbose_name="Contract End Date")
     completed_by = models.ForeignKey("user.User", models.CASCADE, related_name="+")
     on_behalf_of = models.CharField(max_length=255)
     date_completed = models.DateField(default=datetime.date.today)

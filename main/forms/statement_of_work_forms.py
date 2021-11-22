@@ -1,5 +1,4 @@
 from django import forms
-from django.urls import reverse_lazy
 
 from main.forms.forms import FormWithStartEndDates
 from main.models import (
@@ -7,7 +6,18 @@ from main.models import (
     StatementOfWorkModule,
     StatementOfWorkModuleDeliverable,
 )
-from main.utils import syncronise_cost_centre_dropdowns
+
+
+class StatementOfWorkForm(forms.ModelForm):
+    class Meta:
+        model = StatementOfWork
+        fields = "__all__"
+        widgets = {"resourcing_request": forms.HiddenInput}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["resourcing_request"].disabled = True
 
 
 class StatementOfWorkModuleForm(forms.ModelForm):
@@ -22,29 +32,3 @@ class StatementOfWorkModuleDeliverableForm(FormWithStartEndDates):
         model = StatementOfWorkModuleDeliverable
         fields = "__all__"
         widgets = {"statement_of_work_module": forms.HiddenInput}
-
-
-class StatementOfWorkForm(FormWithStartEndDates):
-    class Meta:
-        model = StatementOfWork
-        fields = "__all__"
-        widgets = {
-            "resourcing_request": forms.HiddenInput,
-            "group": forms.Select(
-                attrs={
-                    "hx-get": reverse_lazy("htmx-load-directorates"),
-                    "hx-target": "#id_directorate",
-                }
-            ),
-            "directorate": forms.Select(
-                attrs={
-                    "hx-get": reverse_lazy("htmx-load-costcentres"),
-                    "hx-target": "#id_cost_centre_code",
-                }
-            ),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["resourcing_request"].disabled = True
-        syncronise_cost_centre_dropdowns(self)

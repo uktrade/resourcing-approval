@@ -6,30 +6,51 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0021_auto_20211119_1601'),
+        ("main", "0021_auto_20211119_1601"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='interimrequest',
-            name='equivalent_civil_servant_grade',
-            field=models.CharField(choices=[('AO', 'Ao'), ('EO', 'Eo'), ('HEO', 'Heo'), ('SEO', 'Seo'), ('G6', 'G6'), ('G7', 'G7')], default='G7', max_length=4),
+            model_name="interimrequest",
+            name="equivalent_civil_servant_grade",
+            field=models.CharField(
+                choices=[
+                    ("AO", "Ao"),
+                    ("EO", "Eo"),
+                    ("HEO", "Heo"),
+                    ("SEO", "Seo"),
+                    ("G6", "G6"),
+                    ("G7", "G7"),
+                ],
+                default="G7",
+                max_length=4,
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='interimrequest',
-            name='supplier',
-            field=models.CharField(choices=[('green park', 'Green Park'), ('psr', 'PSR')], default='green park', max_length=20),
+            model_name="interimrequest",
+            name="supplier",
+            field=models.CharField(
+                choices=[("green park", "Green Park"), ("psr", "PSR")],
+                default="green park",
+                max_length=20,
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='interimrequest',
-            name='part_b_business_case',
-            field=models.TextField(help_text='Please detail why the interim resource is required', verbose_name='Business case'),
+            model_name="interimrequest",
+            name="part_b_business_case",
+            field=models.TextField(
+                help_text="Please detail why the interim resource is required",
+                verbose_name="Business case",
+            ),
         ),
         migrations.AlterField(
-            model_name='interimrequest',
-            name='part_b_main_reason',
-            field=models.TextField(help_text='What are the main reasons why this role has not been filled by a substantive Civil Servant. Please detail the strategic workforce plan for this role after the assignment end date:', verbose_name='Min reason'),
+            model_name="interimrequest",
+            name="part_b_main_reason",
+            field=models.TextField(
+                help_text="What are the main reasons why this role has not been filled by a substantive Civil Servant. Please detail the strategic workforce plan for this role after the assignment end date:",
+                verbose_name="Min reason",
+            ),
         ),
     ]
