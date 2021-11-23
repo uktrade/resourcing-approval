@@ -1,0 +1,63 @@
+{% load form %}
+
+<div data-hx-component-id="approvals">
+    {% if resourcing_request.can_approve and user.is_approver or resourcing_request.can_clear_approval and perms.main.can_give_busops_approval %}
+        <form
+            novalidate
+            hx-post="{% url 'resourcing-request-approval' resourcing_request.pk %}"
+            hx-target="[data-hx-component-id='approvals']"
+            hx-swap="outerHTML"
+        >
+            {% include 'main/partials/forms/error-summary.html' %}
+
+            {% csrf_token %}
+
+            {% field form.type %}
+            {% field form.reason %}
+
+            {% if resourcing_request.can_approve %}
+                <button class="govuk-button" type="submit" name="approved" value="true">Approve</button>
+                <button class="govuk-button govuk-button--warning" type="submit" name="approved" value="false">Reject</button>
+            {% endif %}
+            {% if resourcing_request.can_clear_approval and perms.main.can_give_busops_approval %}
+                <button class="govuk-button govuk-button--secondary" type="submit" name="approved" value="unknown">Clear</button>
+            {% endif %}
+        </form>
+    {% endif %}
+
+    <dl class="govuk-summary-list">
+        {% for approval_type, approval in resourcing_request.get_approvals.items %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    {{ approval_type.label }} approval
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {% if approval %}
+                        {{ approval.approved|default_if_none:"Cleared" }} - {{ approval.user }} - {{ approval.timestamp }}
+                    {% endif %}
+                </dd>
+            </div>
+        {% endfor %}
+    </dl>
+
+    <!-- Approvals history -->
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                Approvals history
+            </span>
+        </summary>
+        <div class="govuk-details__text">
+            {% for approval in resourcing_request.approvals.all %}
+                <div>
+                    {{ approval.get_type_display }} - {{ approval.approved|default_if_none:"Cleared" }} - {{ approval.user }} - {{ approval.timestamp }}
+                    {% if approval.reason %}
+                        <div>{{ approval.reason.text }}</div>
+                    {% endif %}
+                </div>
+            {% empty %}
+                No approval history.
+            {% endfor %}
+        </div>
+    </details>
+</div>

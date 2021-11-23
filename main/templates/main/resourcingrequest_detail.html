@@ -222,63 +222,7 @@
 {% if object.is_draft %}
     <p class="govuk-body">Resourcing request is not ready for approval.</p>
 {% else %}
-    <dl class="govuk-summary-list">
-        {% for approval in approvals %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    {{ approval.type.label }} approval
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {% if approval.object %}
-                        {{ approval.object.approved|default_if_none:"Cleared" }} - {{ approval.object.user }} - {{ approval.object.timestamp }}
-                    {% endif %}
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                    {% if object.can_approve and approval.has_permission and not is_approved %}
-                        <!-- Approve -->
-                        <form class="inline" action="{% url 'resourcing-request-add-approval' object.pk %}" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="type" value="{{ approval.type }}">
-                            <input type="hidden" name="approved" value="true">
-                            <button class="govuk-button mb-0">Approve</button>
-                        </form>
-
-                        <!-- Reject -->
-                        <form class="inline" action="{% url 'resourcing-request-add-approval' object.pk %}" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="type" value="{{ approval.type }}">
-                            <input type="hidden" name="approved" value="false">
-                            <button class="govuk-button govuk-button--warning mb-0">Reject</button>
-                        </form>
-                    {% endif %}
-                    {% if object.can_clear_approval and perms.main.can_give_busops_approval %}
-                        <!-- Clear form -->
-                        <form class="inline" action="{% url 'resourcing-request-clear-approval' object.pk %}" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="type" value="{{ approval.type }}">
-                            <button class="govuk-button govuk-button--warning mb-0">Clear</button>
-                        </form>
-                    {% endif %}
-                </dd>
-            </div>
-        {% endfor %}
-    </dl>
-
-    <!-- Approvals history -->
-    <details class="govuk-details" data-module="govuk-details">
-        <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-                Approvals history
-            </span>
-        </summary>
-        <div class="govuk-details__text">
-            {% for approval in object.approvals.all %}
-                <div>{{ approval.get_type_display }} - {{ approval.approved|default_if_none:"Cleared" }} - {{ approval.user }} - {{ approval.timestamp }}</div>
-            {% empty %}
-                No approval history.
-            {% endfor %}
-        </div>
-    </details>
+    {% include 'main/partials/approvals.html' with form=approval_form resourcing_request=object %}
 {% endif %}
 
 <!-- Comments -->

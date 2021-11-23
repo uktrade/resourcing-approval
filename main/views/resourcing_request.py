@@ -1,15 +1,15 @@
 from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
 
 from main.constants import APPROVAL_TYPE_TO_GROUP, ApproverGroup
-from main.forms.forms import CommentForm, ResourcingRequestForm
+from main.forms.forms import ApprovalForm, CommentForm, ResourcingRequestForm
 from main.models import Approval, Comment, ResourcingRequest
 from main.tasks import notify_approvers, send_group_notification, send_notification
 
@@ -71,6 +71,10 @@ class ResourcingRequestDetailView(
         context = super().get_context_data(**kwargs)
 
         resourcing_request = context["object"]
+
+        context["approval_form"] = ApprovalForm(
+            user=self.request.user, resourcing_request=resourcing_request
+        )
 
         context["comment_form"] = CommentForm(
             initial={
@@ -187,92 +191,6 @@ class ResourcingRequestSendForReviewView(ResourcingRequestActionView):
         )
 
 
-class ResourcingRequestAddApproval(ResourcingRequestActionView):
-    def get_permission_required(self):
-        approval_type = self.request.POST["type"]
-
-        return (f"main.can_give_{approval_type}_approval",)
-
-    def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
-        return resourcing_request.can_approve
-
-    def action(self, resourcing_request):
-        approval_type = self.request.POST["type"]
-        approved = self.request.POST["approved"]
-
-        is_approved = resourcing_request.get_is_approved()
-
-        if is_approved:
-            raise ValidationError("Resourcing request is already approved")
-
-        if approval_type not in Approval.Type:
-            raise ValidationError("Invalid approval type")
-
-        if approval_type == "chief":
-            if (
-                self.request.user != resourcing_request.chief
-                and not self.request.user.is_superuser
-            ):
-                raise ValidationError(
-                    "Only the nominated Chief can give Chief approval"
-                )
-
-        approved_choices = {
-            "true": True,
-            "false": False,
-            "unknown": None,
-        }
-        approved = approved_choices[approved]
-
-        approval = Approval.objects.create(
-            resourcing_request=resourcing_request,
-            user=self.request.user,
-            reason=None,
-            type=approval_type,
-            approved=approved,
-        )
-
-        setattr(resourcing_request, f"{approval_type}_approval", approval)
-
-        is_approved = resourcing_request.get_is_approved()
-
-        if is_approved:
-            resourcing_request.state = resourcing_request.State.APPROVED
-
-        resourcing_request.save()
-
-        notify_approvers.delay(
-            resourcing_request.pk,
-            self.resourcing_request_url,
-            approval.pk,
-        )
-
-
-class ResourcingRequestClearApprovalView(ResourcingRequestActionView):
-    permission_required = "main.can_give_busops_approval"
-
-    def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
-        return resourcing_request.can_clear_approval
-
-    def action(self, resourcing_request):
-        approval_type = self.request.POST["type"]
-
-        if approval_type not in Approval.Type:
-            raise ValidationError("Invalid approval type")
-
-        approval = Approval.objects.create(
-            resourcing_request=resourcing_request,
-            user=self.request.user,
-            reason=None,
-            type=approval_type,
-            approved=None,
-        )
-
-        setattr(resourcing_request, f"{approval_type}_approval", approval)
-
-        resourcing_request.save()
-
-
 class ResourcingRequestFinishAmendmentsReviewView(ResourcingRequestActionView):
     permission_required = "main.can_give_busops_approval"
 
@@ -315,3 +233,103 @@ class ResourcingRequestAddComment(PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         return self.object.resourcing_request.get_absolute_url()
+
+
+class ResourcingRequestApprovalView(FormView):
+    form_class = ApprovalForm
+    template_name = "main/partials/approvals.html"
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+
+        self.resourcing_request = (
+            ResourcingRequest.objects.select_related_approvals().get(
+                pk=self.kwargs["pk"]
+            )
+        )
+
+        self.resourcing_request_url = self.request.build_absolute_uri(
+            self.resourcing_request.get_absolute_url()
+        )
+
+    def get_context_data(self, **kwargs):
+        context = {"resourcing_request": self.resourcing_request}
+
+        return super().get_context_data(**kwargs) | context
+
+    def get_form_kwargs(self):
+        form_kwargs = {
+            "user": self.request.user,
+            "resourcing_request": self.resourcing_request,
+        }
+
+        return super().get_form_kwargs() | form_kwargs
+
+    def form_valid(self, form):
+        approval_type = form.cleaned_data["type"]
+        approved = form.cleaned_data["approved"]
+
+        is_approved = self.resourcing_request.get_is_approved()
+
+        if is_approved:
+            raise ValidationError("Resourcing request is already approved")
+
+        if approved is not None:
+            if not self.request.user.has_perm(
+                f"main.can_give_{approval_type}_approval"
+            ):
+                raise PermissionDenied("User cannot give this approval")
+
+            if not self.resourcing_request.can_approve:
+                raise ValidationError("Cannot perform this action")
+
+            if approval_type == Approval.Type.CHIEF.value:
+                if (
+                    self.request.user != self.resourcing_request.chief
+                    and not self.request.user.is_superuser
+                ):
+                    raise ValidationError(
+                        "Only the nominated Chief can give Chief approval"
+                    )
+        else:
+            if not self.request.user.has_perm("main.can_give_busops_approval"):
+                raise PermissionDenied("User cannot give this approval")
+
+            if not self.resourcing_request.can_clear_approval:
+                raise ValidationError("Cannot perform this action")
+
+        comment = None
+
+        if approved in (False, None):
+            comment = Comment.objects.create(
+                resourcing_request=self.resourcing_request,
+                user=self.request.user,
+                text=form.cleaned_data["reason"],
+            )
+
+        approval = Approval.objects.create(
+            resourcing_request=self.resourcing_request,
+            user=self.request.user,
+            reason=comment,
+            type=approval_type,
+            approved=approved,
+        )
+
+        setattr(self.resourcing_request, f"{approval_type}_approval", approval)
+
+        # We need to call `get_is_approved` again to get the updated state.
+        if self.resourcing_request.get_is_approved():
+            self.resourcing_request.state = self.resourcing_request.State.APPROVED
+
+        self.resourcing_request.save()
+
+        notify_approvers.delay(
+            self.resourcing_request.pk,
+            self.resourcing_request_url,
+            approval.pk,
+        )
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return self.request.path_info
