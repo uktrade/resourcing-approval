@@ -6,7 +6,7 @@ from celery import group, shared_task
 from django.conf import settings
 from notifications_python_client.notifications import NotificationsAPIClient
 
-from main.constants import ApproverGroup
+from main.constants import APPROVAL_TYPE_TO_GROUP, ApproverGroup
 from main.models import Approval, ResourcingRequest
 from user.models import User
 
@@ -72,7 +72,7 @@ def notify_approvers(
     """Send a notification to the relevant approvers.
 
     Order of notifications:
-        `Head of Profession -> Chief -> BusOps -> [HRBP, Finance, Commercial]`
+        `Head of Profession -> Chief -> BusOps -> [HRBP, Finance, Commercial] -> Director -> Director General`
     """
 
     resourcing_request: ResourcingRequest = (
@@ -111,31 +111,36 @@ def notify_approvers(
 
         return
 
+    approval_index = next(
+        i for i, approvals in enumerate(Approval.ORDER) if approval.type in approvals
+    )
+
     # Do nothing if the request does not have the correct approvals.
-    if not resourcing_request.has_prerequisite_approvals(approval.type):
-        return
+    for approvals in Approval.ORDER[: approval_index + 1]:
+        for approval_type in approvals:
+            if resourcing_request.get_approval(approval_type) is None:
+                return
 
     # Notify the correct approvers that the request is ready for their approval.
-    if (
-        approval.type == approval.Type.HEAD_OF_PROFESSION
-        and not resourcing_request.chief_approval
-    ):
-        send_notification.delay(
-            to=resourcing_request.chief.email,
-            template_id=settings.GOVUK_NOTIFY_READY_FOR_APPROVAL_TEMPLATE_ID,
-            personalisation={
-                **personalisation,
-                "first_name": resourcing_request.chief.first_name,
-            },
-        )
-    elif (
-        approval.type == approval.Type.CHIEF and not resourcing_request.busops_approval
-    ):
-        send_ready_for_approval_group_notification(ApproverGroup.BUSOPS)
-    elif approval.type == approval.Type.BUSOPS:
-        if not resourcing_request.hrbp_approval:
-            send_ready_for_approval_group_notification(ApproverGroup.HRBP)
-        if not resourcing_request.finance_approval:
-            send_ready_for_approval_group_notification(ApproverGroup.FINANCE)
-        if not resourcing_request.commercial_approval:
-            send_ready_for_approval_group_notification(ApproverGroup.COMMERCIAL)
+    try:
+        next_approval_types = Approval.ORDER[approval_index + 1]
+    except IndexError:
+        next_approval_types = []
+
+    for next_approval_type in next_approval_types:
+        if resourcing_request.get_approval(next_approval_type) is not None:
+            continue
+
+        if next_approval_type == Approval.Type.CHIEF:
+            send_notification.delay(
+                to=resourcing_request.chief.email,
+                template_id=settings.GOVUK_NOTIFY_READY_FOR_APPROVAL_TEMPLATE_ID,
+                personalisation={
+                    **personalisation,
+                    "first_name": resourcing_request.chief.first_name,
+                },
+            )
+        else:
+            send_ready_for_approval_group_notification(
+                APPROVAL_TYPE_TO_GROUP[next_approval_type]
+            )

@@ -89,6 +89,12 @@ class ResourcingRequest(models.Model):
     commercial_approval = models.OneToOneField(
         "Approval", models.SET_NULL, related_name="commercial_approval", null=True
     )
+    director_approval = models.OneToOneField(
+        "Approval", models.SET_NULL, related_name="director_approval", null=True
+    )
+    director_general_approval = models.OneToOneField(
+        "Approval", models.SET_NULL, related_name="director_general_approval", null=True
+    )
 
     objects = ResourcingRequestQuerySet.as_manager()
 
@@ -180,6 +186,9 @@ class ResourcingRequest(models.Model):
     def can_approve(self):
         return self.state == self.State.AWAITING_APPROVALS
 
+    def get_approval(self, approval_type):
+        return getattr(self, f"{approval_type.value}_approval")
+
     def get_approvals(self):
         return {
             Approval.Type.HEAD_OF_PROFESSION: self.head_of_profession_approval,
@@ -188,37 +197,12 @@ class ResourcingRequest(models.Model):
             Approval.Type.HRBP: self.hrbp_approval,
             Approval.Type.FINANCE: self.finance_approval,
             Approval.Type.COMMERCIAL: self.commercial_approval,
+            Approval.Type.DIRECTOR: self.director_approval,
+            Approval.Type.DIRECTOR_GENERAL: self.director_general_approval,
         }
 
     def get_is_approved(self):
         return all(x and x.approved for x in self.get_approvals().values())
-
-    def has_prerequisite_approvals(self, approval_type: "Approval.Type") -> bool:
-        """Check if the required approvals have records for the given approval type.
-
-        Only check if the previous approval is there, not that it was accepted.
-        """
-
-        if approval_type == Approval.Type.HEAD_OF_PROFESSION:
-            return True
-        elif approval_type == Approval.Type.CHIEF:
-            return bool(self.head_of_profession_approval)
-        elif approval_type == Approval.Type.BUSOPS:
-            return all([self.head_of_profession_approval, self.chief_approval])
-        elif approval_type in [
-            Approval.Type.HRBP,
-            Approval.Type.FINANCE,
-            Approval.Type.COMMERCIAL,
-        ]:
-            return all(
-                [
-                    self.head_of_profession_approval,
-                    self.chief_approval,
-                    self.busops_approval,
-                ]
-            )
-        else:
-            raise ValueError("Unknown approval type")
 
 
 class Approval(models.Model):
@@ -233,6 +217,11 @@ class Approval(models.Model):
             ("can_give_hrbp_approval", "Can give HRBP approval"),
             ("can_give_finance_approval", "Can give finance approval"),
             ("can_give_commercial_approval", "Can give commercial approval"),
+            ("can_give_director_approval", "Can give director approval"),
+            (
+                "can_give_director_general_approval",
+                "Can give director general approval",
+            ),
         )
         ordering = ["-timestamp"]
         indexes = [models.Index(fields=["type"])]
@@ -244,6 +233,23 @@ class Approval(models.Model):
         HRBP = "hrbp", "HRBP"
         FINANCE = "finance", "Finance"
         COMMERCIAL = "commercial", "Commercial"
+        # Jason Kitcat at time of writing.
+        DIRECTOR = "director", "Director"
+        # Catherine Vaughan at time of writing.
+        DIRECTOR_GENERAL = "director_general", "Director General"
+
+    ORDER = [
+        [Type.HEAD_OF_PROFESSION],
+        [Type.CHIEF],
+        [Type.BUSOPS],
+        [
+            Type.HRBP,
+            Type.FINANCE,
+            Type.COMMERCIAL,
+        ],
+        [Type.DIRECTOR],
+        [Type.DIRECTOR_GENERAL],
+    ]
 
     resourcing_request = models.ForeignKey(
         "ResourcingRequest", models.CASCADE, related_name="approvals"

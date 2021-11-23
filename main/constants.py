@@ -11,6 +11,8 @@ class ApproverGroup(Enum):
     HRBP = "HRBP"
     FINANCE = "Finance"
     COMMERCIAL = "Commercial"
+    DIRECTOR = "Director"
+    DIRECTOR_GENERAL = "Director General"
 
 
 assert set(x.value for x in ApproverGroup) == set(
@@ -25,4 +27,6 @@ APPROVAL_TYPE_TO_GROUP = {
     Approval.Type.HRBP: ApproverGroup.HRBP,
     Approval.Type.FINANCE: ApproverGroup.FINANCE,
     Approval.Type.COMMERCIAL: ApproverGroup.COMMERCIAL,
+    Approval.Type.DIRECTOR: ApproverGroup.DIRECTOR,
+    Approval.Type.DIRECTOR_GENERAL: ApproverGroup.DIRECTOR_GENERAL,
 }
