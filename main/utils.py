@@ -2,9 +2,25 @@ from chartofaccount.models import CostCentre, Directorate
 from main.models import Approval
 
 
-def get_user_related_approval_types(user):
+def get_user_related_approval_types(user, resourcing_request=None):
     for approval_type in Approval.Type:
-        if user.has_perm(f"main.can_give_{approval_type.value}_approval"):
+        # BusOps can clear all approvals.
+        if (
+            resourcing_request
+            and resourcing_request.can_clear_approval
+            and user.has_perm("main.can_give_busops_approval")
+        ):
+            yield approval_type
+        elif user.has_perm(f"main.can_give_{approval_type.value}_approval"):
+            # Guard clause to check if the user is the nominated chief.
+            if (
+                resourcing_request
+                and approval_type == Approval.Type.CHIEF
+                and user.pk != resourcing_request.chief_id
+                and not user.is_superuser
+            ):
+                continue
+
             yield approval_type
 
 

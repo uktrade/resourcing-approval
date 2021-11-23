@@ -2,6 +2,7 @@ from django import forms
 from django.urls import reverse_lazy
 
 from main.models import (
+    Approval,
     CestDocument,
     CestRationale,
     Comment,
@@ -10,7 +11,7 @@ from main.models import (
     ResourcingRequest,
     SdsStatusDetermination,
 )
-from main.utils import syncronise_cost_centre_dropdowns
+from main.utils import syncronise_cost_centre_dropdowns, get_user_related_approval_types
 
 
 class FormWithStartEndDates(forms.ModelForm):
@@ -54,6 +55,42 @@ class ResourcingRequestForm(FormWithStartEndDates):
         super().__init__(*args, **kwargs)
 
         self.fields["requestor"].disabled = True
+
+
+class ApprovalForm(forms.ModelForm):
+    class Meta:
+        model = Approval
+        fields = [
+            "type",
+            "approved",
+        ]
+
+    reason = forms.CharField(
+        required=False, empty_value=None, widget=forms.Textarea(attrs={"rows": 5})
+    )
+
+    def __init__(self, *args, user, resourcing_request, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["type"].choices = [
+            (approval_type.value, approval_type.label)
+            for approval_type in get_user_related_approval_types(
+                user, resourcing_request
+            )
+        ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        approved = cleaned_data.get("approved")
+        reason = cleaned_data.get("reason")
+
+        if approved in (False, None) and not reason:
+            self.add_error(
+                "reason", "This field is required when rejecting or clearing."
+            )
+
+        return cleaned_data
 
 
 class CommentForm(forms.ModelForm):
