@@ -28,6 +28,12 @@ class Command(BaseCommand):
         commercial_group, _ = Group.objects.get_or_create(
             pk=8, name=ApproverGroup.COMMERCIAL.value
         )
+        director_group, _ = Group.objects.get_or_create(
+            pk=9, name=ApproverGroup.DIRECTOR.value
+        )
+        director_general_group, _ = Group.objects.get_or_create(
+            pk=10, name=ApproverGroup.DIRECTOR_GENERAL.value
+        )
 
         hiring_manager_group.permissions.set(
             Permission.objects.filter(
@@ -153,6 +159,24 @@ class Command(BaseCommand):
             [
                 Permission.objects.get(
                     codename="can_give_commercial_approval",
+                    content_type__app_label="main",
+                )
+            ]
+        )
+
+        director_group.permissions.set(
+            [
+                Permission.objects.get(
+                    codename="can_give_director_approval",
+                    content_type__app_label="main",
+                )
+            ]
+        )
+
+        director_general_group.permissions.set(
+            [
+                Permission.objects.get(
+                    codename="can_give_director_general_approval",
                     content_type__app_label="main",
                 )
             ]

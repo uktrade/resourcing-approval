@@ -142,5 +142,41 @@
       "groups": [2, 3],
       "user_permissions": []
     }
+  },
+  {
+    "model": "user.user",
+    "pk": 9,
+    "fields": {
+      "password": "pbkdf2_sha256$260000$WJgMKG0qBO6luH0wKk1YX2$sk0Sx49ZlxeKSfZTtWMXcoXfclw7LaMXOApPvTvcSCg=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "director",
+      "first_name": "Director",
+      "last_name": "Dan",
+      "email": "director@example.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2021-10-25T10:00:18Z",
+      "groups": [2, 9],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.user",
+    "pk": 10,
+    "fields": {
+      "password": "pbkdf2_sha256$260000$vEyK7Nnv6j4LnMD3b276cy$rgBdSJvNFR9TYSxLw4qgn8lklvtiPDaf5UZm+CQ41SI=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "director-general",
+      "first_name": "Director General",
+      "last_name": "Douglas",
+      "email": "director-general@example.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2021-10-25T10:00:18Z",
+      "groups": [2, 10],
+      "user_permissions": []
+    }
   }
 ]

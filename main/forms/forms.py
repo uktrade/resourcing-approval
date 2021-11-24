@@ -11,7 +11,7 @@ from main.models import (
     ResourcingRequest,
     SdsStatusDetermination,
 )
-from main.utils import syncronise_cost_centre_dropdowns, get_user_related_approval_types
+from main.utils import get_user_related_approval_types, syncronise_cost_centre_dropdowns
 
 
 class FormWithStartEndDates(forms.ModelForm):

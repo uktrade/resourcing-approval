@@ -18,6 +18,7 @@ from main.views.interim_request_views import (
 from main.views.resourcing_request import (
     ResourcingRequestAddComment,
     ResourcingRequestAmendView,
+    ResourcingRequestApprovalView,
     ResourcingRequestCreateView,
     ResourcingRequestDeleteView,
     ResourcingRequestDetailView,
@@ -26,7 +27,6 @@ from main.views.resourcing_request import (
     ResourcingRequestSendForApprovalView,
     ResourcingRequestSendForReviewView,
     ResourcingRequestUpdateView,
-    ResourcingRequestApprovalView,
 )
 from main.views.statement_of_work_views import (
     StatementOfWorkCreateView,
