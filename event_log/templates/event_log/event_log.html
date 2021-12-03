@@ -1,0 +1,10 @@
+{% load humanize %}
+
+
+<ul class="govuk-list">
+    {% for event in event_log %}
+        <li>
+            {{ event.user.get_full_name|default_if_none:"Anonymous" }} - {{ event.description }} - {{ event.timestamp|naturaltime }}
+        </li>
+    {% endfor %}
+</ul>

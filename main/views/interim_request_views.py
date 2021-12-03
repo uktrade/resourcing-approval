@@ -25,12 +25,14 @@ class InterimRequestCreateView(InterimRequestViewMixin, SupportingFormCreateView
     model = InterimRequest
     permission_required = "main.add_interimrequest"
     template_name = "main/interim_request.html"
+    event_context = {"object": "interim request"}
 
 
 class InterimRequestUpdateView(InterimRequestViewMixin, SupportingFormUpdateView):
     model = InterimRequest
     permission_required = "main.change_interimrequest"
     template_name = "main/interim_request.html"
+    event_context = {"object": "interim request"}
 
 
 def load_directorates(request):

@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.urls import reverse
@@ -47,8 +48,6 @@ class ResourcingRequest(models.Model):
 
     class Type(models.IntegerChoices):
         NEW = 1, "New"
-        EXTENSION = 2, "Extension"
-        REPLACEMENT = 3, "Replacement"
 
     requestor = models.ForeignKey(
         "user.User", models.CASCADE, related_name="resourcing_requests"
@@ -95,6 +94,8 @@ class ResourcingRequest(models.Model):
     director_general_approval = models.OneToOneField(
         "Approval", models.SET_NULL, related_name="director_general_approval", null=True
     )
+
+    event_log = GenericRelation("event_log.Event")
 
     objects = ResourcingRequestQuerySet.as_manager()
 

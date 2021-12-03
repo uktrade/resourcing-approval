@@ -42,7 +42,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 minversion = "6.2.5"
-addopts = "--reuse-db --ds=config.settings.test"
+addopts = "--disable-warnings --reuse-db --ds=config.settings.test"
 
 [tool.isort]
 profile = "black"

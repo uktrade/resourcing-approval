@@ -59,6 +59,9 @@ check-migrations:
 
 check: check-black check-isort check-flake8 check-migrations
 
+test:
+	docker-compose run --rm web pytest $(opts)
+
 collectstatic:
 	$(web) python manage.py collectstatic
 

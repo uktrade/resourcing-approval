@@ -16,6 +16,11 @@ services:
     links:
       - postgres
       - redis
+    depends_on:
+      - celery
+      - celery-beat
+      - redis
+      - postgres
     stdin_open: true
     tty: true
   celery:

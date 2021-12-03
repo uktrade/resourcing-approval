@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.db import models
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
@@ -11,6 +12,7 @@ from django.views.generic.list import ListView
 from main.constants import APPROVAL_TYPE_TO_GROUP, ApproverGroup
 from main.forms.forms import ApprovalForm, CommentForm, ResourcingRequestForm
 from main.models import Approval, Comment, ResourcingRequest
+from main.services.event_log import EventLogMixin, EventLogService, EventType
 from main.tasks import notify_approvers, send_group_notification, send_notification
 
 
@@ -51,14 +53,19 @@ class CanEditResourcingRequestMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
-class ResourcingRequestCreateView(PermissionRequiredMixin, CreateView):
+class ResourcingRequestCreateView(EventLogMixin, PermissionRequiredMixin, CreateView):
     model = ResourcingRequest
     form_class = ResourcingRequestForm
     permission_required = "main.add_resourcingrequest"
     template_name = "main/form.html"
+    event_type = EventType.CREATED
+    event_context = {"object": "resourcing request"}
 
     def get_initial(self):
         return {"requestor": self.request.user}
+
+    def get_event_content_object(self) -> models.Model:
+        return self.object
 
 
 class ResourcingRequestDetailView(
@@ -96,6 +103,7 @@ class ResourcingRequestDetailView(
 
 
 class ResourcingRequestUpdateView(
+    EventLogMixin,
     CanEditResourcingRequestMixin,
     CanAccessResourcingRequestMixin,
     PermissionRequiredMixin,
@@ -105,6 +113,11 @@ class ResourcingRequestUpdateView(
     form_class = ResourcingRequestForm
     permission_required = "main.change_resourcingrequest"
     template_name = "main/form.html"
+    event_type = EventType.UPDATED
+    event_context = {"object": "resourcing request"}
+
+    def get_event_content_object(self) -> models.Model:
+        return self.object
 
 
 class ResourcingRequestDeleteView(
@@ -121,7 +134,7 @@ class ResourcingRequestListView(PermissionRequiredMixin, ListView):
     permission_required = "main.view_all_resourcingrequests"
 
 
-class ResourcingRequestActionView(PermissionRequiredMixin, View):
+class ResourcingRequestActionView(EventLogMixin, PermissionRequiredMixin, View):
     def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
         """Return `True` if the action can be performed else `False`."""
         raise NotImplementedError
@@ -149,9 +162,13 @@ class ResourcingRequestActionView(PermissionRequiredMixin, View):
             )
         )
 
+    def get_event_content_object(self) -> models.Model:
+        return self.resourcing_request
+
 
 class ResourcingRequestSendForApprovalView(ResourcingRequestActionView):
     permission_required = "main.change_resourcingrequest"
+    event_type = EventType.SENT_FOR_APPROVAL
 
     def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
         return resourcing_request.can_send_for_approval
@@ -165,6 +182,7 @@ class ResourcingRequestSendForApprovalView(ResourcingRequestActionView):
 
 class ResourcingRequestAmendView(ResourcingRequestActionView):
     permission_required = "main.change_resourcingrequest"
+    event_type = EventType.AMENDING
 
     def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
         return resourcing_request.can_amend
@@ -176,6 +194,7 @@ class ResourcingRequestAmendView(ResourcingRequestActionView):
 
 class ResourcingRequestSendForReviewView(ResourcingRequestActionView):
     permission_required = "main.change_resourcingrequest"
+    event_type = EventType.SENT_FOR_REVIEW
 
     def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
         return resourcing_request.can_send_for_review
@@ -193,6 +212,7 @@ class ResourcingRequestSendForReviewView(ResourcingRequestActionView):
 
 class ResourcingRequestFinishAmendmentsReviewView(ResourcingRequestActionView):
     permission_required = "main.can_give_busops_approval"
+    event_type = EventType.REVIEWED_AMENDMENTS
 
     def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
         return resourcing_request.can_finish_amendments_review
@@ -223,16 +243,20 @@ class ResourcingRequestFinishAmendmentsReviewView(ResourcingRequestActionView):
             )
 
 
-class ResourcingRequestAddComment(PermissionRequiredMixin, CreateView):
+class ResourcingRequestAddComment(EventLogMixin, PermissionRequiredMixin, CreateView):
     model = Comment
     form_class = CommentForm
     permission_required = "main.view_resourcingrequest"
+    event_type = EventType.COMMENTED
 
     def get_initial(self):
         return {"resourcing_request": self.kwargs["pk"], "user": self.request.user.pk}
 
     def get_success_url(self):
         return self.object.resourcing_request.get_absolute_url()
+
+    def get_event_content_object(self) -> models.Model:
+        return self.object.resourcing_request
 
 
 class ResourcingRequestApprovalView(FormView):
@@ -317,9 +341,24 @@ class ResourcingRequestApprovalView(FormView):
 
         setattr(self.resourcing_request, f"{approval_type}_approval", approval)
 
+        EventLogService.add_event(
+            content_object=self.resourcing_request,
+            user=self.request.user,
+            event_type=(
+                EventType.GROUP_APPROVED if approved else EventType.GROUP_REJECTED
+            ),
+            event_context={"group": Approval.Type(approval.type).label},
+        )
+
         # We need to call `get_is_approved` again to get the updated state.
         if self.resourcing_request.get_is_approved():
             self.resourcing_request.state = self.resourcing_request.State.APPROVED
+
+            EventLogService.add_event(
+                content_object=self.resourcing_request,
+                user=self.request.user,
+                event_type=EventType.APPROVED,
+            )
 
         self.resourcing_request.save()
 
