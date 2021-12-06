@@ -13,7 +13,7 @@ DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 # django-chunk-upload-handlers
 # https://github.com/uktrade/django-chunk-s3-av-upload-handlers
 FILE_UPLOAD_HANDLERS = (
-    # "django_chunk_upload_handlers.clam_av.ClamAVFileUploadHandler",
+    "django_chunk_upload_handlers.clam_av.ClamAVFileUploadHandler",
     "django_chunk_upload_handlers.s3.S3FileUploadHandler",
 )  # Order is important
 
@@ -24,3 +24,8 @@ AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 AWS_QUERYSTRING_EXPIRE = 60 * 5  # 5 minutes in seconds
+
+# ClamAV
+CLAM_AV_USERNAME = env("CLAM_AV_USERNAME")
+CLAM_AV_PASSWORD = env("CLAM_AV_PASSWORD")
+CLAM_AV_DOMAIN = env("CLAM_AV_DOMAIN")
