@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.db import models
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 
@@ -17,14 +18,16 @@ from main.models import (
     ResourcingRequest,
     SdsStatusDetermination,
 )
+from main.services.event_log import EventLogMixin, EventType
 
 from .resourcing_request import CanEditResourcingRequestMixin
 
 
 # TODO: Possible opportunity to refactor the supporting forms to use a shared view and
 # template.
-class SupportingFormCreateView(PermissionRequiredMixin, CreateView):
+class SupportingFormCreateView(EventLogMixin, PermissionRequiredMixin, CreateView):
     template_name = "main/form.html"
+    event_type = EventType.CREATED
 
     def get_initial(self):
         return {"resourcing_request": self.request.GET.get("resourcing_request")}
@@ -37,11 +40,15 @@ class SupportingFormCreateView(PermissionRequiredMixin, CreateView):
             pk=self.request.GET.get("resourcing_request")
         )
 
+    def get_event_content_object(self) -> models.Model:
+        return self.object.resourcing_request
+
 
 class SupportingFormUpdateView(
-    CanEditResourcingRequestMixin, PermissionRequiredMixin, UpdateView
+    EventLogMixin, CanEditResourcingRequestMixin, PermissionRequiredMixin, UpdateView
 ):
     template_name = "main/form.html"
+    event_type = EventType.UPDATED
 
     def get_initial(self):
         return {"resourcing_request": self.object.resourcing_request.pk}
@@ -51,6 +58,9 @@ class SupportingFormUpdateView(
 
     def get_resourcing_request(self):
         return self.get_object().resourcing_request
+
+    def get_event_content_object(self) -> models.Model:
+        return self.object.resourcing_request
 
 
 class SupportingFormDetailView(PermissionRequiredMixin, DetailView):
@@ -68,6 +78,7 @@ class FinancialInformationCreateView(SupportingFormCreateView):
     model = FinancialInformation
     form_class = FinancialInformationForm
     permission_required = "main.add_financialinformation"
+    event_context = {"object": "financial information"}
 
 
 class FinancialInformationDetailView(SupportingFormDetailView):
@@ -80,51 +91,60 @@ class FinancialInformationUpdateView(SupportingFormUpdateView):
     model = FinancialInformation
     form_class = FinancialInformationForm
     permission_required = "main.change_financialinformation"
+    event_context = {"object": "financial information"}
 
 
 class JobDescriptionCreateView(SupportingFormCreateView):
     model = JobDescription
     form_class = JobDescriptionForm
     permission_required = "main.add_jobdescription"
+    event_context = {"object": "job description"}
 
 
 class JobDescriptionUpdateView(SupportingFormUpdateView):
     model = JobDescription
     form_class = JobDescriptionForm
     permission_required = "main.change_jobdescription"
+    event_context = {"object": "job description"}
 
 
 class CestRationaleCreateView(SupportingFormCreateView):
     model = CestRationale
     form_class = CestRationaleForm
     permission_required = "main.add_cestrationale"
+    event_context = {"object": "CEST rationale"}
 
 
 class CestRationaleUpdateView(SupportingFormUpdateView):
     model = CestRationale
     form_class = CestRationaleForm
     permission_required = "main.change_cestrationale"
+    event_context = {"object": "CEST rationale"}
 
 
 class CestDocumentCreateView(SupportingFormCreateView):
     model = CestDocument
     form_class = CestDocumentForm
     permission_required = "main.add_cestdocument"
+    event_context = {"object": "CEST document"}
 
 
 class CestDocumentUpdateView(SupportingFormUpdateView):
     model = CestDocument
     form_class = CestDocumentForm
     permission_required = "main.change_cestdocument"
+    event_context = {"object": "CEST document"}
 
 
 class SdsStatusDeterminationCreateView(SupportingFormCreateView):
     model = SdsStatusDetermination
     form_class = SdsStatusDeterminationForm
     permission_required = "main.add_sdsstatusdetermination"
+    event_context = {"object": "SDS status determination"}
 
 
 class SdsStatusDeterminationUpdateView(SupportingFormUpdateView):
     model = SdsStatusDetermination
     form_class = SdsStatusDeterminationForm
     permission_required = "main.change_sdsstatusdetermination"
+    event_context = {"object": "SDS status determination"}

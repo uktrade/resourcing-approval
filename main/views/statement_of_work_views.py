@@ -22,6 +22,7 @@ class StatementOfWorkCreateView(SupportingFormCreateView):
     model = StatementOfWork
     form_class = StatementOfWorkForm
     permission_required = "main.add_statementofwork"
+    event_context = {"object": "statement of work"}
 
     def get_success_url(self):
         if "create_child" in self.request.POST:
@@ -38,6 +39,7 @@ class StatementOfWorkUpdateView(SupportingFormUpdateView):
     model = StatementOfWork
     form_class = StatementOfWorkForm
     permission_required = "main.change_statementofwork"
+    event_context = {"object": "statement of work"}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -59,6 +61,7 @@ class StatementOfWorkModuleCreateView(SupportingFormCreateView):
     model = StatementOfWorkModule
     form_class = StatementOfWorkModuleForm
     permission_required = "main.add_statementofwork"
+    event_context = {"object": "statement of work module"}
 
     def get_initial(self):
         return {"statement_of_work": self.kwargs["parent_pk"]}
@@ -82,6 +85,7 @@ class StatementOfWorkModuleUpdateView(SupportingFormUpdateView):
     model = StatementOfWorkModule
     form_class = StatementOfWorkModuleForm
     permission_required = "main.change_statementofwork"
+    event_context = {"object": "statement of work module"}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -107,6 +111,7 @@ class StatementOfWorkModuleDeliverableCreateView(SupportingFormCreateView):
     model = StatementOfWorkModuleDeliverable
     form_class = StatementOfWorkModuleDeliverableForm
     permission_required = "main.add_statementofwork"
+    event_context = {"object": "statement of work module deliverable"}
 
     def get_initial(self):
         return {"statement_of_work_module": self.kwargs["parent_pk"]}
@@ -123,6 +128,7 @@ class StatementOfWorkModuleDeliverableUpdateView(SupportingFormUpdateView):
     model = StatementOfWorkModuleDeliverable
     form_class = StatementOfWorkModuleDeliverableForm
     permission_required = "main.change_statementofwork"
+    event_context = {"object": "statement of work module deliverable"}
 
     def get_success_url(self):
         return reverse(

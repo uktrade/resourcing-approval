@@ -247,6 +247,18 @@
     </form>
 {% endif %}
 
+<!-- Event log -->
+<details class="govuk-details" data-module="govuk-details">
+    <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+            Event log
+        </span>
+    </summary>
+    <div class="govuk-details__text">
+        {% include 'event_log/event_log.html' with event_log=object.event_log.all %}
+    </div>
+</details>
+
 <script>
 function handleFormConfirmSubmit(event) {
     event.preventDefault();

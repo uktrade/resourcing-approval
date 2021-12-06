@@ -77,6 +77,7 @@ SESSION_COOKIE_AGE = 4 * 60 * 60  # 4 hours in seconds
 # Application definition
 
 INSTALLED_APPS = [
+    "event_log.apps.EventLogConfig",
     "chartofaccount.apps.ChartofaccountConfig",
     "user.apps.UserConfig",
     "main.apps.MainConfig",
@@ -87,6 +88,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.humanize",
     "django_celery_beat",
     "sass_processor",
     "authbroker_client",
