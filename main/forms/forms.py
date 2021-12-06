@@ -130,36 +130,24 @@ class FinancialInformationForm(forms.ModelForm):
             ),
         }
 
-    def __init__(self, *args, **kwargs):
+    inside_ir35_fields = ["min_day_rate", "max_day_rate", "days_required"]
+    outside_ir35_fields = ["project_fees"]
+
+    def __init__(self, *args, is_ir35, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.is_ir35 = is_ir35
+
         self.fields["resourcing_request"].disabled = True
+
+        required_ir35_fields = (
+            self.inside_ir35_fields if self.is_ir35 else self.outside_ir35_fields
+        )
+
+        for field in required_ir35_fields:
+            self.fields[field].required = True
+
         syncronise_cost_centre_dropdowns(self)
-
-    def clean(self):
-        cleaned_data = super().clean()
-
-        inside_ir35_fields = ["min_day_rate", "max_day_rate", "days_required"]
-        outside_ir35_fields = ["project_fees"]
-
-        if cleaned_data.get("resourcing_request").is_ir35 is True:
-            # Check inside fields.
-            for field in inside_ir35_fields:
-                if cleaned_data.get(field) is None:
-                    self.add_error(field, "Required if inside IR35")
-            # Clear outside fields.
-            for field in outside_ir35_fields:
-                cleaned_data[field] = None
-        elif cleaned_data.get("resourcing_request").is_ir35 is False:
-            # Check outside fields.
-            for field in outside_ir35_fields:
-                if cleaned_data.get(field) is None:
-                    self.add_error(field, "Required if outside IR35")
-            # Clear inside fields.
-            for field in inside_ir35_fields:
-                cleaned_data[field] = None
-
-        return cleaned_data
 
 
 class JobDescriptionForm(forms.ModelForm):

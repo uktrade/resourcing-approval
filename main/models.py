@@ -56,7 +56,7 @@ class ResourcingRequest(models.Model):
     state = models.SmallIntegerField(choices=State.choices, default=State.DRAFT)
 
     type = models.SmallIntegerField(choices=Type.choices, default=Type.NEW)
-    full_name = models.CharField(max_length=255)
+    full_name = models.CharField("Contractor's full name", max_length=255)
     job_title = models.CharField(max_length=255)
     project_name = models.CharField(max_length=255)
     start_date = models.DateField()
@@ -545,7 +545,7 @@ class InterimRequest(models.Model):
         help_text="What would be the impact of not filling this requirement.",
     )
     part_b_main_reason = models.TextField(
-        verbose_name="Min reason",
+        verbose_name="Main reason",
         help_text=(
             "What are the main reasons why this role has not been filled by a"
             " substantive Civil Servant. Please detail the strategic workforce plan for"
@@ -565,11 +565,10 @@ class CestRationale(models.Model):
     )
 
     cover_for_perm_role = models.BooleanField(choices=TRUE_FALSE_CHOICES)
-    role_description = models.TextField()
-    what = models.CharField(max_length=50, verbose_name="Control & Direction: what")
-    how = models.CharField(max_length=50, verbose_name="Control & Direction: how")
-    where = models.CharField(max_length=50, verbose_name="Control & Direction: where")
-    when = models.CharField(max_length=50, verbose_name="Control & Direction: when")
+    what = models.TextField("Control & Direction: what")
+    how = models.TextField("Control & Direction: how")
+    where = models.TextField("Control & Direction: where")
+    when = models.TextField("Control & Direction: when")
     personal_service = models.TextField()
     part_and_parcel = models.TextField()
     financial_risk = models.TextField()
@@ -613,7 +612,6 @@ class SdsStatusDetermination(models.Model):
 
     company_name = models.CharField(max_length=255)
     agency = models.CharField(max_length=255)
-    completed_by = models.ForeignKey("user.User", models.CASCADE, related_name="+")
     on_behalf_of = models.CharField(max_length=255)
     date_completed = models.DateField(default=datetime.date.today)
     reasons = models.TextField()

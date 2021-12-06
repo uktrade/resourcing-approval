@@ -5,7 +5,7 @@
 {% else %}
     <div class="govuk-form-group{% if field.errors %} govuk-form-group--error{% endif %}">
         <label class="govuk-label" for="{{ field.id_for_label }}">
-            {{ field.label }}
+            {{ field.label }} <span class="text-red">{{ field.field.required|yesno:"*," }}</span>
         </label>
 
         {% if field.help_text %}

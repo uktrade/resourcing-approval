@@ -29,6 +29,11 @@ class SupportingFormCreateView(EventLogMixin, PermissionRequiredMixin, CreateVie
     template_name = "main/form.html"
     event_type = EventType.CREATED
 
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+
+        self.resourcing_request = self.get_resourcing_request()
+
     def get_initial(self):
         return {"resourcing_request": self.request.GET.get("resourcing_request")}
 
@@ -49,6 +54,11 @@ class SupportingFormUpdateView(
 ):
     template_name = "main/form.html"
     event_type = EventType.UPDATED
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+
+        self.resourcing_request = self.get_resourcing_request()
 
     def get_initial(self):
         return {"resourcing_request": self.object.resourcing_request.pk}
@@ -80,6 +90,11 @@ class FinancialInformationCreateView(SupportingFormCreateView):
     permission_required = "main.add_financialinformation"
     event_context = {"object": "financial information"}
 
+    def get_form_kwargs(self):
+        form_kwargs = {"is_ir35": self.resourcing_request.is_ir35}
+
+        return super().get_form_kwargs() | form_kwargs
+
 
 class FinancialInformationDetailView(SupportingFormDetailView):
     model = FinancialInformation
@@ -92,6 +107,11 @@ class FinancialInformationUpdateView(SupportingFormUpdateView):
     form_class = FinancialInformationForm
     permission_required = "main.change_financialinformation"
     event_context = {"object": "financial information"}
+
+    def get_form_kwargs(self):
+        form_kwargs = {"is_ir35": self.resourcing_request.is_ir35}
+
+        return super().get_form_kwargs() | form_kwargs
 
 
 class JobDescriptionCreateView(SupportingFormCreateView):

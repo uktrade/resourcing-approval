@@ -16,9 +16,7 @@ RESOURCING_REQUEST_TYPE_TO_FORM = {
 
 class InterimRequestViewMixin:
     def get_form_class(self):
-        resourcing_request = self.get_resourcing_request()
-
-        return RESOURCING_REQUEST_TYPE_TO_FORM[resourcing_request.type]
+        return RESOURCING_REQUEST_TYPE_TO_FORM[self.resourcing_request.type]
 
 
 class InterimRequestCreateView(InterimRequestViewMixin, SupportingFormCreateView):
