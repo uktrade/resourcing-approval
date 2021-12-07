@@ -70,8 +70,7 @@ def create_test_resourcing_request(request):
 
     call_command(
         "create_test_resourcing_request",
-        name=form.cleaned_data["name"],
-        insideir35=form.cleaned_data["inside_IR35"],
+        **form.cleaned_data,
     )
 
     return redirect(reverse("dev_tools:index"))

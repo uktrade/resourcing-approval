@@ -32,7 +32,6 @@ def resourcing_request(db):
         {
             "requestor": hiring_manager.pk,
             "type": ResourcingRequest.Type.NEW.value,
-            "full_name": "John Smith",
             "job_title": "Python Developer",
             "project_name": "Testing",
             "start_date": datetime.date.today(),

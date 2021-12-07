@@ -1,9 +1,9 @@
 {% extends 'main/base.html' %}
 
-{% block title %}{{ object.full_name }}{% endblock %}
+{% block title %}{{ object }}{% endblock %}
 
 {% block content %}
-<h1 class="govuk-heading-l">{{ object.full_name }}</h1>
+<h1 class="govuk-heading-l">{{ object }}</h1>
 
 <dl class="govuk-summary-list">
     {% include 'main/partials/summary-row.html' with key='Type' value=object.get_type_display %}
