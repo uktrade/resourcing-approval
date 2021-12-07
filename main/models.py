@@ -132,18 +132,21 @@ class ResourcingRequest(models.Model):
 
     @property
     def required_supporting_forms(self):
-        yield self.financial_information
+        yield hasattr(self, "financial_information")
 
         if self.is_ir35:
-            yield self.job_description
+            yield hasattr(self, "job_description")
         else:
-            yield self.statement_of_work and self.statement_of_work.is_statement_of_work_valid
+            if hasattr(self, "statement_of_work"):
+                yield self.statement_of_work.is_statement_of_work_valid
+            else:
+                yield False
 
         yield from (
-            self.interim_request,
-            self.cest_rationale,
-            self.cest_document,
-            self.sds_status_determination,
+            hasattr(self, "interim_request"),
+            hasattr(self, "cest_rationale"),
+            hasattr(self, "cest_document"),
+            hasattr(self, "sds_status_determination"),
         )
 
     @property
