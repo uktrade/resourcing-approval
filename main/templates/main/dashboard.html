@@ -18,13 +18,13 @@
 {% if amended_resourcing_requests %}
     <h1 class="govuk-heading-m">Amended and ready for review</h1>
 
-    {% include 'main/partials/resourcing_request_table.html' with resourcing_requests=amended_resourcing_requests %}
+    {% include 'main/partials/resourcing_request_table.html' with resourcing_requests=amended_resourcing_requests show_requestor=True %}
 {% endif %}
 
 {% if awaiting_your_approval %}
     <h1 class="govuk-heading-m">Awaiting your approval</h1>
 
-    {% include 'main/partials/resourcing_request_table.html' with resourcing_requests=awaiting_your_approval %}
+    {% include 'main/partials/resourcing_request_table.html' with resourcing_requests=awaiting_your_approval show_requestor=True %}
 {% endif %}
 
 {% endblock %}
