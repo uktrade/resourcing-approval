@@ -56,7 +56,6 @@ class ResourcingRequest(models.Model):
     state = models.SmallIntegerField(choices=State.choices, default=State.DRAFT)
 
     type = models.SmallIntegerField(choices=Type.choices, default=Type.NEW)
-    full_name = models.CharField("Contractor's full name", max_length=255)
     job_title = models.CharField(max_length=255)
     project_name = models.CharField(max_length=255)
     start_date = models.DateField()
@@ -100,7 +99,7 @@ class ResourcingRequest(models.Model):
     objects = ResourcingRequestQuerySet.as_manager()
 
     def __str__(self):
-        return self.full_name
+        return f"{self.job_title} for {self.project_name}"
 
     def get_absolute_url(self):
         return reverse("resourcing-request-detail", kwargs={"pk": self.pk})

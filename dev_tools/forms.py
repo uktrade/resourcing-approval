@@ -19,5 +19,6 @@ class ChangeUserForm(forms.Form):
 
 
 class CreateTestResourcingRequestForm(forms.Form):
-    name = forms.CharField()
-    inside_IR35 = forms.ChoiceField(choices=TRUE_FALSE_CHOICES)
+    job_title = forms.CharField()
+    project_name = forms.CharField()
+    inside_ir35 = forms.ChoiceField(choices=TRUE_FALSE_CHOICES)

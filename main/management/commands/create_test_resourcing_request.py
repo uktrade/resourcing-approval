@@ -23,8 +23,9 @@ class Command(BaseCommand):
     help = "Create a test resourcing request"
 
     def add_arguments(self, parser):
-        parser.add_argument("--name", default="John Smith")
-        parser.add_argument("--insideir35", default=True)
+        parser.add_argument("--job-title", default="Python Developer")
+        parser.add_argument("--project-name", default="Testing")
+        parser.add_argument("--inside-ir35", default=True)
 
     def handle(self, *args, **options):
         assert settings.APP_ENV in (
@@ -32,16 +33,16 @@ class Command(BaseCommand):
             "dev",
         ), "Command can only be ran in a dev environment"
 
-        name = options["name"]
-        inside_ir35 = options["insideir35"] == "True"
+        job_title = options["job_title"]
+        project_name = options["project_name"]
+        inside_ir35 = options["inside_ir35"] == "True"
 
         resourcing_request = ResourcingRequest.objects.create(
             # Hiring Manager Helen
             requestor_id=2,
             type=ResourcingRequest.Type.NEW,
-            full_name=name,
-            job_title="Python Developer",
-            project_name="JML",
+            job_title=job_title,
+            project_name=project_name,
             start_date=datetime.date.today(),
             end_date=datetime.date.today() + datetime.timedelta(days=30 * 6),
             is_ir35=inside_ir35,
@@ -127,7 +128,7 @@ class Command(BaseCommand):
         CestRationale.objects.create(
             resourcing_request=resourcing_request,
             cover_for_perm_role=True,
-            role_description=lorem_ipsum.paragraph(),
+            # role_description=lorem_ipsum.paragraph(),
             what="Python Developer",
             how="From agency",
             where="Remote",
@@ -149,7 +150,7 @@ class Command(BaseCommand):
             company_name="A Company",
             agency="Five Stars",
             # Chief Rache
-            completed_by_id=3,
+            # completed_by_id=3,
             on_behalf_of="DIT",
             date_completed=datetime.date.today(),
             reasons=lorem_ipsum.paragraph(),

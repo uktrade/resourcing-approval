@@ -39,7 +39,6 @@ class ResourcingRequestForm(FormWithStartEndDates):
         fields = [
             "requestor",
             "type",
-            "full_name",
             "job_title",
             "project_name",
             "start_date",
