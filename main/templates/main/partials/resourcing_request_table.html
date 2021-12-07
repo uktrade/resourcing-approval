@@ -1,14 +1,22 @@
 <table class="govuk-table">
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-            <th class="govuk-table__header">Name</th>
+            <th class="govuk-table__header">Job title</th>
+            <th class="govuk-table__header">Project name</th>
+            {% if show_requestor %}
+                <th class="govuk-table__header">Requestor</th>
+            {% endif %}
             <th class="govuk-table__header">Status</th>
         </tr>
     </thead>
     <tbody class="govuk-table__body">
         {% for object in resourcing_requests %}
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell"><a href="{% url 'resourcing-request-detail' object.pk %}">{{ object }}</a></td>
+                <td class="govuk-table__cell"><a href="{% url 'resourcing-request-detail' object.pk %}">{{ object.job_title }}</a></td>
+                <td class="govuk-table__cell">{{ object.project_name }}</td>
+                {% if show_requestor %}
+                    <td class="govuk-table__cell">{{ object.requestor }}</td>
+                {% endif %}
                 <td class="govuk-table__cell">{{ object.get_state_display }}</td>
             </tr>
         {% endfor %}
