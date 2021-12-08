@@ -1,0 +1,19 @@
+digraph "Resourcing Approval" {
+    node [shape=box]
+
+    user [label="User" shape=oval]
+    app [label="Resourcing Approval"]
+    db [label="Database\nPostgreSQL" shape=cylinder]
+    redis [label="Message Broker\nRedis" shape=cylinder]
+    fs [label="File storage\nS3" shape=cylinder]
+    sso [label="Staff SSO"]
+    notify [label="GOV.UK Notify"]
+
+    user -> sso [label="Authentication"]
+    user -> app [label="CRUD"]
+    app -> sso [label="Fetch user details"]
+    app -> db
+    app -> fs
+    app -> redis
+    app -> notify -> user [label="Notifications"]
+}
