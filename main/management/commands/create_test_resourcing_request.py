@@ -148,7 +148,10 @@ class Command(BaseCommand):
         SdsStatusDetermination.objects.create(
             resourcing_request=resourcing_request,
             company_name="A Company",
+            worker_name="John Smith",
             agency="Five Stars",
+            contract_start_date=datetime.date.today(),
+            contract_end_date=datetime.date.today() + datetime.timedelta(days=30 * 6),
             # Chief Rache
             # completed_by_id=3,
             on_behalf_of="DIT",

@@ -613,7 +613,10 @@ class SdsStatusDetermination(models.Model):
     )
 
     company_name = models.CharField(max_length=255)
+    worker_name = models.CharField("worker's name", max_length=255)
     agency = models.CharField(max_length=255)
+    contract_start_date = models.DateField()
+    contract_end_date = models.DateField()
     on_behalf_of = models.CharField(max_length=255)
     date_completed = models.DateField(default=datetime.date.today)
     reasons = models.TextField()
