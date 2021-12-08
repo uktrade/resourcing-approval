@@ -1,21 +1,27 @@
 {% extends 'main/base.html' %}
 
+{% load summary %}
+
 {% block title %}{{ object }}{% endblock %}
 
 {% block content %}
 <h1 class="govuk-heading-l">{{ object }}</h1>
 
 <dl class="govuk-summary-list">
-    {% include 'main/partials/summary-row.html' with key='Type' value=object.get_type_display %}
-    {% include 'main/partials/summary-row.html' with key='Job title' value=object.job_title %}
-    {% include 'main/partials/summary-row.html' with key='Project name' value=object.project_name %}
-    {% include 'main/partials/summary-row.html' with key='Start date' value=object.start_date %}
-    {% include 'main/partials/summary-row.html' with key='End date' value=object.end_date %}
-    {% include 'main/partials/summary-row.html' with key='Is IR35' value=object.get_is_ir35_display %}
-    {% include 'main/partials/summary-row.html' with key='Chief' value=object.chief %}
-    {% include 'main/partials/summary-row.html' with key='Requestor' value=object.requestor %}
-    {% include 'main/partials/summary-row.html' with key='Status' value=object.get_state_display %}
+    {% field_summary object 'type' %}
+    {% field_summary object 'job_title' %}
+    {% field_summary object 'project_name' %}
+    {% field_summary object 'start_date' %}
+    {% field_summary object 'end_date' %}
+    {% field_summary object 'is_ir35' %}
+    {% field_summary object 'chief' %}
+    {% field_summary object 'requestor' %}
+    {% field_summary object 'state' %}
+</dl>
 
+<h2 class="govuk-heading-m">Supporting forms</h2>
+
+<dl class="govuk-summary-list">
     <!-- Financial information -->
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">

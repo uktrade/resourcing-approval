@@ -53,7 +53,9 @@ class ResourcingRequest(models.Model):
         "user.User", models.CASCADE, related_name="resourcing_requests"
     )
 
-    state = models.SmallIntegerField(choices=State.choices, default=State.DRAFT)
+    state = models.SmallIntegerField(
+        "Status", choices=State.choices, default=State.DRAFT
+    )
 
     type = models.SmallIntegerField(choices=Type.choices, default=Type.NEW)
     job_title = models.CharField(max_length=255)

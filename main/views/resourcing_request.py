@@ -79,24 +79,15 @@ class ResourcingRequestDetailView(
 
         resourcing_request = context["object"]
 
+        # forms
         context["approval_form"] = ApprovalForm(
             user=self.request.user, resourcing_request=resourcing_request
         )
-
         context["comment_form"] = CommentForm(
             initial={
                 "resourcing_request": resourcing_request.pk,
                 "user": self.request.user.pk,
             }
-        )
-
-        approvals = list(
-            get_approvals_context_data(self.request.user, resourcing_request)
-        )
-
-        context["approvals"] = approvals
-        context["is_approved"] = all(
-            x["object"] and x["object"].approved for x in approvals
         )
 
         return context
