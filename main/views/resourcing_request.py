@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
@@ -88,6 +88,10 @@ class ResourcingRequestDetailView(
                 "resourcing_request": resourcing_request.pk,
                 "user": self.request.user.pk,
             }
+        )
+
+        context["can_user_approve"] = resourcing_request.can_user_approve(
+            self.request.user
         )
 
         return context
@@ -268,7 +272,12 @@ class ResourcingRequestApprovalView(FormView):
         )
 
     def get_context_data(self, **kwargs):
-        context = {"resourcing_request": self.resourcing_request}
+        context = {
+            "resourcing_request": self.resourcing_request,
+            "can_user_approve": self.resourcing_request.can_user_approve(
+                self.request.user
+            ),
+        }
 
         return super().get_context_data(**kwargs) | context
 
@@ -283,39 +292,11 @@ class ResourcingRequestApprovalView(FormView):
     def form_valid(self, form):
         approval_type = form.cleaned_data["type"]
         approved = form.cleaned_data["approved"]
-
-        is_approved = self.resourcing_request.get_is_approved()
-
-        if is_approved:
-            raise ValidationError("Resourcing request is already approved")
-
-        if approved is not None:
-            if not self.request.user.has_perm(
-                f"main.can_give_{approval_type}_approval"
-            ):
-                raise PermissionDenied("User cannot give this approval")
-
-            if not self.resourcing_request.can_approve:
-                raise ValidationError("Cannot perform this action")
-
-            if approval_type == Approval.Type.CHIEF.value:
-                if (
-                    self.request.user != self.resourcing_request.chief
-                    and not self.request.user.is_superuser
-                ):
-                    raise ValidationError(
-                        "Only the nominated Chief can give Chief approval"
-                    )
-        else:
-            if not self.request.user.has_perm("main.can_give_busops_approval"):
-                raise PermissionDenied("User cannot give this approval")
-
-            if not self.resourcing_request.can_clear_approval:
-                raise ValidationError("Cannot perform this action")
+        reason = form.cleaned_data["reason"]
 
         comment = None
 
-        if approved in (False, None):
+        if reason:
             comment = Comment.objects.create(
                 resourcing_request=self.resourcing_request,
                 user=self.request.user,
@@ -341,7 +322,6 @@ class ResourcingRequestApprovalView(FormView):
             event_context={"group": Approval.Type(approval.type).label},
         )
 
-        # We need to call `get_is_approved` again to get the updated state.
         if self.resourcing_request.get_is_approved():
             self.resourcing_request.state = self.resourcing_request.State.APPROVED
 

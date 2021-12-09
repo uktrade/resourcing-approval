@@ -1,7 +1,7 @@
 {% load form %}
 
 <div data-hx-component-id="approvals">
-    {% if resourcing_request.can_approve and user.is_approver or resourcing_request.can_clear_approval and perms.main.can_give_busops_approval %}
+    {% if can_user_approve %}
         <form
             novalidate
             hx-post="{% url 'resourcing-request-approval' resourcing_request.pk %}"

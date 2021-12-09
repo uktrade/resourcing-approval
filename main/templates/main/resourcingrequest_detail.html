@@ -12,6 +12,7 @@
     {% field_summary object 'job_title' %}
     {% field_summary object 'project_name' %}
     {% field_summary object 'start_date' %}
+    {% field_summary object 'profession' %}
     {% field_summary object 'end_date' %}
     {% field_summary object 'is_ir35' %}
     {% field_summary object 'chief' %}
@@ -228,7 +229,7 @@
 {% if object.is_draft %}
     <p class="govuk-body">Resourcing request is not ready for approval.</p>
 {% else %}
-    {% include 'main/partials/approvals.html' with form=approval_form resourcing_request=object %}
+    {% include 'main/partials/approvals.html' with form=approval_form resourcing_request=object can_user_approve=can_user_approve %}
 {% endif %}
 
 <!-- Comments -->

@@ -32,3 +32,24 @@ main {
 .ml-1 {
   margin-left: 1rem;
 }
+
+.messages-list {
+  margin-top: 20px;
+  font-weight: bold;
+
+  li {
+    padding-left: 15px;
+  }
+
+  .success {
+    border-left: 5px solid green;
+  }
+
+  .warning {
+    border-left: 5px solid orange;
+  }
+
+  .error {
+    border-left: 5px solid #d4351c;
+  }
+}

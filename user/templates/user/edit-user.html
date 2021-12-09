@@ -1,0 +1,14 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Edit {{ user }}{% endblock %}
+
+{% block content %}
+<h1 class="govuk-heading-l">Edit {{ user }}</h1>
+
+<form method="POST" novalidate>
+    {% csrf_token %}
+    {% include 'main/partials/forms/form.html' %}
+    <button class="govuk-button">Submit</button>
+</form>
+
+{% endblock %}

@@ -18,6 +18,9 @@ shell:
 migrations:
 	$(web) python manage.py makemigrations
 
+empty-migration:
+	$(web) python manage.py makemigrations --empty $(app)
+
 migrate:
 	$(web) python manage.py migrate
 
@@ -60,7 +63,10 @@ check-migrations:
 check: check-black check-isort check-flake8 check-migrations
 
 test:
-	docker-compose run --rm web pytest $(opts)
+	docker-compose run --rm web pytest
+
+test-create-db:
+	docker-compose run --rm web pytest --create-db
 
 collectstatic:
 	$(web) python manage.py collectstatic

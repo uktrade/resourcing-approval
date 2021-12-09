@@ -56,7 +56,11 @@
                         </li>
                     {% endif %}
                     <li class="govuk-header__navigation-item govuk-header__navigation-item--active">
-                        {{ user }}
+                        {% if user.is_authenticated %}
+                            <a class="govuk-header__link" href="{% url 'user:edit-user' user.pk %}">{{ user }}</a>
+                        {% else %}
+                            {{ user }}
+                        {% endif %}
                     </li>
                 </ul>
             </nav>

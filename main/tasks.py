@@ -4,6 +4,7 @@ from typing import Any, Optional
 
 from celery import group, shared_task
 from django.conf import settings
+from django.db.models.query_utils import Q
 from notifications_python_client.notifications import NotificationsAPIClient
 
 from main.constants import APPROVAL_TYPE_TO_GROUP, ApproverGroup
@@ -41,12 +42,18 @@ def send_notification(to, template_id, personalisation=None):
 
 def send_group_notification(
     approver_group: ApproverGroup,
+    user_filter: Optional[Q] = None,
     *,
     template_id: str,
     personalisation: Optional[dict[str, Any]] = None,
 ) -> None:
     if personalisation is None:
         personalisation = {}
+
+    users = User.objects.filter(groups__name=approver_group.value)
+
+    if user_filter:
+        users = users.filter(user_filter)
 
     tasks = [
         send_notification.s(
@@ -57,7 +64,7 @@ def send_group_notification(
                 "first_name": user.first_name,
             },
         )
-        for user in User.objects.filter(groups__name=approver_group.value)
+        for user in users
     ]
 
     group(tasks).apply_async()
@@ -94,7 +101,10 @@ def notify_approvers(
 
     # Notify the head of profession group that the request has been send for approval.
     if not approval:
-        send_ready_for_approval_group_notification(ApproverGroup.HEAD_OF_PROFESSION)
+        send_ready_for_approval_group_notification(
+            ApproverGroup.HEAD_OF_PROFESSION,
+            Q(profession=resourcing_request.profession),
+        )
 
         return
 
