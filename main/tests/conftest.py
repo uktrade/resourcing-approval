@@ -34,6 +34,7 @@ def resourcing_request(db):
             "type": ResourcingRequest.Type.NEW.value,
             "job_title": "Python Developer",
             "project_name": "Testing",
+            "profession": 1,  # Development
             "start_date": datetime.date.today(),
             "end_date": datetime.date.today() + datetime.timedelta(days=30 * 6),
             "is_ir35": True,
@@ -41,7 +42,10 @@ def resourcing_request(db):
         },
     )
 
-    return ResourcingRequest.objects.last()
+    resourcing_request = ResourcingRequest.objects.last()
+    assert resourcing_request
+
+    return resourcing_request
 
 
 def login(client, username):

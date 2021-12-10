@@ -41,6 +41,7 @@ class ResourcingRequestForm(FormWithStartEndDates):
             "type",
             "job_title",
             "project_name",
+            "profession",
             "start_date",
             "end_date",
             "is_ir35",
@@ -71,6 +72,9 @@ class ApprovalForm(forms.ModelForm):
     def __init__(self, *args, user, resourcing_request, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.user = user
+        self.resourcing_request = resourcing_request
+
         self.fields["type"].choices = [
             (approval_type.value, approval_type.label)
             for approval_type in get_user_related_approval_types(
@@ -81,13 +85,56 @@ class ApprovalForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
+        type = cleaned_data.get("type")
         approved = cleaned_data.get("approved")
         reason = cleaned_data.get("reason")
+
+        approval_type = Approval.Type(type)
 
         if approved in (False, None) and not reason:
             self.add_error(
                 "reason", "This field is required when rejecting or clearing."
             )
+
+        if self.resourcing_request.get_is_approved():
+            self.add_error(None, "The resourcing request has already been approved.")
+
+        if approved in (True, False):
+            if not self.resourcing_request.can_approve:
+                self.add_error(None, "The resourcing request cannot be approved")
+
+            if not self.user.has_approval_perm(approval_type):
+                self.add_error(
+                    None, "The user does not have permission to give this approval."
+                )
+
+            if (
+                approval_type == Approval.Type.CHIEF
+                and self.user != self.resourcing_request.chief
+                and not self.user.is_superuser
+            ):
+                self.add_error(
+                    None, "Only the nominated Chief can give Chief approval."
+                )
+
+            if (
+                approval_type == Approval.Type.HEAD_OF_PROFESSION
+                and self.user.profession != self.resourcing_request.profession
+                and not self.user.is_superuser
+            ):
+                self.add_error(
+                    None,
+                    "Only the relevant Head of Profession can give Head of Profession approval",
+                )
+
+        if approved is None:
+            if not self.resourcing_request.can_clear_approval:
+                self.add_error(None, "The approvals cannot be cleared.")
+
+            if not self.user.has_approval_perm(Approval.Type.BUSOPS):
+                self.add_error(
+                    None, "The user does not have permission to clear approvals."
+                )
 
         return cleaned_data
 

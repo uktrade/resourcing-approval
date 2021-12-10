@@ -1,11 +1,20 @@
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.urls import reverse
 
 from main.models import Approval
 
 
 class User(AbstractUser):
+    profession = models.ForeignKey(
+        "main.Profession", models.PROTECT, null=True, blank=True
+    )
+
     def __str__(self):
         return self.get_full_name() or self.get_username()
+
+    def get_absolute_url(self):
+        return reverse("user:edit-user", kwargs={"pk": self.pk})
 
     @property
     def is_approver(self):
@@ -15,3 +24,11 @@ class User(AbstractUser):
 
     def has_approval_perm(self, approval_type):
         return self.has_perm(f"main.can_give_{approval_type.value}_approval")
+
+    @property
+    def is_head_of_profession(self):
+        return self.has_approval_perm(Approval.Type.HEAD_OF_PROFESSION)
+
+    @property
+    def is_busops(self):
+        return self.has_approval_perm(Approval.Type.BUSOPS)

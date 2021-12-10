@@ -20,6 +20,13 @@ TRUE_FALSE_CHOICES = (
 )
 
 
+class Profession(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+
 class ResourcingRequestQuerySet(models.QuerySet):
     def select_related_approvals(self):
         return self.select_related(
@@ -60,6 +67,7 @@ class ResourcingRequest(models.Model):
     type = models.SmallIntegerField(choices=Type.choices, default=Type.NEW)
     job_title = models.CharField(max_length=255)
     project_name = models.CharField(max_length=255)
+    profession = models.ForeignKey("Profession", models.PROTECT)
     start_date = models.DateField()
     end_date = models.DateField()
     is_ir35 = models.BooleanField(
@@ -208,6 +216,26 @@ class ResourcingRequest(models.Model):
 
     def get_is_approved(self):
         return all(x and x.approved for x in self.get_approvals().values())
+
+    def can_user_approve(self, user):
+        """Return whether the user can approve this resourcing request."""
+        if self.can_approve:
+            if user.is_superuser:
+                return True
+
+            # Is the user the correct head of profession?
+            if user.is_head_of_profession and user.profession == self.profession:
+                return True
+
+            # Is the user another type of approver?
+            if not user.is_head_of_profession and user.is_approver:
+                return True
+
+        # If in review (can clear approval), is the user from busops?
+        if self.can_clear_approval and user.is_busops:
+            return True
+
+        return False
 
 
 class Approval(models.Model):

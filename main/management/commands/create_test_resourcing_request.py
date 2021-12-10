@@ -43,6 +43,7 @@ class Command(BaseCommand):
             type=ResourcingRequest.Type.NEW,
             job_title=job_title,
             project_name=project_name,
+            profession_id=1,  # Development
             start_date=datetime.date.today(),
             end_date=datetime.date.today() + datetime.timedelta(days=30 * 6),
             is_ir35=inside_ir35,

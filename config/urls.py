@@ -7,6 +7,7 @@ from django.views.generic.base import RedirectView
 
 urlpatterns = [
     path("", include("main.urls")),
+    path("user/", include("user.urls")),
     path("auth/", include("authbroker_client.urls")),
     path("dev-tools/", include("dev_tools.urls")),
     path("healthcheck/", include("healthcheck.urls")),

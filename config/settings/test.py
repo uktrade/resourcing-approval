@@ -6,3 +6,5 @@ DATABASES["default"] = dj_database_url.parse(
 )
 
 CELERY_BROKER_URL = "redis://redis:6379/0"
+
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
