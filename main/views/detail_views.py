@@ -5,45 +5,48 @@ from main.models import (
     SdsStatusDetermination,
     StatementOfWork,
 )
-from main.views.supporting_forms import SupportingFormDetailView
+from main.views.supporting_documents import SupportingDocumentDetailView
 
 
-class JobDescriptionDetailView(SupportingFormDetailView):
+class JobDescriptionDetailView(SupportingDocumentDetailView):
     model = JobDescription
     permission_required = "main.view_jobdescription"
     title = "Job description"
 
 
-class InterimRequestDetailView(SupportingFormDetailView):
+class InterimRequestDetailView(SupportingDocumentDetailView):
     model = InterimRequest
     permission_required = "main.view_interimrequest"
-    title = "Interim Request"
+    title = "Interim request"
 
 
-class CestRationaleDetailView(SupportingFormDetailView):
+class CestRationaleDetailView(SupportingDocumentDetailView):
     model = CestRationale
     permission_required = "main.view_cestrationale"
-    title = "CEST Rationale"
+    title = "CEST rationale"
 
 
-class SdsStatusDeterminationDetailView(SupportingFormDetailView):
+class SdsStatusDeterminationDetailView(SupportingDocumentDetailView):
     model = SdsStatusDetermination
     permission_required = "main.view_sdsstatusdetermination"
-    title = "SDS Status Determination"
+    title = "SDS status determination"
 
 
-class StatementOfWorkDetailView(SupportingFormDetailView):
+class StatementOfWorkDetailView(SupportingDocumentDetailView):
+    pk_url_kwarg = "statement_of_work_pk"
     model = StatementOfWork
-    permission_required = "main.view_statementofwork"
-    title = "Statement of Work"
     template_name = "main/statement_of_work_detail.html"
+    permission_required = "main.view_statementofwork"
+    title = "Statement of work"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["my_modules"] = self.object.modules.all()
-        context["deliverable_exclude_list"] = [
-            "id",
-            "statement_of_work_module",
-            "deliverable_title",
-        ]
-        return context
+        context = {
+            "my_modules": self.object.modules.all(),
+            "deliverable_exclude_list": [
+                "id",
+                "statement_of_work_module",
+                "deliverable_title",
+            ],
+        }
+
+        return super().get_context_data(**kwargs) | context

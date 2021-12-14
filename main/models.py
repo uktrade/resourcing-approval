@@ -112,7 +112,9 @@ class ResourcingRequest(models.Model):
         return f"{self.job_title} for {self.project_name}"
 
     def get_absolute_url(self):
-        return reverse("resourcing-request-detail", kwargs={"pk": self.pk})
+        return reverse(
+            "resourcing-request-detail", kwargs={"resourcing_request_pk": self.pk}
+        )
 
     @property
     def is_draft(self) -> bool:
@@ -340,6 +342,15 @@ class JobDescription(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse(
+            "job-description-detail",
+            kwargs={
+                "resourcing_request_pk": self.resourcing_request.pk,
+                "supporting_document_pk": self.pk,
+            },
+        )
+
 
 class FinancialInformation(models.Model):
     class AreaOfWork(models.TextChoices):
@@ -400,6 +411,15 @@ class FinancialInformation(models.Model):
     def __str__(self) -> str:
         return "Financial information"
 
+    def get_absolute_url(self):
+        return reverse(
+            "financial-information-detail",
+            kwargs={
+                "resourcing_request_pk": self.resourcing_request.pk,
+                "supporting_document_pk": self.pk,
+            },
+        )
+
 
 class StatementOfWork(models.Model):
     resourcing_request = models.OneToOneField(
@@ -449,6 +469,15 @@ class StatementOfWork(models.Model):
     def __str__(self):
         return self.company_name
 
+    def get_absolute_url(self):
+        return reverse(
+            "statement-of-work-detail",
+            kwargs={
+                "resourcing_request_pk": self.resourcing_request.pk,
+                "statement_of_work_pk": self.pk,
+            },
+        )
+
 
 class StatementOfWorkModule(models.Model):
     statement_of_work = models.ForeignKey(
@@ -484,6 +513,9 @@ class StatementOfWorkModule(models.Model):
     def __str__(self):
         return self.module_title
 
+    def get_absolute_url(self):
+        return self.statement_of_work.get_absolute_url()
+
 
 class StatementOfWorkModuleDeliverable(models.Model):
     statement_of_work_module = models.ForeignKey(
@@ -509,6 +541,9 @@ class StatementOfWorkModuleDeliverable(models.Model):
 
     def __str__(self):
         return self.deliverable_title
+
+    def get_absolute_url(self):
+        return self.statement_of_work_module.statement_of_work.get_absolute_url()
 
 
 class InterimRequest(models.Model):
@@ -588,6 +623,15 @@ class InterimRequest(models.Model):
     def __str__(self):
         return "Interim request"
 
+    def get_absolute_url(self):
+        return reverse(
+            "interim-request-detail",
+            kwargs={
+                "resourcing_request_pk": self.resourcing_request.pk,
+                "supporting_document_pk": self.pk,
+            },
+        )
+
 
 class CestRationale(models.Model):
     resourcing_request = models.OneToOneField(
@@ -609,6 +653,15 @@ class CestRationale(models.Model):
 
     def __str__(self):
         return "CEST rationale"
+
+    def get_absolute_url(self):
+        return reverse(
+            "cest-rationale-detail",
+            kwargs={
+                "resourcing_request_pk": self.resourcing_request.pk,
+                "supporting_document_pk": self.pk,
+            },
+        )
 
 
 def resourcing_request_directory_path(instance, filename):
@@ -634,6 +687,12 @@ class CestDocument(models.Model):
     def __str__(self):
         return self.file.name
 
+    def get_absolute_url(self):
+        return reverse(
+            "resourcing-request-detail",
+            kwargs={"resourcing_request_pk": self.resourcing_request.pk},
+        )
+
 
 class SdsStatusDetermination(models.Model):
     resourcing_request = models.OneToOneField(
@@ -653,6 +712,15 @@ class SdsStatusDetermination(models.Model):
 
     def __str__(self):
         return "SDS status determination"
+
+    def get_absolute_url(self):
+        return reverse(
+            "sds-status-determination-detail",
+            kwargs={
+                "resourcing_request_pk": self.resourcing_request.pk,
+                "supporting_document_pk": self.pk,
+            },
+        )
 
 
 class Comment(models.Model):

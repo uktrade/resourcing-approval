@@ -31,12 +31,14 @@ from main.views.resourcing_request import (
 from main.views.statement_of_work_views import (
     StatementOfWorkCreateView,
     StatementOfWorkModuleCreateView,
+    StatementOfWorkModuleDeleteView,
     StatementOfWorkModuleDeliverableCreateView,
+    StatementOfWorkModuleDeliverableDeleteView,
     StatementOfWorkModuleDeliverableUpdateView,
     StatementOfWorkModuleUpdateView,
     StatementOfWorkUpdateView,
 )
-from main.views.supporting_forms import (
+from main.views.supporting_documents import (
     CestDocumentCreateView,
     CestDocumentUpdateView,
     CestRationaleCreateView,
@@ -51,183 +53,216 @@ from main.views.supporting_forms import (
 )
 
 
+def supporting_document_urls(name, create_view, update_view, detail_view=None):
+    urls = [
+        path("create", create_view.as_view(), name=f"{name}-create"),
+        path(
+            "<int:supporting_document_pk>/update",
+            update_view.as_view(),
+            name=f"{name}-update",
+        ),
+    ]
+
+    if detail_view:
+        urls.append(
+            path(
+                "<int:supporting_document_pk>/",
+                detail_view.as_view(),
+                name=f"{name}-detail",
+            )
+        )
+
+    return urls
+
+
+financial_information_urls = supporting_document_urls(
+    "financial-information",
+    FinancialInformationCreateView,
+    FinancialInformationUpdateView,
+    FinancialInformationDetailView,
+)
+
+job_description_urls = supporting_document_urls(
+    "job-description",
+    JobDescriptionCreateView,
+    JobDescriptionUpdateView,
+    JobDescriptionDetailView,
+)
+
+statement_of_work_module_deliverable_urls = [
+    path(
+        "create",
+        StatementOfWorkModuleDeliverableCreateView.as_view(),
+        name="statement-of-work-module-deliverable-create",
+    ),
+    path(
+        "<int:deliverable_pk>/update",
+        StatementOfWorkModuleDeliverableUpdateView.as_view(),
+        name="statement-of-work-module-deliverable-update",
+    ),
+    path(
+        "<int:deliverable_pk>/delete",
+        StatementOfWorkModuleDeliverableDeleteView.as_view(),
+        name="statement-of-work-module-deliverable-delete",
+    ),
+]
+
+statement_of_work_module_urls = [
+    path(
+        "create",
+        StatementOfWorkModuleCreateView.as_view(),
+        name="statement-of-work-module-create",
+    ),
+    path(
+        "<int:module_pk>/update",
+        StatementOfWorkModuleUpdateView.as_view(),
+        name="statement-of-work-module-update",
+    ),
+    path(
+        "<int:module_pk>/delete",
+        StatementOfWorkModuleDeleteView.as_view(),
+        name="statement-of-work-module-delete",
+    ),
+    path(
+        "<int:module_pk>/deliverable/",
+        include(statement_of_work_module_deliverable_urls),
+    ),
+]
+
+statement_of_work_urls = [
+    path(
+        "create", StatementOfWorkCreateView.as_view(), name="statement-of-work-create"
+    ),
+    path(
+        "<int:statement_of_work_pk>/",
+        include(
+            [
+                path(
+                    "update",
+                    StatementOfWorkUpdateView.as_view(),
+                    name="statement-of-work-update",
+                ),
+                path(
+                    "",
+                    StatementOfWorkDetailView.as_view(),
+                    name="statement-of-work-detail",
+                ),
+                path("module/", include(statement_of_work_module_urls)),
+            ]
+        ),
+    ),
+]
+
+interim_request_urls = supporting_document_urls(
+    "interim-request",
+    InterimRequestCreateView,
+    InterimRequestUpdateView,
+    InterimRequestDetailView,
+)
+
+cest_rationale_urls = supporting_document_urls(
+    "cest-rationale",
+    CestRationaleCreateView,
+    CestRationaleUpdateView,
+    CestRationaleDetailView,
+)
+
+cest_document_urls = supporting_document_urls(
+    "cest-document",
+    CestDocumentCreateView,
+    CestDocumentUpdateView,
+)
+
+sds_status_determination_urls = supporting_document_urls(
+    "sds-status-determination",
+    SdsStatusDeterminationCreateView,
+    SdsStatusDeterminationUpdateView,
+    SdsStatusDeterminationDetailView,
+)
+
 request_urls = [
     path(
         "",
-        ResourcingRequestListView.as_view(),
-        name="resourcing-request-list",
-    ),
-    path(
-        "create/",
-        ResourcingRequestCreateView.as_view(),
-        name="resourcing-request-create",
-    ),
-    path(
-        "<int:pk>/",
         ResourcingRequestDetailView.as_view(),
         name="resourcing-request-detail",
     ),
     path(
-        "<int:pk>/update",
+        "update",
         ResourcingRequestUpdateView.as_view(),
         name="resourcing-request-update",
     ),
     path(
-        "<int:pk>/delete",
+        "delete",
         ResourcingRequestDeleteView.as_view(),
         name="resourcing-request-delete",
     ),
+    # Supporting documents
+    path("financial-information/", include(financial_information_urls)),
+    path("job-description/", include(job_description_urls)),
+    path("statement-of-work/", include(statement_of_work_urls)),
+    path("interim-request/", include(interim_request_urls)),
+    path("cest-rationale/", include(cest_rationale_urls)),
+    path("cest-document/", include(cest_document_urls)),
+    path("sds-status-determination/", include(sds_status_determination_urls)),
+    # Actions
     path(
-        "<int:pk>/send-for-approval",
+        "send-for-approval",
         ResourcingRequestSendForApprovalView.as_view(),
         name="resourcing-request-send-for-approval",
     ),
     path(
-        "<int:pk>/amend",
+        "amend",
         ResourcingRequestAmendView.as_view(),
         name="resourcing-request-amend",
     ),
     path(
-        "<int:pk>/send-for-review",
+        "send-for-review",
         ResourcingRequestSendForReviewView.as_view(),
         name="resourcing-request-send-for-review",
     ),
     path(
-        "<int:pk>/finish-amendments-review",
+        "finish-amendments-review",
         ResourcingRequestFinishAmendmentsReviewView.as_view(),
         name="resourcing-request-finish-amendments-review",
     ),
     path(
-        "<int:pk>/add-comment",
+        "add-comment",
         ResourcingRequestAddComment.as_view(),
         name="resourcing-request-add-comment",
     ),
     path(
-        "<int:pk>/approval",
+        "approval",
         ResourcingRequestApprovalView.as_view(),
         name="resourcing-request-approval",
     ),
 ]
 
-
-def document_urls(create_view, update_view, name_prefix, parent_key=""):
-    return [
-        path(
-            f"create{parent_key}",
-            create_view.as_view(),
-            name=f"{name_prefix}-create",
-        ),
-        path(
-            "<int:pk>/update",
-            update_view.as_view(),
-            name=f"{name_prefix}-update",
-        ),
-    ]
-
-
-def details_document_urls(
-    detail_view, create_view, update_view, name_prefix, parent_key=""
-):
-    return [
-        path(
-            f"create{parent_key}",
-            create_view.as_view(),
-            name=f"{name_prefix}-create",
-        ),
-        path(
-            "<int:pk>/update",
-            update_view.as_view(),
-            name=f"{name_prefix}-update",
-        ),
-        path(
-            "<int:pk>/detail",
-            detail_view.as_view(),
-            name=f"{name_prefix}-detail",
-        ),
-    ]
-
-
-financial_information_urls = details_document_urls(
-    FinancialInformationDetailView,
-    FinancialInformationCreateView,
-    FinancialInformationUpdateView,
-    "financial-information",
-)
-
-
-job_description_urls = details_document_urls(
-    JobDescriptionDetailView,
-    JobDescriptionCreateView,
-    JobDescriptionUpdateView,
-    "job-description",
-)
-
-statement_of_work_urls = details_document_urls(
-    StatementOfWorkDetailView,
-    StatementOfWorkCreateView,
-    StatementOfWorkUpdateView,
-    "statement-of-work",
-)
-
-
-statement_of_work__module_urls = document_urls(
-    StatementOfWorkModuleCreateView,
-    StatementOfWorkModuleUpdateView,
-    "statement-of-work-module",
-    "/<int:parent_pk>",
-)
-
-statement_of_work__module_deliverable_urls = document_urls(
-    StatementOfWorkModuleDeliverableCreateView,
-    StatementOfWorkModuleDeliverableUpdateView,
-    "statement-of-work-module-deliverable",
-    "/<int:parent_pk>",
-)
-
-
-interim_request_urls = details_document_urls(
-    InterimRequestDetailView,
-    InterimRequestCreateView,
-    InterimRequestUpdateView,
-    "interim-request",
-)
-
-cest_rationale_urls = details_document_urls(
-    CestRationaleDetailView,
-    CestRationaleCreateView,
-    CestRationaleUpdateView,
-    "cest-rationale",
-)
-
-cest_document_urls = document_urls(
-    CestDocumentCreateView,
-    CestDocumentUpdateView,
-    "cest-document",
-)
-
-sds_status_determination_urls = details_document_urls(
-    SdsStatusDeterminationDetailView,
-    SdsStatusDeterminationCreateView,
-    SdsStatusDeterminationUpdateView,
-    "sds-status-determination",
-)
-
 urlpatterns = [
     path("", index, name="index"),
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
-    path("resourcing-request/", include(request_urls)),
-    path("financial-information/", include(financial_information_urls)),
-    path("job-description/", include(job_description_urls)),
-    path("statement-of-work/", include(statement_of_work_urls)),
+    # Resourcing request
     path(
-        "statement-of-work-module-deliverable/",
-        include(statement_of_work__module_deliverable_urls),
+        "resourcing-request/",
+        include(
+            [
+                path(
+                    "",
+                    ResourcingRequestListView.as_view(),
+                    name="resourcing-request-list",
+                ),
+                path(
+                    "create/",
+                    ResourcingRequestCreateView.as_view(),
+                    name="resourcing-request-create",
+                ),
+                path(
+                    "<int:resourcing_request_pk>/",
+                    include(request_urls),
+                ),
+            ]
+        ),
     ),
-    path("statement-of-work-module/", include(statement_of_work__module_urls)),
-    path("interim-request/", include(interim_request_urls)),
-    path("cest-rationale/", include(cest_rationale_urls)),
-    path("cest-document/", include(cest_document_urls)),
-    path("sds-status-determination/", include(sds_status_determination_urls)),
+    # htmx
     path("htmx/load-directorates/", load_directorates, name="htmx-load-directorates"),
     path("htmx/load-costcentres/", load_costcentres, name="htmx-load-costcentres"),
 ]

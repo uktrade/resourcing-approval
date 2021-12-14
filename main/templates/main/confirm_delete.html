@@ -1,0 +1,17 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Confirm delete{% endblock %}
+
+{% block content %}
+<h1 class="govuk-heading-l">Confirm delete</h1>
+
+<form method="POST" novalidate>
+    {% csrf_token %}
+
+    <p class="govuk-body">Are you sure you want to delete?</p>
+
+    <button class="govuk-button" type="submit">Yes</button>
+    <a class="govuk-button govuk-button--secondary" href="{{ object.get_absolute_url }}">Cancel</a>
+</form>
+
+{% endblock %}

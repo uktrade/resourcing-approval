@@ -6,18 +6,18 @@
 {% block content %}
 <h1 class="govuk-heading-l">{{ detail_title }}</h1>
 
-
 <dl class="govuk-summary-list">
-
     {% object_as_list object exclude_list %}
-
 </dl>
-    {% block children %}
-    {% endblock %}
 
-    <a class="govuk-button govuk-button--secondary mb-0"
-       href="{% url 'resourcing-request-detail' object.resourcing_request_id %}">
-        Back</a>
-
+{% block children %}
 {% endblock %}
 
+{% block actions %}
+<a
+    class="govuk-button govuk-button--secondary mb-0"
+    href="{% url 'resourcing-request-detail' object.resourcing_request_id %}"
+>Back</a>
+{% endblock %}
+
+{% endblock %}

@@ -4,7 +4,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
-from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
@@ -14,24 +13,8 @@ from main.forms.forms import ApprovalForm, CommentForm, ResourcingRequestForm
 from main.models import Approval, Comment, ResourcingRequest
 from main.services.event_log import EventLogMixin, EventLogService, EventType
 from main.tasks import notify_approvers, send_group_notification, send_notification
-
-
-def get_approvals_context_data(user, resourcing_request):
-    approvals = resourcing_request.get_approvals()
-
-    for approval_type in Approval.Type:
-        has_permission = user.has_approval_perm(approval_type)
-
-        if approval_type == Approval.Type.CHIEF:
-            has_permission = has_permission and (
-                user == resourcing_request.chief or user.is_superuser
-            )
-
-        yield {
-            "type": approval_type,
-            "has_permission": has_permission,
-            "object": approvals[approval_type],
-        }
+from main.views.base import ResourcingRequestBaseView
+from main.views.mixins import FormMixin
 
 
 # TODO: Adds 2 queries.
@@ -39,27 +22,29 @@ class CanAccessResourcingRequestMixin(UserPassesTestMixin):
     def test_func(self):
         user = self.request.user
 
-        return user == self.get_object().requestor or user.is_approver
+        return user == self.resourcing_request.requestor or user.is_approver
 
 
 class CanEditResourcingRequestMixin:
-    def get_resourcing_request(self):
-        return self.get_object()
-
     def dispatch(self, request, *args, **kwargs):
-        if not self.get_resourcing_request().can_update:
+        if not self.resourcing_request.can_update:
             raise ValidationError("Cannot edit resourcing request")
 
         return super().dispatch(request, *args, **kwargs)
 
 
-class ResourcingRequestCreateView(EventLogMixin, PermissionRequiredMixin, CreateView):
+class ResourcingRequestCreateView(
+    EventLogMixin,
+    PermissionRequiredMixin,
+    FormMixin,
+    CreateView,
+):
     model = ResourcingRequest
     form_class = ResourcingRequestForm
     permission_required = "main.add_resourcingrequest"
-    template_name = "main/form.html"
     event_type = EventType.CREATED
     event_context = {"object": "resourcing request"}
+    title = "Create resourcing request"
 
     def get_initial(self):
         return {"requestor": self.request.user}
@@ -69,8 +54,12 @@ class ResourcingRequestCreateView(EventLogMixin, PermissionRequiredMixin, Create
 
 
 class ResourcingRequestDetailView(
-    CanAccessResourcingRequestMixin, PermissionRequiredMixin, DetailView
+    CanAccessResourcingRequestMixin,
+    PermissionRequiredMixin,
+    DetailView,
+    ResourcingRequestBaseView,
 ):
+    pk_url_kwarg = "resourcing_request_pk"
     model = ResourcingRequest
     permission_required = "main.view_resourcingrequest"
 
@@ -102,26 +91,32 @@ class ResourcingRequestUpdateView(
     CanEditResourcingRequestMixin,
     CanAccessResourcingRequestMixin,
     PermissionRequiredMixin,
+    FormMixin,
     UpdateView,
+    ResourcingRequestBaseView,
 ):
+    pk_url_kwarg = "resourcing_request_pk"
     model = ResourcingRequest
     form_class = ResourcingRequestForm
     permission_required = "main.change_resourcingrequest"
-    template_name = "main/form.html"
     event_type = EventType.UPDATED
     event_context = {"object": "resourcing request"}
+    title = "Update resourcing request"
 
     def get_event_content_object(self) -> models.Model:
         return self.object
 
 
 class ResourcingRequestDeleteView(
-    CanAccessResourcingRequestMixin, PermissionRequiredMixin, DeleteView
+    CanAccessResourcingRequestMixin,
+    PermissionRequiredMixin,
+    DeleteView,
+    ResourcingRequestBaseView,
 ):
+    pk_url_kwarg = "resourcing_request_pk"
     model = ResourcingRequest
     success_url = reverse_lazy("dashboard")
     permission_required = "main.delete_resourcingrequest"
-    template_name = "main/form.html"
 
 
 class ResourcingRequestListView(PermissionRequiredMixin, ListView):
@@ -129,7 +124,11 @@ class ResourcingRequestListView(PermissionRequiredMixin, ListView):
     permission_required = "main.view_all_resourcingrequests"
 
 
-class ResourcingRequestActionView(EventLogMixin, PermissionRequiredMixin, View):
+class ResourcingRequestActionView(
+    EventLogMixin, PermissionRequiredMixin, ResourcingRequestBaseView
+):
+    pk_url_kwarg = "resourcing_request_pk"
+
     def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
         """Return `True` if the action can be performed else `False`."""
         raise NotImplementedError
@@ -138,14 +137,6 @@ class ResourcingRequestActionView(EventLogMixin, PermissionRequiredMixin, View):
         raise NotImplementedError
 
     def post(self, request, pk, **kwargs):
-        self.resourcing_request = (
-            ResourcingRequest.objects.select_related_approvals().get(pk=pk)
-        )
-
-        self.resourcing_request_url = self.request.build_absolute_uri(
-            self.resourcing_request.get_absolute_url()
-        )
-
         if not self.can_do_action(self.resourcing_request):
             raise ValidationError("Cannot perform this action")
 
@@ -238,38 +229,34 @@ class ResourcingRequestFinishAmendmentsReviewView(ResourcingRequestActionView):
             )
 
 
-class ResourcingRequestAddComment(EventLogMixin, PermissionRequiredMixin, CreateView):
+class ResourcingRequestAddComment(
+    EventLogMixin,
+    PermissionRequiredMixin,
+    CreateView,
+    ResourcingRequestBaseView,
+):
+    pk_url_kwarg = "resourcing_request_pk"
     model = Comment
     form_class = CommentForm
     permission_required = "main.view_resourcingrequest"
     event_type = EventType.COMMENTED
 
     def get_initial(self):
-        return {"resourcing_request": self.kwargs["pk"], "user": self.request.user.pk}
+        return {
+            "resourcing_request": self.resourcing_request.pk,
+            "user": self.request.user.pk,
+        }
 
     def get_success_url(self):
-        return self.object.resourcing_request.get_absolute_url()
+        return self.resourcing_request.get_absolute_url()
 
     def get_event_content_object(self) -> models.Model:
-        return self.object.resourcing_request
+        return self.resourcing_request
 
 
-class ResourcingRequestApprovalView(FormView):
+class ResourcingRequestApprovalView(FormView, ResourcingRequestBaseView):
     form_class = ApprovalForm
     template_name = "main/partials/approvals.html"
-
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-
-        self.resourcing_request = (
-            ResourcingRequest.objects.select_related_approvals().get(
-                pk=self.kwargs["pk"]
-            )
-        )
-
-        self.resourcing_request_url = self.request.build_absolute_uri(
-            self.resourcing_request.get_absolute_url()
-        )
 
     def get_context_data(self, **kwargs):
         context = {
