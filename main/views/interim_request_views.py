@@ -3,9 +3,9 @@ from django.shortcuts import render
 from chartofaccount.models import CostCentre, Directorate
 from main.forms.interim_request_form import InterimRequestNewForm
 from main.models import InterimRequest, ResourcingRequest
-from main.views.supporting_forms import (
-    SupportingFormCreateView,
-    SupportingFormUpdateView,
+from main.views.supporting_documents import (
+    SupportingDocumentCreateView,
+    SupportingDocumentUpdateView,
 )
 
 
@@ -19,18 +19,20 @@ class InterimRequestViewMixin:
         return RESOURCING_REQUEST_TYPE_TO_FORM[self.resourcing_request.type]
 
 
-class InterimRequestCreateView(InterimRequestViewMixin, SupportingFormCreateView):
+class InterimRequestCreateView(InterimRequestViewMixin, SupportingDocumentCreateView):
     model = InterimRequest
     permission_required = "main.add_interimrequest"
     template_name = "main/interim_request.html"
     event_context = {"object": "interim request"}
+    title = "Interim request"
 
 
-class InterimRequestUpdateView(InterimRequestViewMixin, SupportingFormUpdateView):
+class InterimRequestUpdateView(InterimRequestViewMixin, SupportingDocumentUpdateView):
     model = InterimRequest
     permission_required = "main.change_interimrequest"
     template_name = "main/interim_request.html"
     event_context = {"object": "interim request"}
+    title = "Interim request"
 
 
 def load_directorates(request):

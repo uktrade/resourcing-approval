@@ -33,12 +33,12 @@
         </dd>
         <dd class="govuk-summary-list__actions">
             {% if perms.main.view_financialinformation and object.financial_information %}
-                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'financial-information-detail' object.financial_information.pk %}">View</a>
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'financial-information-detail' resourcing_request_pk=object.pk supporting_document_pk=object.financial_information.pk %}">View</a>
             {% endif %}
             {% if perms.main.change_financialinformation and object.financial_information and object.can_update %}
-                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'financial-information-update' object.financial_information.pk %}">Update</a>
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'financial-information-update' resourcing_request_pk=object.pk supporting_document_pk=object.financial_information.pk %}">Update</a>
             {% elif perms.main.add_financialinformation and not object.financial_information %}
-                <a class="govuk-button govuk-button mb-0" href="{% url 'financial-information-create' %}?resourcing_request={{ object.pk }}">Create</a>
+                <a class="govuk-button govuk-button mb-0" href="{% url 'financial-information-create' resourcing_request_pk=object.pk %}">Create</a>
             {% endif %}
         </dd>
     </div>
@@ -58,12 +58,12 @@
         <dd class="govuk-summary-list__actions">
             {% if object.is_ir35 %}
                 {% if perms.main.view_jobdescription and object.job_description %}
-                    <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'job-description-detail' object.job_description.pk %}">View</a>
+                    <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'job-description-detail' resourcing_request_pk=object.pk supporting_document_pk=object.job_description.pk %}">View</a>
                 {% endif %}
                 {% if perms.main.change_jobdescription and object.job_description and object.can_update %}
-                    <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'job-description-update' object.job_description.pk %}">Update</a>
+                    <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'job-description-update' resourcing_request_pk=object.pk supporting_document_pk=object.job_description.pk %}">Update</a>
                 {% elif perms.main.add_jobdescription and not object.job_description %}
-                    <a class="govuk-button govuk-button mb-0" href="{% url 'job-description-create' %}?resourcing_request={{ object.pk }}">Create</a>
+                    <a class="govuk-button govuk-button mb-0" href="{% url 'job-description-create' resourcing_request_pk=object.pk %}">Create</a>
                 {% endif %}
             {% endif %}
         </dd>
@@ -84,12 +84,12 @@
         <dd class="govuk-summary-list__actions">
             {% if not object.is_ir35 %}
                 {% if perms.main.view_statementofwork and object.statement_of_work %}
-                    <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'statement-of-work-detail' object.statement_of_work.pk %}">View</a>
+                    <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'statement-of-work-detail' resourcing_request_pk=object.pk statement_of_work_pk=object.statement_of_work.pk %}">View</a>
                 {% endif %}
                 {% if perms.main.change_statementofwork and object.statement_of_work and object.can_update %}
-                    <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'statement-of-work-update' object.statement_of_work.pk %}">Update</a>
+                    <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'statement-of-work-update' resourcing_request_pk=object.pk statement_of_work_pk=object.statement_of_work.pk %}">Update</a>
                 {% elif perms.main.add_statementofwork and not object.statement_of_work %}
-                    <a class="govuk-button govuk-button mb-0" href="{% url 'statement-of-work-create' %}?resourcing_request={{ object.pk }}">Create</a>
+                    <a class="govuk-button govuk-button mb-0" href="{% url 'statement-of-work-create' resourcing_request_pk=object.pk %}">Create</a>
                 {% endif %}
             {% endif %}
         </dd>
@@ -105,12 +105,12 @@
         </dd>
         <dd class="govuk-summary-list__actions">
             {% if perms.main.view_interimrequest and object.interim_request %}
-                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'interim-request-detail' object.interim_request.pk %}">View</a>
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'interim-request-detail' resourcing_request_pk=object.pk supporting_document_pk=object.interim_request.pk %}">View</a>
             {% endif %}
             {% if perms.main.change_interimrequest and object.interim_request and object.can_update %}
-                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'interim-request-update' object.interim_request.pk %}">Update</a>
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'interim-request-update' resourcing_request_pk=object.pk supporting_document_pk=object.interim_request.pk %}">Update</a>
             {% elif perms.main.add_interimrequest and not object.interim_request %}
-                <a class="govuk-button govuk-button mb-0" href="{% url 'interim-request-create' %}?resourcing_request={{ object.pk }}">Create</a>
+                <a class="govuk-button govuk-button mb-0" href="{% url 'interim-request-create' resourcing_request_pk=object.pk %}">Create</a>
             {% endif %}
         </dd>
     </div>
@@ -125,12 +125,12 @@
         </dd>
         <dd class="govuk-summary-list__actions">
             {% if perms.main.view_cestrationale and object.cest_rationale %}
-                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'cest-rationale-detail' object.cest_rationale.pk %}">View</a>
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'cest-rationale-detail' resourcing_request_pk=object.pk supporting_document_pk=object.cest_rationale.pk %}">View</a>
             {% endif %}
             {% if perms.main.change_cestrationale and object.cest_rationale and object.can_update %}
-                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'cest-rationale-update' object.cest_rationale.pk %}">Update</a>
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'cest-rationale-update' resourcing_request_pk=object.pk supporting_document_pk=object.cest_rationale.pk %}">Update</a>
             {% elif perms.main.add_cestrationale and not object.cest_rationale %}
-                <a class="govuk-button govuk-button mb-0" href="{% url 'cest-rationale-create' %}?resourcing_request={{ object.pk }}">Create</a>
+                <a class="govuk-button govuk-button mb-0" href="{% url 'cest-rationale-create' resourcing_request_pk=object.pk %}">Create</a>
             {% endif %}
         </dd>
     </div>
@@ -148,9 +148,9 @@
                 <a class="govuk-button govuk-button--secondary mb-0" href="{{ object.cest_document.file.url }}">View</a>
             {% endif %}
             {% if perms.main.change_cestdocument and object.cest_document and object.can_update %}
-                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'cest-document-update' object.cest_document.pk %}">Update</a>
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'cest-document-update' resourcing_request_pk=object.pk supporting_document_pk=object.cest_document.pk %}">Update</a>
             {% elif perms.main.add_cestdocument and not object.cest_document %}
-                <a class="govuk-button govuk-button mb-0" href="{% url 'cest-document-create' %}?resourcing_request={{ object.pk }}">Create</a>
+                <a class="govuk-button govuk-button mb-0" href="{% url 'cest-document-create' resourcing_request_pk=object.pk %}">Create</a>
             {% endif %}
         </dd>
     </div>
@@ -165,12 +165,12 @@
         </dd>
         <dd class="govuk-summary-list__actions">
             {% if perms.main.view_sdsstatusdetermination and object.sds_status_determination %}
-                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'sds-status-determination-detail' object.sds_status_determination.pk %}">View</a>
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'sds-status-determination-detail' resourcing_request_pk=object.pk supporting_document_pk=object.sds_status_determination.pk %}">View</a>
             {% endif %}
             {% if perms.main.change_sdsstatusdetermination and object.sds_status_determination and object.can_update %}
-                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'sds-status-determination-update' object.sds_status_determination.pk %}">Update</a>
+                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'sds-status-determination-update' resourcing_request_pk=object.pk supporting_document_pk=object.sds_status_determination.pk %}">Update</a>
             {% elif perms.main.add_sdsstatusdetermination and not object.sds_status_determination %}
-                <a class="govuk-button govuk-button mb-0" href="{% url 'sds-status-determination-create' %}?resourcing_request={{ object.pk }}">Create</a>
+                <a class="govuk-button govuk-button mb-0" href="{% url 'sds-status-determination-create' resourcing_request_pk=object.pk %}">Create</a>
             {% endif %}
         </dd>
     </div>
@@ -179,33 +179,33 @@
 <!-- Actions -->
 {% if perms.main.change_resourcingrequest %}
     {% if object.can_send_for_approval %}
-        <form class="inline" action="{% url 'resourcing-request-send-for-approval' object.pk %}" method="post">
+        <form class="inline" action="{% url 'resourcing-request-send-for-approval' resourcing_request_pk=object.pk %}" method="post">
             {% csrf_token %}
             <button class="govuk-button">Send for approval</button>
         </form>
     {% endif %}
 
     {% if object.can_amend %}
-        <form class="inline" action="{% url 'resourcing-request-amend' object.pk %}" method="post">
+        <form class="inline" action="{% url 'resourcing-request-amend' resourcing_request_pk=object.pk %}" method="post">
             {% csrf_token %}
             <button class="govuk-button govuk-button--secondary">Amend</button>
         </form>
     {% endif %}
 
     {% if object.can_send_for_review %}
-        <form class="inline" action="{% url 'resourcing-request-send-for-review' object.pk %}" method="post">
+        <form class="inline" action="{% url 'resourcing-request-send-for-review' resourcing_request_pk=object.pk %}" method="post">
             {% csrf_token %}
             <button class="govuk-button">Send for review</button>
         </form>
     {% endif %}
 
     {% if object.can_update %}
-        <a class="govuk-button govuk-button--secondary" href="{% url 'resourcing-request-update' object.pk %}">Update</a>
+        <a class="govuk-button govuk-button--secondary" href="{% url 'resourcing-request-update' resourcing_request_pk=object.pk %}">Update</a>
     {% endif %}
 {% endif %}
 
 {% if perms.main.can_give_busops_approval and object.can_finish_amendments_review %}
-    <form class="inline" action="{% url 'resourcing-request-finish-amendments-review' object.pk %}" method="post">
+    <form class="inline" action="{% url 'resourcing-request-finish-amendments-review' resourcing_request_pk=object.pk %}" method="post">
         {% csrf_token %}
         <button class="govuk-button">Finish amendments review</button>
     </form>
@@ -214,7 +214,7 @@
 {% if perms.main.delete_resourcingrequest %}
     <form
         class="inline"
-        action="{% url 'resourcing-request-delete' object.pk %}"
+        action="{% url 'resourcing-request-delete' resourcing_request_pk=object.pk %}"
         method="post"
         data-confirm="Are you sure you want to delete this resourcing request?"
     >

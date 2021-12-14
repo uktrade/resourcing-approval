@@ -193,6 +193,13 @@ class FinancialInformationForm(forms.ModelForm):
         for field in required_ir35_fields:
             self.fields[field].required = True
 
+        ir35_fields_to_remove = (
+            self.inside_ir35_fields if not self.is_ir35 else self.outside_ir35_fields
+        )
+
+        for field in ir35_fields_to_remove:
+            del self.fields[field]
+
         syncronise_cost_centre_dropdowns(self)
 
 

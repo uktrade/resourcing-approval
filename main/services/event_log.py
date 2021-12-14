@@ -22,8 +22,8 @@ class EventType(Enum):
     """
 
     # value = tuple[string, Optional[set[str]]]
-    CREATED = ("Created the {object}", {"object"})
-    UPDATED = ("Updated the {object}", {"object"})
+    CREATED = ("Created a {object}", {"object"})
+    UPDATED = ("Updated a {object}", {"object"})
     SENT_FOR_APPROVAL = ("Sent the resourcing request for approval", None)
     AMENDING = ("Amending the resourcing request", None)
     SENT_FOR_REVIEW = ("Sent the amendments for review", None)
@@ -32,6 +32,7 @@ class EventType(Enum):
     GROUP_REJECTED = ("{group} rejected the resourcing request", {"group"})
     COMMENTED = ("Commented on the resourcing request", None)
     APPROVED = ("The resourcing request was approved", None)
+    DELETED = ("Deleted a {object}", {"object"})
 
 
 class EventLogService:

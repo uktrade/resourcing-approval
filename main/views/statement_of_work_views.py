@@ -1,6 +1,3 @@
-# https://simpleit.rocks/python/django/having-multiple-submit-buttons-for-same-form-in-django/
-from django.urls import reverse
-
 from main.forms.statement_of_work_forms import (
     StatementOfWorkForm,
     StatementOfWorkModuleDeliverableForm,
@@ -11,127 +8,95 @@ from main.models import (
     StatementOfWorkModule,
     StatementOfWorkModuleDeliverable,
 )
-from main.views.supporting_forms import (
-    SupportingFormCreateView,
-    SupportingFormUpdateView,
+from main.views.supporting_documents import (
+    SupportingDocumentCreateView,
+    SupportingDocumentDeleteView,
+    SupportingDocumentUpdateView,
 )
 
 
-class StatementOfWorkCreateView(SupportingFormCreateView):
-    template_name = "main/statement_of_work.html"
+class StatementOfWorkBaseMixin:
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+
+# Statement of work
+class StatementOfWorkMixin(StatementOfWorkBaseMixin):
     model = StatementOfWork
+    pk_url_kwarg = "statement_of_work_pk"
+    event_context = {"object": "statement of work"}
+    title = "Statement of work"
+
+
+class StatementOfWorkCreateView(StatementOfWorkMixin, SupportingDocumentCreateView):
     form_class = StatementOfWorkForm
     permission_required = "main.add_statementofwork"
-    event_context = {"object": "statement of work"}
-
-    def get_success_url(self):
-        if "create_child" in self.request.POST:
-            url = reverse(
-                "statement-of-work-module-create", kwargs={"parent_pk": self.object.id}
-            )
-        else:
-            url = self.object.resourcing_request.get_absolute_url()
-        return url
 
 
-class StatementOfWorkUpdateView(SupportingFormUpdateView):
-    template_name = "main/statement_of_work.html"
-    model = StatementOfWork
+class StatementOfWorkUpdateView(StatementOfWorkMixin, SupportingDocumentUpdateView):
     form_class = StatementOfWorkForm
     permission_required = "main.change_statementofwork"
-    event_context = {"object": "statement of work"}
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["my_children"] = self.object.modules.all()
-        return context
-
-    def get_success_url(self):
-        if "create_child" in self.request.POST:
-            url = reverse(
-                "statement-of-work-module-create", kwargs={"parent_pk": self.object.id}
-            )
-        else:
-            url = self.object.resourcing_request.get_absolute_url()
-        return url
 
 
-class StatementOfWorkModuleCreateView(SupportingFormCreateView):
-    template_name = "main/statement_of_work_module.html"
+# Modules
+class StatementOfWorkModuleMixin(StatementOfWorkBaseMixin):
     model = StatementOfWorkModule
+    pk_url_kwarg = "module_pk"
+    event_context = {"object": "statement of work module"}
+    title = "Statement of work module"
+
+
+class StatementOfWorkModuleCreateView(
+    StatementOfWorkModuleMixin, SupportingDocumentCreateView
+):
     form_class = StatementOfWorkModuleForm
     permission_required = "main.add_statementofwork"
-    event_context = {"object": "statement of work module"}
 
     def get_initial(self):
-        return {"statement_of_work": self.kwargs["parent_pk"]}
-
-    def get_success_url(self):
-        if "create_child" in self.request.POST:
-            url = reverse(
-                "statement-of-work-module-deliverable-create",
-                kwargs={"parent_pk": self.object.id},
-            )
-        else:
-            url = reverse(
-                "statement-of-work-update",
-                kwargs={"pk": self.object.statement_of_work.id},
-            )
-        return url
+        return {"statement_of_work": self.kwargs["statement_of_work_pk"]}
 
 
-class StatementOfWorkModuleUpdateView(SupportingFormUpdateView):
-    template_name = "main/statement_of_work_module.html"
-    model = StatementOfWorkModule
+class StatementOfWorkModuleUpdateView(
+    StatementOfWorkModuleMixin, SupportingDocumentUpdateView
+):
     form_class = StatementOfWorkModuleForm
     permission_required = "main.change_statementofwork"
-    event_context = {"object": "statement of work module"}
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["my_children"] = self.object.deliverables.all()
-        return context
-
-    def get_success_url(self):
-        if "create_child" in self.request.POST:
-            url = reverse(
-                "statement-of-work-module-deliverable-create",
-                kwargs={"parent_pk": self.object.id},
-            )
-        else:
-            url = reverse(
-                "statement-of-work-update",
-                kwargs={"pk": self.object.statement_of_work.id},
-            )
-        return url
 
 
-class StatementOfWorkModuleDeliverableCreateView(SupportingFormCreateView):
-    template_name = "main/form.html"
+class StatementOfWorkModuleDeleteView(
+    StatementOfWorkModuleMixin, SupportingDocumentDeleteView
+):
+    permission_required = "main.delete_statementofwork"
+
+
+# Deliverables
+class StatementOfWorkModuleDeliverableMixin(StatementOfWorkBaseMixin):
+    model = StatementOfWorkModuleDeliverable
+    pk_url_kwarg = "deliverable_pk"
+    event_context = {"object": "statement of work module deliverable"}
+    title = "Statement of work module deliverable"
+
+
+class StatementOfWorkModuleDeliverableCreateView(
+    StatementOfWorkModuleDeliverableMixin, SupportingDocumentCreateView
+):
     model = StatementOfWorkModuleDeliverable
     form_class = StatementOfWorkModuleDeliverableForm
+    pk_url_kwarg = "deliverable_pk"
     permission_required = "main.add_statementofwork"
-    event_context = {"object": "statement of work module deliverable"}
 
     def get_initial(self):
-        return {"statement_of_work_module": self.kwargs["parent_pk"]}
-
-    def get_success_url(self):
-        return reverse(
-            "statement-of-work-module-update",
-            kwargs={"pk": self.object.statement_of_work_module.id},
-        )
+        return {"statement_of_work_module": self.kwargs["module_pk"]}
 
 
-class StatementOfWorkModuleDeliverableUpdateView(SupportingFormUpdateView):
-    template_name = "main/form.html"
-    model = StatementOfWorkModuleDeliverable
+class StatementOfWorkModuleDeliverableUpdateView(
+    StatementOfWorkModuleDeliverableMixin, SupportingDocumentUpdateView
+):
     form_class = StatementOfWorkModuleDeliverableForm
     permission_required = "main.change_statementofwork"
-    event_context = {"object": "statement of work module deliverable"}
 
-    def get_success_url(self):
-        return reverse(
-            "statement-of-work-module-update",
-            kwargs={"pk": self.object.statement_of_work_module.id},
-        )
+
+class StatementOfWorkModuleDeliverableDeleteView(
+    StatementOfWorkModuleDeliverableMixin, SupportingDocumentDeleteView
+):
+    permission_required = "main.delete_statementofwork"

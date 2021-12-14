@@ -1,26 +1,52 @@
 {% extends 'main/detail.html' %}
+
 {% load list_object %}
 
-    {% block children %}
+{% block children %}
+    <div>
         {% for module in my_modules %}
-            <dl class="govuk-summary-list">
-                {% include 'main/partials/summary-row.html' with key="Module" value=module.module_title %}
-                {% include 'main/partials/summary-row.html' with key="Completion date" value=module.completion_date %}
-            </dl>
-            {% for deliverable in module.get_deliverables %}
-                <details class="govuk-details" data-module="govuk-details">
-                  <summary class="govuk-details__summary">
-                      <span class="govuk-details__summary-text">
-                        {{ deliverable.deliverable_title }}
-                      </span>
-                  </summary>
-                  <div class="govuk-details__text">
-                      <dl class="govuk-summary-list">
-                        {% object_as_list deliverable deliverable_exclude_list %}
-                      </dl>
-                  </div>
-                </details>
-          {% endfor %}
-        {% endfor %}
-    {% endblock children %}
+            <div>
+                <dl class="govuk-summary-list">
+                    {% include 'main/partials/summary-row.html' with key="Module" value=module.module_title %}
+                    {% include 'main/partials/summary-row.html' with key="Completion date" value=module.completion_date %}
+                </dl>
+        
+                {% for deliverable in module.get_deliverables %}
+                    <details class="govuk-details" data-module="govuk-details">
+                        <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text">
+                                {{ deliverable.deliverable_title }}
+                            </span>
+                        </summary>
+                        <div class="govuk-details__text">
+                            <dl class="govuk-summary-list">
+                                {% object_as_list deliverable deliverable_exclude_list %}
+                            </dl>
 
+                            {% if perms.main.change_statementofwork %}
+                                <a class="govuk-button govuk-button--secondary" href="{% url 'statement-of-work-module-deliverable-update' resourcing_request_pk=object.resourcing_request.pk statement_of_work_pk=object.pk module_pk=module.pk deliverable_pk=deliverable.pk %}">Edit module</a>
+                            {% endif %}
+                            {% if perms.main.delete_statementofwork %}
+                                <a class="govuk-button govuk-button--warning" href="{% url 'statement-of-work-module-deliverable-delete' resourcing_request_pk=object.resourcing_request.pk statement_of_work_pk=object.pk module_pk=module.pk deliverable_pk=deliverable.pk %}">Delete module</a>
+                            {% endif %}
+                        </div>
+                    </details>
+                {% endfor %}
+
+                {% if perms.main.add_statementofwork %}
+                    <a class="govuk-button" href="{% url 'statement-of-work-module-deliverable-create' resourcing_request_pk=object.resourcing_request.pk statement_of_work_pk=object.pk module_pk=module.pk %}">Add deliverable</a>
+                {% endif %}
+                {% if perms.main.change_statementofwork %}
+                    <a class="govuk-button govuk-button--secondary" href="{% url 'statement-of-work-module-update' resourcing_request_pk=object.resourcing_request.pk statement_of_work_pk=object.pk module_pk=module.pk %}">Edit module</a>
+                {% endif %}
+                {% if perms.main.delete_statementofwork %}
+                    <a class="govuk-button govuk-button--warning" href="{% url 'statement-of-work-module-delete' resourcing_request_pk=object.resourcing_request.pk statement_of_work_pk=object.pk module_pk=module.pk %}">Delete module</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        {% if perms.main.add_statementofwork %}
+            <a class="govuk-button" href="{% url 'statement-of-work-module-create' resourcing_request_pk=object.resourcing_request.pk statement_of_work_pk=object.pk %}">Add module</a>
+        {% endif %}
+    </div>
+{% endblock children %}
