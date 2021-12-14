@@ -3,7 +3,8 @@
 <ul class="govuk-list">
     {% for event in event_log %}
         <li>
-            {{ event.user.get_full_name|default_if_none:"Anonymous" }} - {{ event.description }} - {{ event.timestamp|naturaltime }}
+            <span>{{ event.user.get_full_name|default_if_none:"Anonymous" }} - {{ event.description }}</span>
+            <span class="govuk-body-s">({{ event.timestamp|naturaltime }})</span>
         </li>
     {% endfor %}
 </ul>

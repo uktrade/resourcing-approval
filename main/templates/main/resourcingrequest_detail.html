@@ -52,7 +52,7 @@
             {% if object.is_ir35 %}
                 {{ object.job_description|default:'No job description' }}
             {% else %}
-                Not required
+                Not required if the role is outside IR35
             {% endif %}
         </dd>
         <dd class="govuk-summary-list__actions">
@@ -78,7 +78,7 @@
             {% if not object.is_ir35 %}
                 {{ object.statement_of_work|default:'No statement of work' }}
             {% else %}
-                Not required
+                Not required if the role is inside IR35
             {% endif %}
         </dd>
         <dd class="govuk-summary-list__actions">
@@ -233,17 +233,21 @@
 {% endif %}
 
 <!-- Comments -->
-<h1 class="govuk-heading-l">Comments</h1>
-
 {% if perms.main.view_comment %}
-    {% for comment in object.comments.all %}
     <div>
-        <span class="govuk-body govuk-!-font-weight-bold">{{ comment.user }}</span><span class="govuk-body-s secondary-text ml-1">{{ comment.timestamp }}</span>
-        <p class="govuk-body">
-            {{ comment.text }}
-        </p>
+        <h1 class="govuk-heading-l">Comments</h1>
+        <div>
+            {% for comment in object.comments.all %}
+                <div>
+                    <span class="govuk-body govuk-!-font-weight-bold">{{ comment.user }}</span>
+                    <span class="govuk-body-s secondary-text ml-1">{{ comment.timestamp }}</span>
+                    <p class="govuk-body">{{ comment.text }}</p>
+                </div>
+            {% empty %}
+                <p class="govuk-body">No comments have been added.</p>
+            {% endfor %}
+        </div>
     </div>
-    {% endfor %}
 {% endif %}
 
 {% if perms.main.add_comment %}

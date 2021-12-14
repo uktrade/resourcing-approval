@@ -56,6 +56,15 @@ class ResourcingRequestForm(FormWithStartEndDates):
 
         self.fields["requestor"].disabled = True
 
+        # Add placeholders to the form.
+        placeholders = {
+            "job_title": "Python Developer",
+            "project_name": "JML",
+        }
+
+        for field, placeholder in placeholders.items():
+            self.fields[field].widget.attrs["placeholder"] = placeholder
+
 
 class ApprovalForm(forms.ModelForm):
     class Meta:
@@ -186,6 +195,12 @@ class FinancialInformationForm(forms.ModelForm):
 
         self.fields["resourcing_request"].disabled = True
 
+        money_fields = ["total_budget", "min_day_rate", "max_day_rate", "project_fees"]
+
+        for field in money_fields:
+            self.fields[field].prefix = "£"
+
+        # Update required fields.
         required_ir35_fields = (
             self.inside_ir35_fields if self.is_ir35 else self.outside_ir35_fields
         )
@@ -193,6 +208,7 @@ class FinancialInformationForm(forms.ModelForm):
         for field in required_ir35_fields:
             self.fields[field].required = True
 
+        # Remove unnecessary fields.
         ir35_fields_to_remove = (
             self.inside_ir35_fields if not self.is_ir35 else self.outside_ir35_fields
         )
