@@ -136,7 +136,7 @@ class ResourcingRequestActionView(
     def action(self, resourcing_request):
         raise NotImplementedError
 
-    def post(self, request, pk, **kwargs):
+    def post(self, request, resourcing_request_pk, **kwargs):
         if not self.can_do_action(self.resourcing_request):
             raise ValidationError("Cannot perform this action")
 
@@ -144,7 +144,8 @@ class ResourcingRequestActionView(
 
         return redirect(
             reverse(
-                "resourcing-request-detail", kwargs={"pk": self.resourcing_request.pk}
+                "resourcing-request-detail",
+                kwargs={"resourcing_request_pk": self.resourcing_request.pk},
             )
         )
 

@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db import models
 from django.views.generic.detail import DetailView
@@ -43,15 +45,23 @@ class SupportingDocumentCreateView(
 class SupportingDocumentDetailView(
     PermissionRequiredMixin, DetailView, ResourcingRequestBaseView
 ):
+    # Class attributes
+    # Django
     pk_url_kwarg = "supporting_document_pk"
-    template_name = "main/detail.html"
-    exclude_list = ["id", "resourcing_request"]
+    template_name = "main/supporting_document_detail.html"
+    # App
+    title = "Supporting document"
+    excluded_fields: ClassVar[list[str]] = ["id", "resourcing_request"]
+    stacked_fields: ClassVar[list[str]] = []
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["detail_title"] = self.title
-        context["exclude_list"] = self.exclude_list
-        return context
+        context = {
+            "title": self.title,
+            "excluded_fields": self.excluded_fields,
+            "stacked_fields": self.stacked_fields,
+        }
+
+        return super().get_context_data(**kwargs) | context
 
 
 class SupportingDocumentUpdateView(

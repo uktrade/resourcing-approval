@@ -1,0 +1,36 @@
+{% load model %}
+
+<div style="margin-bottom: 40px;">
+    {% for field in object|fields %}
+        {% if field.name not in excluded_fields %}
+            {% if field.name in stacked_fields %}        
+                <div class="govuk-grid-row govuk-body" style="margin-top: 10px; margin-bottom: 10px;">
+                    <div class="govuk-grid-column-full">
+                        <div>
+                            <span class="govuk-!-font-weight-bold">{{ field|verbose_name|capfirst }}</span>
+                        </div>
+                        <div class="govuk-hint">
+                            {{ field|help_text }}
+                        </div>
+                        <div>
+                            {{ object|value:field.name }}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="govuk-grid-row govuk-body" style="margin-top: 10px; margin-bottom: 10px;">
+                    <div class="govuk-grid-column-one-half">
+                        <span class="govuk-!-font-weight-bold">{{ field|verbose_name|capfirst }}</span>
+                        {% if field|help_text %}
+                            <span class="tooltip" title="{{ object|field:field_name|help_text }}">🛈</span>
+                        {% endif %}
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        {{ object|value:field.name }}
+                    </div>
+                </div>
+            {% endif %}
+            <hr class="govuk-section-break govuk-section-break--visible">
+        {% endif %}
+    {% endfor %}
+</div>

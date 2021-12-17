@@ -79,7 +79,7 @@ def notify_approvers(
     """Send a notification to the relevant approvers.
 
     Order of notifications:
-        `Head of Profession -> Chief -> BusOps -> [HRBP, Finance, Commercial] -> Director -> Director General`
+        `Head of Profession -> Chief -> BusOps -> [HRBP, Finance, Commercial] -> Director -> DG COO`
     """
 
     resourcing_request: ResourcingRequest = (
