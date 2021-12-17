@@ -49,6 +49,11 @@ class StatementOfWorkDetailView(SupportingDocumentDetailView):
     template_name = "main/statement_of_work_detail.html"
     permission_required = "main.view_statementofwork"
     title = "Statement of work"
+    excluded_fields = [
+        "id",
+        "resourcing_request",
+        "modules",
+    ]
     stacked_fields = [
         "project_description",
         "notice_period",
