@@ -4,13 +4,13 @@ from django.urls.conf import include
 from main.views.dashboard import DashboardView, index
 from main.views.detail_views import (
     CestRationaleDetailView,
-    InterimRequestDetailView,
     JobDescriptionDetailView,
     SdsStatusDeterminationDetailView,
     StatementOfWorkDetailView,
 )
 from main.views.interim_request_views import (
     InterimRequestCreateView,
+    InterimRequestDetailView,
     InterimRequestUpdateView,
     load_costcentres,
     load_directorates,

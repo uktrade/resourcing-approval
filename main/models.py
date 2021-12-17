@@ -100,8 +100,8 @@ class ResourcingRequest(models.Model):
     director_approval = models.OneToOneField(
         "Approval", models.SET_NULL, related_name="director_approval", null=True
     )
-    director_general_approval = models.OneToOneField(
-        "Approval", models.SET_NULL, related_name="director_general_approval", null=True
+    dg_coo_approval = models.OneToOneField(
+        "Approval", models.SET_NULL, related_name="dg_coo_approval", null=True
     )
 
     event_log = GenericRelation("event_log.Event")
@@ -213,7 +213,7 @@ class ResourcingRequest(models.Model):
             Approval.Type.FINANCE: self.finance_approval,
             Approval.Type.COMMERCIAL: self.commercial_approval,
             Approval.Type.DIRECTOR: self.director_approval,
-            Approval.Type.DIRECTOR_GENERAL: self.director_general_approval,
+            Approval.Type.DG_COO: self.dg_coo_approval,
         }
 
     def get_is_approved(self):
@@ -254,8 +254,8 @@ class Approval(models.Model):
             ("can_give_commercial_approval", "Can give commercial approval"),
             ("can_give_director_approval", "Can give director approval"),
             (
-                "can_give_director_general_approval",
-                "Can give director general approval",
+                "can_give_dg_coo_approval",
+                "Can give DG COO approval",
             ),
         )
         ordering = ["-timestamp"]
@@ -271,7 +271,7 @@ class Approval(models.Model):
         # Jason Kitcat at time of writing.
         DIRECTOR = "director", "Director"
         # Catherine Vaughan at time of writing.
-        DIRECTOR_GENERAL = "director_general", "Director General"
+        DG_COO = "dg_coo", "DG COO"
 
     ORDER = [
         [Type.HEAD_OF_PROFESSION],
@@ -283,7 +283,7 @@ class Approval(models.Model):
             Type.COMMERCIAL,
         ],
         [Type.DIRECTOR],
-        [Type.DIRECTOR_GENERAL],
+        [Type.DG_COO],
     ]
 
     resourcing_request = models.ForeignKey(

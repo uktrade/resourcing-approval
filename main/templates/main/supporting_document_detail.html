@@ -1,0 +1,15 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ object }}{% endblock %}
+
+{% block content %}
+<h1 class="govuk-heading-l">{{ object }}</h1>
+
+{% include 'main/partials/supporting_document_view.html' %}
+
+{% block children %}
+{% endblock %}
+
+<a class="govuk-button govuk-button--secondary mb-0" href="{% url 'resourcing-request-detail' object.resourcing_request_id %}">Back</a>
+
+{% endblock %}

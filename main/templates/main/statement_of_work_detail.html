@@ -1,8 +1,10 @@
-{% extends 'main/detail.html' %}
+{% extends 'main/supporting_document_detail.html' %}
 
 {% load list_object %}
 
 {% block children %}
+<h2 class="govuk-heading-m">Modules</h2>
+
     <div>
         {% for module in my_modules %}
             <div>
@@ -10,7 +12,9 @@
                     {% include 'main/partials/summary-row.html' with key="Module" value=module.module_title %}
                     {% include 'main/partials/summary-row.html' with key="Completion date" value=module.completion_date %}
                 </dl>
-        
+
+                <h3 class="govuk-heading-s">Deliverables</h3>
+
                 {% for deliverable in module.get_deliverables %}
                     <details class="govuk-details" data-module="govuk-details">
                         <summary class="govuk-details__summary">
@@ -24,10 +28,10 @@
                             </dl>
 
                             {% if perms.main.change_statementofwork %}
-                                <a class="govuk-button govuk-button--secondary" href="{% url 'statement-of-work-module-deliverable-update' resourcing_request_pk=object.resourcing_request.pk statement_of_work_pk=object.pk module_pk=module.pk deliverable_pk=deliverable.pk %}">Edit module</a>
+                                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'statement-of-work-module-deliverable-update' resourcing_request_pk=object.resourcing_request.pk statement_of_work_pk=object.pk module_pk=module.pk deliverable_pk=deliverable.pk %}">Edit deliverable</a>
                             {% endif %}
                             {% if perms.main.delete_statementofwork %}
-                                <a class="govuk-button govuk-button--warning" href="{% url 'statement-of-work-module-deliverable-delete' resourcing_request_pk=object.resourcing_request.pk statement_of_work_pk=object.pk module_pk=module.pk deliverable_pk=deliverable.pk %}">Delete module</a>
+                                <a class="govuk-button govuk-button--warning mb-0" href="{% url 'statement-of-work-module-deliverable-delete' resourcing_request_pk=object.resourcing_request.pk statement_of_work_pk=object.pk module_pk=module.pk deliverable_pk=deliverable.pk %}">Delete deliverable</a>
                             {% endif %}
                         </div>
                     </details>
@@ -49,4 +53,4 @@
             <a class="govuk-button" href="{% url 'statement-of-work-module-create' resourcing_request_pk=object.resourcing_request.pk statement_of_work_pk=object.pk %}">Add module</a>
         {% endif %}
     </div>
-{% endblock children %}
+{% endblock %}

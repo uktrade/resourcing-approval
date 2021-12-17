@@ -1,6 +1,5 @@
 from main.models import (
     CestRationale,
-    InterimRequest,
     JobDescription,
     SdsStatusDetermination,
     StatementOfWork,
@@ -12,24 +11,36 @@ class JobDescriptionDetailView(SupportingDocumentDetailView):
     model = JobDescription
     permission_required = "main.view_jobdescription"
     title = "Job description"
-
-
-class InterimRequestDetailView(SupportingDocumentDetailView):
-    model = InterimRequest
-    permission_required = "main.view_interimrequest"
-    title = "Interim request"
+    stacked_fields = [
+        "role_purpose",
+        "key_accountabilities",
+        "line_management_responsibility",
+        "personal_attributes_and_skills",
+        "essential_and_preferred_experience",
+    ]
 
 
 class CestRationaleDetailView(SupportingDocumentDetailView):
     model = CestRationale
     permission_required = "main.view_cestrationale"
     title = "CEST rationale"
+    stacked_fields = [
+        "what",
+        "how",
+        "where",
+        "when",
+        "personal_service",
+        "part_and_parcel",
+        "financial_risk",
+        "business_on_own_account",
+    ]
 
 
 class SdsStatusDeterminationDetailView(SupportingDocumentDetailView):
     model = SdsStatusDetermination
     permission_required = "main.view_sdsstatusdetermination"
     title = "SDS status determination"
+    stacked_fields = ["reasons"]
 
 
 class StatementOfWorkDetailView(SupportingDocumentDetailView):
@@ -38,6 +49,13 @@ class StatementOfWorkDetailView(SupportingDocumentDetailView):
     template_name = "main/statement_of_work_detail.html"
     permission_required = "main.view_statementofwork"
     title = "Statement of work"
+    stacked_fields = [
+        "project_description",
+        "notice_period",
+        "fees",
+        "exceptional_expenses",
+        "deliverable_notes",
+    ]
 
     def get_context_data(self, **kwargs):
         context = {

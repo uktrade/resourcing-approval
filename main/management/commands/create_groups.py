@@ -31,9 +31,11 @@ class Command(BaseCommand):
         director_group, _ = Group.objects.get_or_create(
             pk=9, name=ApproverGroup.DIRECTOR.value
         )
-        director_general_group, _ = Group.objects.get_or_create(
-            pk=10, name=ApproverGroup.DIRECTOR_GENERAL.value
+        dg_coo_group, _ = Group.objects.get_or_create(
+            pk=10, defaults={"name": ApproverGroup.DG_COO.value}
         )
+        dg_coo_group.name = ApproverGroup.DG_COO.value
+        dg_coo_group.save()
 
         hiring_manager_group.permissions.set(
             Permission.objects.filter(
@@ -173,10 +175,10 @@ class Command(BaseCommand):
             ]
         )
 
-        director_general_group.permissions.set(
+        dg_coo_group.permissions.set(
             [
                 Permission.objects.get(
-                    codename="can_give_director_general_approval",
+                    codename="can_give_dg_coo_approval",
                     content_type__app_label="main",
                 )
             ]

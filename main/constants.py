@@ -12,7 +12,7 @@ class ApproverGroup(Enum):
     FINANCE = "Finance"
     COMMERCIAL = "Commercial"
     DIRECTOR = "Director"
-    DIRECTOR_GENERAL = "Director General"
+    DG_COO = "DG COO"
 
 
 assert set(x.value for x in ApproverGroup) == set(
@@ -28,5 +28,5 @@ APPROVAL_TYPE_TO_GROUP = {
     Approval.Type.FINANCE: ApproverGroup.FINANCE,
     Approval.Type.COMMERCIAL: ApproverGroup.COMMERCIAL,
     Approval.Type.DIRECTOR: ApproverGroup.DIRECTOR,
-    Approval.Type.DIRECTOR_GENERAL: ApproverGroup.DIRECTOR_GENERAL,
+    Approval.Type.DG_COO: ApproverGroup.DG_COO,
 }
