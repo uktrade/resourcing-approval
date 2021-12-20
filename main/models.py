@@ -67,6 +67,7 @@ class ResourcingRequest(models.Model):
     type = models.SmallIntegerField(choices=Type.choices, default=Type.NEW)
     job_title = models.CharField(max_length=255)
     project_name = models.CharField(max_length=255)
+    portfolio = models.CharField(max_length=50, null=True, blank=True)
     profession = models.ForeignKey("Profession", models.PROTECT)
     start_date = models.DateField()
     end_date = models.DateField()

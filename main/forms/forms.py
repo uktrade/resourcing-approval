@@ -41,6 +41,7 @@ class ResourcingRequestForm(FormWithStartEndDates):
             "type",
             "job_title",
             "project_name",
+            "portfolio",
             "profession",
             "start_date",
             "end_date",
