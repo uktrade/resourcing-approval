@@ -62,6 +62,7 @@ class Command(BaseCommand):
             area_of_work=FinancialInformation.AreaOfWork.INVESTMENT,
             total_budget=500_000,
             timesheet_and_expenses_validator="Mr Anthony Manager",
+            second_timesheet_validator="Mrs Anna Manager",
         )
 
         if inside_ir35:

@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0042_auto_20211217_1033'),
+        ("main", "0042_auto_20211217_1033"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='statementofwork',
-            old_name='slot_code',
-            new_name='position_code',
+            model_name="statementofwork",
+            old_name="slot_code",
+            new_name="position_code",
         ),
         migrations.RemoveField(
-            model_name='interimrequest',
-            name='slot_codes',
+            model_name="interimrequest",
+            name="slot_codes",
         ),
         migrations.AddField(
-            model_name='interimrequest',
-            name='position_code',
-            field=models.CharField(default='1234abcd', max_length=30),
+            model_name="interimrequest",
+            name="position_code",
+            field=models.CharField(default="1234abcd", max_length=30),
             preserve_default=False,
         ),
     ]
