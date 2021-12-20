@@ -396,7 +396,10 @@ class FinancialInformation(models.Model):
         "Total Budget, including sourcing fees, expenses and interim labour cost"
     )
     timesheet_and_expenses_validator = models.CharField(
-        "Name of the Timesheet & Expenses Validator", max_length=255
+        "name of the first timesheet & expenses validator", max_length=255
+    )
+    second_timesheet_validator = models.CharField(
+        "name of the second timesheet & expenses validator", max_length=255
     )
     min_day_rate = models.IntegerField(
         "Minimum anticipated day rate", null=True, blank=True

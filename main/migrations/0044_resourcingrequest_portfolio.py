@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0043_auto_20211220_0938'),
+        ("main", "0043_auto_20211220_0938"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='resourcingrequest',
-            name='portfolio',
+            model_name="resourcingrequest",
+            name="portfolio",
             field=models.CharField(blank=True, max_length=50, null=True),
         ),
     ]
