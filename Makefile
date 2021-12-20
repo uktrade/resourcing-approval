@@ -65,7 +65,7 @@ check: check-black check-isort check-flake8 check-migrations
 test:
 	docker-compose run --rm web pytest
 
-test-create-db:
+test-fresh:
 	docker-compose run --rm web pytest --create-db
 
 collectstatic:
