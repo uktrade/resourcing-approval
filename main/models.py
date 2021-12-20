@@ -74,7 +74,9 @@ class ResourcingRequest(models.Model):
     is_ir35 = models.BooleanField(
         "Is the role inside IR35?", null=True, choices=TRUE_FALSE_CHOICES
     )
-    chief = models.ForeignKey("user.User", models.CASCADE, related_name="+")
+    chief = models.ForeignKey(
+        "user.User", models.CASCADE, verbose_name="Chief/SMT sponsor", related_name="+"
+    )
 
     # Approvals
     head_of_profession_approval = models.OneToOneField(
