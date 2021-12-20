@@ -85,7 +85,7 @@ class Command(BaseCommand):
         statement_of_work = StatementOfWork.objects.create(
             resourcing_request=resourcing_request,
             company_name="Supplier company",
-            slot_code="1234abcd",
+            position_code="1234abcd",
             is_nominated_worker=True,
             hiring_manager_team_leader="Mr Anthony Manager",
             project_description=lorem_ipsum.paragraph(),
@@ -118,7 +118,7 @@ class Command(BaseCommand):
             overseas_country=None,
             type_of_security_clearance="sc",
             contractor_type="generalist",
-            slot_codes="1234abcd",
+            position_code="1234abcd",
             equivalent_civil_servant_grade=InterimRequest.CivilServantGrade.G7,
             supplier=InterimRequest.Supplier.GREEN_PARK,
             part_b_business_case=lorem_ipsum.paragraph(),

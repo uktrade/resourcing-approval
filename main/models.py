@@ -429,7 +429,7 @@ class StatementOfWork(models.Model):
     )
 
     company_name = models.CharField(max_length=255)
-    slot_code = models.CharField(max_length=30)
+    position_code = models.CharField(max_length=30)
     is_nominated_worker = models.BooleanField(
         "Did DDaT find them or not?", null=True, choices=TRUE_FALSE_CHOICES
     )
@@ -598,7 +598,7 @@ class InterimRequest(models.Model):
         choices=CONTRACTOR_TYPE_CHOICES,
         verbose_name="Category of Interim",
     )
-    slot_codes = models.CharField(max_length=255)
+    position_code = models.CharField(max_length=30)
     equivalent_civil_servant_grade = models.CharField(
         max_length=4, choices=CivilServantGrade.choices
     )

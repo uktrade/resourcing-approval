@@ -13,6 +13,8 @@ from user.models import User
 def django_db_setup(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
         call_command("loaddata", "test-chartofaccount.json")
+        # The `create_groups` command must run before we load the `test-users.json`
+        # fixture.
         call_command("create_groups")
         call_command("loaddata", "test-users.json")
 
