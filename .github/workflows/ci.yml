@@ -22,5 +22,11 @@ jobs:
       - name: Run check
         run: make check
 
+      - name: Docker compose up
+        run: docker-compose up -d
+
       - name: Run test
         run: make test
+
+      - name: Docker compose down
+        run: docker-compose down
