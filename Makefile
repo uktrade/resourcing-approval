@@ -79,6 +79,9 @@ test-fresh:
 test-bash:
 	$(testrunner) /bin/bash
 
+test-ci:
+	$(testrunner) ./scripts/test-ci.sh
+
 # Local commands
 black:
 	black .
