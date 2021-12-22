@@ -62,18 +62,24 @@ check-migrations:
 
 check: check-black check-isort check-flake8 check-migrations
 
-test:
-	docker-compose run --rm web pytest
-
-test-fresh:
-	docker-compose run --rm web pytest --create-db
-
 collectstatic:
 	$(web) python manage.py collectstatic
 
 compilescss:
 	$(web) python manage.py compilescss
 
+testrunner = docker-compose run --rm --name testrunner web
+
+test:
+	$(testrunner) pytest
+
+test-fresh:
+	$(testrunner) pytest --create-db
+
+test-bash:
+	$(testrunner) /bin/bash
+
+# Local commands
 black:
 	black .
 

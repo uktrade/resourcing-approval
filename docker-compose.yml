@@ -43,3 +43,10 @@ services:
       - "5432:5432"
   redis:
     image: redis
+  selenium:
+    image: selenium/standalone-firefox:4.1.1-20211217
+    ports:
+      - "4444:4444"
+    shm_size: 2gb
+    depends_on:
+      - web
