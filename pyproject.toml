@@ -37,6 +37,7 @@ bpython = "^0.21"
 pytest-django = "^4.4.0"
 selenium = "^4.1.0"
 pytest-selenium = "^2.0.1"
+coverage = "^6.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -52,3 +53,10 @@ multi_line_output = 3
 skip_gitignore = true
 line_length = 88
 lines_after_imports = 2
+
+[tool.coverage.run]
+omit = [
+    "*/migrations/*",
+    "*/tests/*",
+    "config/*",
+]
