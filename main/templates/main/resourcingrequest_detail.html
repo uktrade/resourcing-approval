@@ -5,7 +5,7 @@
 {% block title %}{{ object }}{% endblock %}
 
 {% block content %}
-<h1 class="govuk-heading-l">{{ object }}</h1>
+<h1 class="govuk-heading-l"><data id="id" value="{{ object.pk }}">{{ object }}</h1>
 
 <dl class="govuk-summary-list">
     {% field_summary object 'type' %}

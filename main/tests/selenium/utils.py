@@ -2,6 +2,9 @@ from typing import Any
 
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.select import Select
 
 
 def copy_database(source: str, target: str, db_settings: dict[str, Any]) -> None:
@@ -46,3 +49,27 @@ def run_sql(sql: str, db_settings: dict[str, Any]) -> None:
     cur = conn.cursor()
     cur.execute(sql)
     conn.close()
+
+
+def fill_out_form(driver: WebDriver, form: WebElement, **form_data):
+    for name, value in form_data.items():
+        set_element_value(driver, form.find_element_by_name(name), value)
+
+
+def set_element_value(driver: WebDriver, element: WebElement, value: Any):
+    value = str(value)
+
+    if element.tag_name == "input":
+        if element.get_attribute("type") == "date":
+            # TODO: Ideally we would not have to reach for javascript to handle dates.
+            driver.execute_script(
+                f"document.querySelector('input[name={element.get_attribute('name')}]').value = '{value}';"
+            )
+        else:
+            element.clear()
+            element.send_keys(value)
+    elif element.tag_name == "select":
+        select = Select(element)
+        select.select_by_value(value)
+    else:
+        raise TypeError(f"Unsupported type of element {element.tag_name!r}")
