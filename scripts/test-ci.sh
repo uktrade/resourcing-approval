@@ -3,4 +3,4 @@
 set -ex
 
 coverage run -m pytest
-coverage report --fail-under=75
+coverage report --sort=cover --fail-under=80

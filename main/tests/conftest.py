@@ -6,6 +6,7 @@ from django.test import Client
 from django.urls import reverse
 
 from main.models import ResourcingRequest
+from main.services.resourcing_request import create_full_test_resourcing_request
 from user.models import User
 
 
@@ -22,6 +23,16 @@ def django_db_setup(django_db_setup, django_db_blocker):
 @pytest.fixture
 def admin_user(db):
     return User.objects.get(username="admin")
+
+
+@pytest.fixture
+def hiring_manager(db, client):
+    return login(client, "hiring-manager")
+
+
+@pytest.fixture
+def busops(db, client):
+    return login(client, "busops")
 
 
 @pytest.fixture
@@ -48,6 +59,15 @@ def resourcing_request(db):
     assert resourcing_request
 
     return resourcing_request
+
+
+@pytest.fixture
+def full_resourcing_request(db):
+    return create_full_test_resourcing_request(
+        job_title="Python Developer",
+        project_name="Unit Test",
+        inside_ir35=True,
+    )
 
 
 def login(client, username):

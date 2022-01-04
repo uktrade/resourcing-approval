@@ -35,8 +35,6 @@ isort = "^5.9.3"
 poetry = "^1.1.10"
 bpython = "^0.21"
 pytest-django = "^4.4.0"
-selenium = "^4.1.0"
-pytest-selenium = "^2.0.1"
 coverage = "^6.2"
 
 [build-system]
@@ -45,7 +43,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 minversion = "6.2.5"
-addopts = "--disable-warnings --reuse-db --ds=config.settings.test --liveserver=0.0.0.0:8000 --driver=Remote --selenium-host=selenium --capability browserName firefox"
+addopts = "--disable-warnings --reuse-db --ds=config.settings.test"
 
 [tool.isort]
 profile = "black"
