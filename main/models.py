@@ -252,7 +252,7 @@ class Approval(models.Model):
             ),
             ("can_give_busops_approval", "Can give workforce planning approval"),
             ("can_give_chief_approval", "Can give chief approval"),
-            ("can_give_hrbp_approval", "Can give HRBP approval"),
+            ("can_give_hrbp_approval", "Can give HR business partners approval"),
             ("can_give_finance_approval", "Can give finance approval"),
             ("can_give_commercial_approval", "Can give commercial approval"),
             ("can_give_director_approval", "Can give director approval"),
@@ -268,7 +268,7 @@ class Approval(models.Model):
         HEAD_OF_PROFESSION = "head_of_profession", "Head of Profession"
         CHIEF = "chief", "Chief"
         BUSOPS = "busops", "Workforce Planning"
-        HRBP = "hrbp", "HRBP"
+        HRBP = "hrbp", "HR Business Partners"
         FINANCE = "finance", "Finance"
         COMMERCIAL = "commercial", "Commercial"
         # Jason Kitcat at time of writing.
