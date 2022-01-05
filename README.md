@@ -35,3 +35,6 @@
 
 - `BusOps` has been renamed to `Workforce Planning`. References in the code will stick
   to `BusOps` for the time being, and labels will change to `Workforce Planning`.
+
+- `HRBP` has been renamed to `HR Business Partners`. References in the code will stick
+  to `HRBP` for the time being, and labels will change to `HR Business Partners`.

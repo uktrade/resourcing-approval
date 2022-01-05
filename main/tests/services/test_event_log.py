@@ -18,7 +18,7 @@ def test_add_event(db, resourcing_request, admin_user):
         resourcing_request,
         admin_user,
         EventType.GROUP_APPROVED,
-        {"group": "HRBP"},
+        {"group": "HR Business Partners"},
     )
 
     assert Event.objects.count() == prev_count + 1

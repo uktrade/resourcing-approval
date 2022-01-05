@@ -8,7 +8,7 @@ class ApproverGroup(Enum):
     HEAD_OF_PROFESSION = "Head of Profession"
     CHIEF = "Chief"
     BUSOPS = "Workforce Planning"
-    HRBP = "HRBP"
+    HRBP = "HR Business Partners"
     FINANCE = "Finance"
     COMMERCIAL = "Commercial"
     DIRECTOR = "Director"
