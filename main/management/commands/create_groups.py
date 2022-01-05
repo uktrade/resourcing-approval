@@ -19,8 +19,11 @@ class Command(BaseCommand):
             pk=4, name=ApproverGroup.CHIEF.value
         )
         busops_group, _ = Group.objects.get_or_create(
-            pk=5, name=ApproverGroup.BUSOPS.value
+            pk=5, defaults={"name": ApproverGroup.BUSOPS.value}
         )
+        busops_group.name = ApproverGroup.BUSOPS.value
+        busops_group.save()
+
         hrbp_group, _ = Group.objects.get_or_create(pk=6, name=ApproverGroup.HRBP.value)
         finance_group, _ = Group.objects.get_or_create(
             pk=7, name=ApproverGroup.FINANCE.value

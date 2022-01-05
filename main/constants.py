@@ -7,7 +7,7 @@ from main.models import Approval
 class ApproverGroup(Enum):
     HEAD_OF_PROFESSION = "Head of Profession"
     CHIEF = "Chief"
-    BUSOPS = "BusOps"
+    BUSOPS = "Workforce Planning"
     HRBP = "HRBP"
     FINANCE = "Finance"
     COMMERCIAL = "Commercial"
