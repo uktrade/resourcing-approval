@@ -30,3 +30,8 @@
 # Integrations
 
 - GOV.UK Notify
+
+# Notes
+
+- `BusOps` has been renamed to `Workforce Planning`. References in the code will stick
+  to `BusOps` for the time being, and labels will change to `Workforce Planning`.

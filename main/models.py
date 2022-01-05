@@ -250,7 +250,7 @@ class Approval(models.Model):
                 "can_give_head_of_profession_approval",
                 "Can give head of profession approval",
             ),
-            ("can_give_busops_approval", "Can give BusOps approval"),
+            ("can_give_busops_approval", "Can give workforce planning approval"),
             ("can_give_chief_approval", "Can give chief approval"),
             ("can_give_hrbp_approval", "Can give HRBP approval"),
             ("can_give_finance_approval", "Can give finance approval"),
@@ -267,7 +267,7 @@ class Approval(models.Model):
     class Type(models.TextChoices):
         HEAD_OF_PROFESSION = "head_of_profession", "Head of Profession"
         CHIEF = "chief", "Chief"
-        BUSOPS = "busops", "BusOps"
+        BUSOPS = "busops", "Workforce Planning"
         HRBP = "hrbp", "HRBP"
         FINANCE = "finance", "Finance"
         COMMERCIAL = "commercial", "Commercial"
