@@ -9,10 +9,16 @@ main {
   padding: 0;
 }
 
+// GDS overrides
 .govuk-header__logo {
   width: 100% !important;
 }
 
+.govuk-button--secondary {
+  background-color: hsl(30, 7.7%, 92%);
+}
+
+// Utilities
 .secondary-text {
   color: $govuk-secondary-text-colour;
 }
@@ -37,6 +43,7 @@ main {
   cursor: help;
 }
 
+// Components
 .messages-list {
   margin-top: 20px;
   font-weight: bold;
