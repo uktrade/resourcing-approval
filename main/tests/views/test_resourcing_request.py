@@ -95,3 +95,72 @@ class TestResourcingRequestAddCommentView:
         self._add_comment(client, full_resourcing_request, text=text)
         assert len(tasks.TEST_NOTIFICATION_BOX) == 1
         assert tasks.TEST_NOTIFICATION_BOX[0]["personalisation"]["commenter"]
+
+
+class TestResourcingRequestApprovalView:
+    @pytest.fixture(autouse=True)
+    def _setup(self, client, hiring_manager, full_resourcing_request):
+        client.post(
+            reverse(
+                "resourcing-request-send-for-approval",
+                kwargs={"resourcing_request_pk": full_resourcing_request.pk},
+            )
+        )
+
+    def _approval(
+        self,
+        client,
+        resourcing_request,
+        type: str,
+        approved: bool,
+        reason: str = None,
+    ):
+        return client.post(
+            reverse(
+                "resourcing-request-approval",
+                kwargs={"resourcing_request_pk": resourcing_request.pk},
+            ),
+            data={
+                "type": type,
+                "approved": approved,
+                "reason": reason,
+            },
+        )
+
+    def test_can_add_approval(
+        self, client, head_of_profession, full_resourcing_request
+    ):
+        r = self._approval(
+            client,
+            full_resourcing_request,
+            type="head_of_profession",
+            approved=True,
+            reason="LGTM!",
+        )
+        assert r.status_code == 302
+        full_resourcing_request.refresh_from_db()
+        assert full_resourcing_request.head_of_profession_approval
+
+    def test_requestor_is_notified_of_approval(
+        self, client, head_of_profession, full_resourcing_request, settings
+    ):
+        self._approval(
+            client,
+            full_resourcing_request,
+            type="head_of_profession",
+            approved=True,
+            reason="LGTM!",
+        )
+
+        approval_notifications = [
+            x
+            for x in tasks.TEST_NOTIFICATION_BOX
+            if x["template_id"] == settings.GOVUK_NOTIFY_APPROVAL_TEMPLATE_ID
+        ]
+
+        # 1 comment left notification was sent to the requestor
+        assert len(approval_notifications) == 1
+        assert (
+            approval_notifications[0]["personalisation"]["approved_or_rejected"]
+            == "approved"
+        )

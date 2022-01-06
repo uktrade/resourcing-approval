@@ -136,6 +136,7 @@
       "first_name": "Head of Profession",
       "last_name": "Henry",
       "email": "head-of-profession@example.com",
+      "profession": 1,
       "is_staff": true,
       "is_active": true,
       "date_joined": "2021-10-25T10:00:18Z",

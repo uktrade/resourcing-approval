@@ -252,7 +252,11 @@ class ResourcingRequestAddComment(
         send_notification.delay(
             email_address=self.resourcing_request.requestor.email,
             template_id=settings.GOVUK_NOTIFY_COMMENT_LEFT_TEMPLATE_ID,
-            personalisation={"commenter": self.request.user.get_full_name()},
+            personalisation={
+                "first_name": self.resourcing_request.requestor.first_name,
+                "commenter": self.request.user.get_full_name(),
+                "resourcing_request_url": self.resourcing_request_url,
+            },
         )
 
         return super().form_valid(form)
@@ -334,6 +338,17 @@ class ResourcingRequestApprovalView(FormView, ResourcingRequestBaseView):
             self.resourcing_request.pk,
             self.resourcing_request_url,
             approval.pk,
+        )
+
+        send_notification.delay(
+            email_address=self.resourcing_request.requestor.email,
+            template_id=settings.GOVUK_NOTIFY_APPROVAL_TEMPLATE_ID,
+            personalisation={
+                "first_name": self.resourcing_request.requestor.first_name,
+                "approved_or_rejected": "approved" if approved else "rejected",
+                "approver": self.request.user.get_full_name(),
+                "resourcing_request_url": self.resourcing_request_url,
+            },
         )
 
         return super().form_valid(form)
