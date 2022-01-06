@@ -32,6 +32,11 @@ def hiring_manager(db, client):
 
 
 @pytest.fixture
+def head_of_profession(db, client):
+    return login(client, "head-of-profession")
+
+
+@pytest.fixture
 def busops(db, client):
     return login(client, "busops")
 
