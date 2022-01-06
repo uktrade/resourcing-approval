@@ -1,6 +1,8 @@
 from .non_prod import *  # noqa: F403
 
 
+APP_ENV = "test"
+
 ALLOWED_HOSTS = ["testrunner"]
 
 CSRF_COOKIE_SECURE = False

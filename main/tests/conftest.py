@@ -5,6 +5,7 @@ from django.core.management import call_command
 from django.test import Client
 from django.urls import reverse
 
+from main import tasks
 from main.models import ResourcingRequest
 from main.services.resourcing_request import create_full_test_resourcing_request
 from user.models import User
@@ -75,3 +76,8 @@ def login(client, username):
     client.force_login(user)
 
     return user
+
+
+@pytest.fixture(autouse=True)
+def _empty_test_notification_box():
+    tasks.TEST_NOTIFICATION_BOX = []
