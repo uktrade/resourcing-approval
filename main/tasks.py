@@ -1,6 +1,6 @@
 import logging
 from functools import partial
-from typing import Any, Optional
+from typing import Any, Optional, TypedDict
 
 from celery import group, shared_task
 from django.conf import settings
@@ -15,17 +15,28 @@ from user.models import User
 logger = logging.getLogger(__name__)
 
 
+class TestNotification(TypedDict):
+    email_address: str
+    template_id: str
+    personalisation: Optional[dict[str, str]]
+
+
+TEST_NOTIFICATION_BOX: list[TestNotification] = []
+
+
 @shared_task
-def send_notification(to, template_id, personalisation=None):
+def send_notification(
+    email_address: str, template_id: str, personalisation: dict[str, str] = None
+):
     if personalisation is None:
         personalisation = {}
 
-    if settings.APP_ENV in ("local", "test"):
+    if settings.APP_ENV == "local":
         logging.info(
             "\n".join(
                 (
                     f"GOVUK_NOTIFY_API_KEY={settings.GOVUK_NOTIFY_API_KEY}",
-                    f"to={to}",
+                    f"email_address={email_address}",
                     f"template_id={template_id}",
                     f"personalisation={personalisation}",
                 )
@@ -34,9 +45,22 @@ def send_notification(to, template_id, personalisation=None):
 
         return
 
+    if settings.APP_ENV == "test":
+        TEST_NOTIFICATION_BOX.append(
+            {
+                "email_address": email_address,
+                "template_id": template_id,
+                "personalisation": personalisation,
+            }
+        )
+
+        return
+
     notifications_client = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
     notifications_client.send_email_notification(
-        email_address=to, template_id=template_id, personalisation=personalisation
+        email_address=email_address,
+        template_id=template_id,
+        personalisation=personalisation,
     )
 
 
@@ -57,7 +81,7 @@ def send_group_notification(
 
     tasks = [
         send_notification.s(
-            to=user.email,
+            email_address=user.email,
             template_id=template_id,
             personalisation={
                 **personalisation,
@@ -111,7 +135,7 @@ def notify_approvers(
     # Notify the requestor that the request has been approved.
     if resourcing_request.is_approved:
         send_notification.delay(
-            to=resourcing_request.requestor.email,
+            email_address=resourcing_request.requestor.email,
             template_id=settings.GOVUK_NOTIFY_APPROVED_TEMPLATE_ID,
             personalisation={
                 **personalisation,
@@ -143,7 +167,7 @@ def notify_approvers(
 
         if next_approval_type == Approval.Type.CHIEF:
             send_notification.delay(
-                to=resourcing_request.chief.email,
+                email_address=resourcing_request.chief.email,
                 template_id=settings.GOVUK_NOTIFY_READY_FOR_APPROVAL_TEMPLATE_ID,
                 personalisation={
                     **personalisation,

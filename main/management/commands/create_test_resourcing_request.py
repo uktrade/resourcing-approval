@@ -15,6 +15,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         assert settings.APP_ENV in (
             "local",
+            "test",
             "dev",
         ), "Command can only be ran in a dev environment"
 
