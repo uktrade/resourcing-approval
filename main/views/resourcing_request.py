@@ -355,3 +355,15 @@ class ResourcingRequestApprovalView(FormView, ResourcingRequestBaseView):
 
     def get_success_url(self):
         return self.request.path_info
+
+
+class ResourcingRequestMarkAsCompleteView(ResourcingRequestActionView):
+    permission_required = "main.change_resourcingrequest"
+    event_type = EventType.COMPLETED
+
+    def can_do_action(self, resourcing_request: ResourcingRequest) -> bool:
+        return resourcing_request.can_mark_as_complete
+
+    def action(self, resourcing_request):
+        resourcing_request.state = ResourcingRequest.State.COMPLETED
+        resourcing_request.save()

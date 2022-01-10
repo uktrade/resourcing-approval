@@ -203,6 +203,13 @@
     {% if object.can_update %}
         <a class="govuk-button govuk-button--secondary" href="{% url 'resourcing-request-update' resourcing_request_pk=object.pk %}">Update</a>
     {% endif %}
+
+    {% if object.can_mark_as_complete %}
+        <form class="inline" action="{% url 'resourcing-request-mark-as-complete' resourcing_request_pk=object.pk %}" method="post">
+            {% csrf_token %}
+            <button class="govuk-button">Mark as complete</button>
+        </form>
+    {% endif %}
 {% endif %}
 
 {% if perms.main.can_give_busops_approval and object.can_finish_amendments_review %}

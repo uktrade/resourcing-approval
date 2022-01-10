@@ -33,6 +33,7 @@ class EventType(Enum):
     COMMENTED = ("Commented on the resourcing request", None)
     APPROVED = ("The resourcing request was approved", None)
     DELETED = ("Deleted a {object}", {"object"})
+    COMPLETED = ("Marked the resourcing request as complete", None)
 
 
 class EventLogService:

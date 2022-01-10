@@ -49,4 +49,6 @@ class DashboardView(TemplateView):
         return query
 
     def _get_approved_by_you_context_data(self):
-        return ResourcingRequest.objects.filter(approvals__user=self.request.user)
+        return ResourcingRequest.objects.filter(
+            approvals__user=self.request.user
+        ).distinct()

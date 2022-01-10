@@ -52,6 +52,7 @@ class ResourcingRequest(models.Model):
         AMENDING = 2, "Amending"
         AMENDMENTS_REVIEW = 3, "Amendments review"
         APPROVED = 4, "Approved"
+        COMPLETED = 5, "Completed"
 
     class Type(models.IntegerChoices):
         NEW = 1, "New"
@@ -145,6 +146,11 @@ class ResourcingRequest(models.Model):
         return self.state == self.State.APPROVED
 
     @property
+    def is_completed(self) -> bool:
+        """Return whether the resourcing request is completed."""
+        return self.state == self.State.COMPLETED
+
+    @property
     def required_supporting_forms(self):
         yield hasattr(self, "financial_information")
 
@@ -160,7 +166,6 @@ class ResourcingRequest(models.Model):
             hasattr(self, "interim_request"),
             hasattr(self, "cest_rationale"),
             hasattr(self, "cest_document"),
-            hasattr(self, "sds_status_determination"),
         )
 
     @property
@@ -203,6 +208,10 @@ class ResourcingRequest(models.Model):
     @property
     def can_approve(self):
         return self.state == self.State.AWAITING_APPROVALS
+
+    @property
+    def can_mark_as_complete(self):
+        return hasattr(self, "sds_status_determination") and self.is_approved
 
     def get_approval(self, approval_type):
         return getattr(self, f"{approval_type.value}_approval")

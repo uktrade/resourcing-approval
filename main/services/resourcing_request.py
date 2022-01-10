@@ -1,4 +1,5 @@
 import datetime
+from typing import Any
 
 from django.core.files.base import ContentFile
 from django.utils import lorem_ipsum
@@ -133,16 +134,20 @@ def create_full_test_resourcing_request(
 
     SdsStatusDetermination.objects.create(
         resourcing_request=resourcing_request,
-        company_name="A Company",
-        worker_name="John Smith",
-        agency="Five Stars",
-        contract_start_date=datetime.date.today(),
-        contract_end_date=datetime.date.today() + datetime.timedelta(days=30 * 6),
-        # Chief Rache
-        # completed_by_id=3,
-        on_behalf_of="DIT",
-        date_completed=datetime.date.today(),
-        reasons=lorem_ipsum.paragraph(),
+        **create_sds_status_determination_test_data(),
     )
 
     return resourcing_request
+
+
+def create_sds_status_determination_test_data() -> dict[str, Any]:
+    return {
+        "company_name": "A Company",
+        "worker_name": "John Smith",
+        "agency": "Five Stars",
+        "contract_start_date": datetime.date.today(),
+        "contract_end_date": datetime.date.today() + datetime.timedelta(days=30 * 6),
+        "on_behalf_of": "DIT",
+        "date_completed": datetime.date.today(),
+        "reasons": lorem_ipsum.paragraph(),
+    }
