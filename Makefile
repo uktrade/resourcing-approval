@@ -24,10 +24,15 @@ empty-migration:
 migrate:
 	$(web) python manage.py migrate
 
-groups:
+data-groups:
 	$(web) python manage.py create_groups
 
-test-data: groups
+data-countries:
+	$(web) python manage.py loaddata countries.json
+
+app-data: data-groups data-countries
+
+test-data:
 	$(web) python manage.py loaddata test-users.json
 	$(web) python manage.py loaddata test-chartofaccount.json
 
@@ -35,6 +40,7 @@ first-use:
 	docker-compose down
 	$(web) python manage.py migrate
 	$(web) python manage.py create_groups
+	$(web) python manage.py loaddata countries.json
 	$(web) python manage.py loaddata test-users.json
 	$(web) python manage.py loaddata test-chartofaccount.json
 	docker-compose up

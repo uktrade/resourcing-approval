@@ -591,8 +591,12 @@ class InterimRequest(models.Model):
     uk_based = models.BooleanField(
         default=True, verbose_name="UK based", choices=TRUE_FALSE_CHOICES
     )
-    overseas_country = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="if Overseas which Country"
+    overseas_country = models.ForeignKey(
+        "countries.Country",
+        on_delete=models.PROTECT,
+        verbose_name="if overseas which country?",
+        null=True,
+        blank=True,
     )
     type_of_security_clearance = models.CharField(
         max_length=50,
