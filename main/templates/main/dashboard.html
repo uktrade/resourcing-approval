@@ -27,4 +27,10 @@
     {% include 'main/partials/resourcing_request_table.html' with resourcing_requests=awaiting_your_approval show_requestor=True %}
 {% endif %}
 
+{% if approved_by_you %}
+    <h1 class="govuk-heading-m">Approved by you</h1>
+
+    {% include 'main/partials/resourcing_request_table.html' with resourcing_requests=approved_by_you show_requestor=True %}
+{% endif %}
+
 {% endblock %}

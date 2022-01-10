@@ -19,7 +19,8 @@ class DashboardView(TemplateView):
         user = self.request.user
 
         context["your_resourcing_requests"] = user.resourcing_requests.all()
-        context["awaiting_your_approval"] = self.get_awaiting_approval_context_data()
+        context["awaiting_your_approval"] = self._get_awaiting_approval_context_data()
+        context["approved_by_you"] = self._get_approved_by_you_context_data()
 
         if user.has_perm("main.can_give_busops_approval"):
             context["amended_resourcing_requests"] = ResourcingRequest.objects.filter(
@@ -28,7 +29,7 @@ class DashboardView(TemplateView):
 
         return context
 
-    def get_awaiting_approval_context_data(self):
+    def _get_awaiting_approval_context_data(self):
         approval_filter = Q()
 
         for approval_type in get_user_related_approval_types(self.request.user):
@@ -46,3 +47,6 @@ class DashboardView(TemplateView):
         ).distinct()
 
         return query
+
+    def _get_approved_by_you_context_data(self):
+        return ResourcingRequest.objects.filter(approvals__user=self.request.user)
