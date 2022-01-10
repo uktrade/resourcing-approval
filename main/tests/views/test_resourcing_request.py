@@ -4,6 +4,9 @@ from django.urls import reverse
 
 from main import tasks
 from main.models import ResourcingRequest
+from main.services.resourcing_request import create_sds_status_determination_test_data
+from main.tests.conftest import login
+from main.tests.constants import USERNAME_APPROVAL_ORDER
 
 
 class TestResourcingRequestCreateView:
@@ -164,3 +167,64 @@ class TestResourcingRequestApprovalView:
             approval_notifications[0]["personalisation"]["approved_or_rejected"]
             == "approved"
         )
+
+
+def test_scenario_mark_as_complete(client, full_resourcing_request):
+    # remove the SDS status determination form
+    full_resourcing_request.sds_status_determination.delete()
+
+    # send for approval
+    login(client, "hiring-manager")
+    client.post(
+        reverse(
+            "resourcing-request-send-for-approval",
+            kwargs={"resourcing_request_pk": full_resourcing_request.pk},
+        )
+    )
+
+    # give all approvals
+    for username, approval_type in USERNAME_APPROVAL_ORDER:
+        login(client, username)
+        client.post(
+            reverse(
+                "resourcing-request-approval",
+                kwargs={"resourcing_request_pk": full_resourcing_request.pk},
+            ),
+            data={
+                "type": approval_type.value,
+                "approved": True,
+            },
+        )
+
+    full_resourcing_request.refresh_from_db()
+    assert full_resourcing_request.state == ResourcingRequest.State.APPROVED
+
+    login(client, "hiring-manager")
+
+    # check we can't mark as complete without the SDS status determination
+    with pytest.raises(ValidationError):
+        client.post(
+            reverse(
+                "resourcing-request-mark-as-complete",
+                kwargs={"resourcing_request_pk": full_resourcing_request.pk},
+            )
+        )
+
+    # add back the SDS status determination form
+    client.post(
+        reverse(
+            "sds-status-determination-create",
+            kwargs={"resourcing_request_pk": full_resourcing_request.pk},
+        ),
+        data=create_sds_status_determination_test_data(),
+    )
+    # mark as complete
+    client.post(
+        reverse(
+            "resourcing-request-mark-as-complete",
+            kwargs={"resourcing_request_pk": full_resourcing_request.pk},
+        )
+    )
+
+    full_resourcing_request.refresh_from_db()
+    assert full_resourcing_request.state == ResourcingRequest.State.COMPLETED

@@ -24,6 +24,7 @@ from main.views.resourcing_request import (
     ResourcingRequestDetailView,
     ResourcingRequestFinishAmendmentsReviewView,
     ResourcingRequestListView,
+    ResourcingRequestMarkAsCompleteView,
     ResourcingRequestSendForApprovalView,
     ResourcingRequestSendForReviewView,
     ResourcingRequestUpdateView,
@@ -234,6 +235,11 @@ request_urls = [
         "approval",
         ResourcingRequestApprovalView.as_view(),
         name="resourcing-request-approval",
+    ),
+    path(
+        "mark-as-complete",
+        ResourcingRequestMarkAsCompleteView.as_view(),
+        name="resourcing-request-mark-as-complete",
     ),
 ]
 
