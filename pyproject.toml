@@ -43,6 +43,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 minversion = "6.2.5"
+python_files = "test_*.py *_test.py tests.py"
 addopts = "--disable-warnings --reuse-db --ds=config.settings.test"
 
 [tool.isort]

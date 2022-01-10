@@ -77,6 +77,7 @@ SESSION_COOKIE_AGE = 4 * 60 * 60  # 4 hours in seconds
 # Application definition
 
 INSTALLED_APPS = [
+    "countries.apps.CountriesConfig",
     "event_log.apps.EventLogConfig",
     "chartofaccount.apps.ChartofaccountConfig",
     "user.apps.UserConfig",
