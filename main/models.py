@@ -12,6 +12,7 @@ from chartofaccount.models import (
     ProgrammeCode,
     ProjectCode,
 )
+from main.templatetags.currency import currency
 
 
 TRUE_FALSE_CHOICES = (
@@ -434,6 +435,18 @@ class FinancialInformation(models.Model):
                 "supporting_document_pk": self.pk,
             },
         )
+
+    def get_total_budget_display(self):
+        return currency(self.total_budget)
+
+    def get_min_day_rate_display(self):
+        return currency(self.min_day_rate)
+
+    def get_max_day_rate_display(self):
+        return currency(self.max_day_rate)
+
+    def get_project_fees_display(self):
+        return currency(self.project_fees)
 
 
 class StatementOfWork(models.Model):
