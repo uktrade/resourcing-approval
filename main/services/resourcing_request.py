@@ -60,12 +60,15 @@ def create_full_test_resourcing_request(
 
     JobDescription.objects.create(
         resourcing_request=resourcing_request,
-        title="Python Developer",
-        role_purpose=lorem_ipsum.paragraph(),
-        key_accountabilities=lorem_ipsum.paragraph(),
-        line_management_responsibility=lorem_ipsum.paragraph(),
-        personal_attributes_and_skills=lorem_ipsum.paragraph(),
-        essential_and_preferred_experience=lorem_ipsum.paragraph(),
+        description={
+            "delta": {
+                "ops": [
+                    {"insert": "Heading 1"},
+                    {"insert": "\n", "attributes": {"header": 1}},
+                    {"insert": lorem_ipsum.paragraph() + "\n"},
+                ]
+            }
+        },
     )
 
     statement_of_work = StatementOfWork.objects.create(

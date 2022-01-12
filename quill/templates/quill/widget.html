@@ -1,0 +1,35 @@
+<div id="quill_{{ name }}">
+    <div data-quill-editor></div>
+    <input
+        name="{{ name }}"
+        data-quill-input
+        type="hidden"
+        value="{{ widget.value }}"
+    >
+</div>
+
+<script>
+    const {{ module }} = new QuillWrapper(
+        "#quill_{{ name }}",
+        {% if widget.attrs.read_only %}
+        {
+            readOnly: true,
+            modules: { toolbar: false },
+        },
+        {% else %}
+        {
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'bullet' }, { 'list': 'ordered'}],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    ['link'],
+                    ['clean'],
+                ],
+            },
+            theme: "snow",
+        },
+        {% endif %}
+    );
+</script>
