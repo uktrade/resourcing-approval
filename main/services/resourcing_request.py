@@ -6,7 +6,6 @@ from django.utils import lorem_ipsum
 
 from main.models import (
     CestDocument,
-    CestRationale,
     FinancialInformation,
     InterimRequest,
     JobDescription,
@@ -113,21 +112,6 @@ def create_full_test_resourcing_request(
         part_b_business_case=lorem_ipsum.paragraph(),
         part_b_impact=lorem_ipsum.paragraph(),
         part_b_main_reason=lorem_ipsum.paragraph(),
-    )
-
-    CestRationale.objects.create(
-        resourcing_request=resourcing_request,
-        cover_for_perm_role=True,
-        # role_description=lorem_ipsum.paragraph(),
-        what="Python Developer",
-        how="From agency",
-        where="Remote",
-        when="Soon",
-        personal_service=lorem_ipsum.paragraph(),
-        part_and_parcel=lorem_ipsum.paragraph(),
-        financial_risk=lorem_ipsum.paragraph(),
-        business_on_own_account=lorem_ipsum.paragraph(),
-        supply_chain="Test supply chain",
     )
 
     cest_document = CestDocument(resourcing_request=resourcing_request)

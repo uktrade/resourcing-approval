@@ -3,7 +3,6 @@ from django.urls.conf import include
 
 from main.views.dashboard import DashboardView, index
 from main.views.detail_views import (
-    CestRationaleDetailView,
     JobDescriptionDetailView,
     SdsStatusDeterminationDetailView,
     StatementOfWorkDetailView,
@@ -42,8 +41,6 @@ from main.views.statement_of_work_views import (
 from main.views.supporting_documents import (
     CestDocumentCreateView,
     CestDocumentUpdateView,
-    CestRationaleCreateView,
-    CestRationaleUpdateView,
     FinancialInformationCreateView,
     FinancialInformationDetailView,
     FinancialInformationUpdateView,
@@ -161,13 +158,6 @@ interim_request_urls = supporting_document_urls(
     InterimRequestDetailView,
 )
 
-cest_rationale_urls = supporting_document_urls(
-    "cest-rationale",
-    CestRationaleCreateView,
-    CestRationaleUpdateView,
-    CestRationaleDetailView,
-)
-
 cest_document_urls = supporting_document_urls(
     "cest-document",
     CestDocumentCreateView,
@@ -202,7 +192,6 @@ request_urls = [
     path("job-description/", include(job_description_urls)),
     path("statement-of-work/", include(statement_of_work_urls)),
     path("interim-request/", include(interim_request_urls)),
-    path("cest-rationale/", include(cest_rationale_urls)),
     path("cest-document/", include(cest_document_urls)),
     path("sds-status-determination/", include(sds_status_determination_urls)),
     # Actions

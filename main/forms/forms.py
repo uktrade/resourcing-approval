@@ -4,7 +4,6 @@ from django.urls import reverse_lazy
 from main.models import (
     Approval,
     CestDocument,
-    CestRationale,
     Comment,
     FinancialInformation,
     JobDescription,
@@ -223,21 +222,6 @@ class FinancialInformationForm(forms.ModelForm):
 class JobDescriptionForm(forms.ModelForm):
     class Meta:
         model = JobDescription
-        fields = "__all__"
-        widgets = {"resourcing_request": forms.HiddenInput}
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields["resourcing_request"].disabled = True
-
-
-class CestRationaleForm(forms.ModelForm):
-    start_date_field = "role_start_date"
-    end_date_field = "role_end_date"
-
-    class Meta:
-        model = CestRationale
         fields = "__all__"
         widgets = {"resourcing_request": forms.HiddenInput}
 
