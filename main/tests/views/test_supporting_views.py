@@ -9,7 +9,6 @@ from django.urls import reverse
         "job-description",
         "statement-of-work",
         "interim-request",
-        "cest-rationale",
         "cest-document",
         "sds-status-determination",
     ],

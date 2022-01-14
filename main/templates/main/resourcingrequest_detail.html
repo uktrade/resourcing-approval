@@ -116,26 +116,6 @@
         </dd>
     </div>
 
-    <!-- CEST rationale -->
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-            CEST rationale
-        </dt>
-        <dd class="govuk-summary-list__value">
-            {{ object.cest_rationale|default:'No CEST rationale' }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-            {% if perms.main.view_cestrationale and object.cest_rationale %}
-                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'cest-rationale-detail' resourcing_request_pk=object.pk supporting_document_pk=object.cest_rationale.pk %}">View</a>
-            {% endif %}
-            {% if perms.main.change_cestrationale and object.cest_rationale and object.can_update %}
-                <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'cest-rationale-update' resourcing_request_pk=object.pk supporting_document_pk=object.cest_rationale.pk %}">Update</a>
-            {% elif perms.main.add_cestrationale and not object.cest_rationale %}
-                <a class="govuk-button govuk-button mb-0" href="{% url 'cest-rationale-create' resourcing_request_pk=object.pk %}">Create</a>
-            {% endif %}
-        </dd>
-    </div>
-
     <!-- CEST document -->
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">

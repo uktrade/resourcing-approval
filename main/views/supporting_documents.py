@@ -7,14 +7,12 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from main.forms.forms import (
     CestDocumentForm,
-    CestRationaleForm,
     FinancialInformationForm,
     JobDescriptionForm,
     SdsStatusDeterminationForm,
 )
 from main.models import (
     CestDocument,
-    CestRationale,
     FinancialInformation,
     JobDescription,
     SdsStatusDetermination,
@@ -143,22 +141,6 @@ class JobDescriptionUpdateView(SupportingDocumentUpdateView):
     permission_required = "main.change_jobdescription"
     event_context = {"object": "job description"}
     title = "Job description"
-
-
-class CestRationaleCreateView(SupportingDocumentCreateView):
-    model = CestRationale
-    form_class = CestRationaleForm
-    permission_required = "main.add_cestrationale"
-    event_context = {"object": "CEST rationale"}
-    title = "CEST rationale"
-
-
-class CestRationaleUpdateView(SupportingDocumentUpdateView):
-    model = CestRationale
-    form_class = CestRationaleForm
-    permission_required = "main.change_cestrationale"
-    event_context = {"object": "CEST rationale"}
-    title = "CEST rationale"
 
 
 class CestDocumentCreateView(SupportingDocumentCreateView):

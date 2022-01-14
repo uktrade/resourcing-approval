@@ -1,9 +1,4 @@
-from main.models import (
-    CestRationale,
-    JobDescription,
-    SdsStatusDetermination,
-    StatementOfWork,
-)
+from main.models import JobDescription, SdsStatusDetermination, StatementOfWork
 from main.views.supporting_documents import SupportingDocumentDetailView
 
 
@@ -19,22 +14,6 @@ class JobDescriptionDetailView(SupportingDocumentDetailView):
         "personal_attributes_and_skills",
         "essential_and_preferred_experience",
         "description",
-    ]
-
-
-class CestRationaleDetailView(SupportingDocumentDetailView):
-    model = CestRationale
-    permission_required = "main.view_cestrationale"
-    title = "CEST rationale"
-    stacked_fields = [
-        "what",
-        "how",
-        "where",
-        "when",
-        "personal_service",
-        "part_and_parcel",
-        "financial_risk",
-        "business_on_own_account",
     ]
 
 

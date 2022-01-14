@@ -168,7 +168,6 @@ class ResourcingRequest(models.Model):
 
         yield from (
             hasattr(self, "interim_request"),
-            hasattr(self, "cest_rationale"),
             hasattr(self, "cest_document"),
         )
 
@@ -637,37 +636,6 @@ class InterimRequest(models.Model):
     def get_absolute_url(self):
         return reverse(
             "interim-request-detail",
-            kwargs={
-                "resourcing_request_pk": self.resourcing_request.pk,
-                "supporting_document_pk": self.pk,
-            },
-        )
-
-
-class CestRationale(models.Model):
-    resourcing_request = models.OneToOneField(
-        "ResourcingRequest",
-        models.CASCADE,
-        related_name="cest_rationale",
-    )
-
-    cover_for_perm_role = models.BooleanField(choices=TRUE_FALSE_CHOICES)
-    what = models.TextField("Control & Direction: what")
-    how = models.TextField("Control & Direction: how")
-    where = models.TextField("Control & Direction: where")
-    when = models.TextField("Control & Direction: when")
-    personal_service = models.TextField()
-    part_and_parcel = models.TextField()
-    financial_risk = models.TextField()
-    business_on_own_account = models.TextField()
-    supply_chain = models.CharField(max_length=255)
-
-    def __str__(self):
-        return "CEST rationale"
-
-    def get_absolute_url(self):
-        return reverse(
-            "cest-rationale-detail",
             kwargs={
                 "resourcing_request_pk": self.resourcing_request.pk,
                 "supporting_document_pk": self.pk,
