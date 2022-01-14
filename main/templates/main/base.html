@@ -10,6 +10,7 @@
     <link rel="shortcut icon" href="{% static 'main/favicon.ico' %}" type="image/x-icon">
     <link href="{% sass_src 'main/css/styles.scss' %}" rel="stylesheet" type="text/css"/>
     <script src="https://unpkg.com/htmx.org@1.6.0" integrity="sha384-G4dtlRlMBrk5fEiRXDsLjriPo8Qk5ZeHVVxS8KhX6D7I9XXJlNqbdvRlp9/glk5D" crossorigin="anonymous"></script>
+    {% block libraries %}{% endblock %}
 </head>
 <body>
     {% include 'main/partials/header.html' with service_name='Resourcing Approval' %}

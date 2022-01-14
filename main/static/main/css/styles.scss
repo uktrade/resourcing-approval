@@ -9,6 +9,44 @@ main {
   padding: 0;
 }
 
+// Quill overrides
+.ql-container .ql-editor,
+.ql-container.ql-snow .ql-editor {
+  p {
+    @extend .govuk-body;
+  }
+
+  h1 {
+    @extend .govuk-heading-l;
+  }
+
+  h2 {
+    @extend .govuk-heading-m;
+  }
+
+  h3 {
+    @extend .govuk-heading-s;
+  }
+
+  ul {
+    @extend .govuk-list;
+    @extend .govuk-list--bullet;
+  }
+
+  ol {
+    @extend .govuk-list;
+    @extend .govuk-list--number;
+  }
+
+  a {
+    @extend .govuk-link;
+  }
+}
+
+.ql-container.ql-disabled .ql-editor {
+  padding: 0;
+}
+
 // GDS overrides
 .govuk-header__logo {
   width: 100% !important;

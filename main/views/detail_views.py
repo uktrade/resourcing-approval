@@ -9,6 +9,7 @@ from main.views.supporting_documents import SupportingDocumentDetailView
 
 class JobDescriptionDetailView(SupportingDocumentDetailView):
     model = JobDescription
+    template_name = "main/jobdescription_detail.html"
     permission_required = "main.view_jobdescription"
     title = "Job description"
     stacked_fields = [
@@ -17,6 +18,7 @@ class JobDescriptionDetailView(SupportingDocumentDetailView):
         "line_management_responsibility",
         "personal_attributes_and_skills",
         "essential_and_preferred_experience",
+        "description",
     ]
 
 

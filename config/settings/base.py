@@ -77,6 +77,7 @@ SESSION_COOKIE_AGE = 4 * 60 * 60  # 4 hours in seconds
 # Application definition
 
 INSTALLED_APPS = [
+    "quill.apps.QuillConfig",
     "countries.apps.CountriesConfig",
     "event_log.apps.EventLogConfig",
     "chartofaccount.apps.ChartofaccountConfig",
