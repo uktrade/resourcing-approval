@@ -4,6 +4,7 @@ import json
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.validators import FileExtensionValidator
 from django.db import models
+from django.template.defaultfilters import date, truncatechars
 from django.urls import reverse
 
 from chartofaccount.models import (
@@ -16,6 +17,7 @@ from chartofaccount.models import (
 from main.templatetags.currency import currency
 from quill.db.models.fields import QuillField
 from quill.forms.widgets import QuillWidget
+from quill.utils import extract_text
 
 
 TRUE_FALSE_CHOICES = (
@@ -324,7 +326,7 @@ class JobDescription(models.Model):
     description = QuillField()
 
     def __str__(self):
-        return "Job description"
+        return truncatechars(extract_text(self.description).replace("\n", " "), 40)
 
     def get_absolute_url(self):
         return reverse(
@@ -403,7 +405,17 @@ class FinancialInformation(models.Model):
     )
 
     def __str__(self) -> str:
-        return "Financial information"
+        text = [f"Cost centre: {self.cost_centre_code}"]
+
+        if self.resourcing_request.is_ir35:
+            text.append(
+                f"Day rate: {currency(self.min_day_rate)}"
+                f" - {currency(self.max_day_rate)}"
+            )
+        else:
+            text.append(f"Project fees: {currency(self.project_fees)}")
+
+        return " / ".join(text)
 
     def get_absolute_url(self):
         return reverse(
@@ -473,7 +485,9 @@ class StatementOfWork(models.Model):
         return True
 
     def __str__(self):
-        return self.company_name
+        return (
+            f"Company name: {self.company_name} / Position code: {self.position_code}"
+        )
 
     def get_absolute_url(self):
         return reverse(
@@ -631,7 +645,10 @@ class InterimRequest(models.Model):
     )
 
     def __str__(self):
-        return "Interim request"
+        return (
+            f"Security clearance: {self.get_type_of_security_clearance_display()}"
+            f" / Contractor type: {self.get_contractor_type_display()}"
+        )
 
     def get_absolute_url(self):
         return reverse(
@@ -690,7 +707,10 @@ class SdsStatusDetermination(models.Model):
     reasons = models.TextField()
 
     def __str__(self):
-        return "SDS status determination"
+        return (
+            f"Start date: {date(self.contract_start_date, 'DATE_FORMAT')}"
+            f" / End date: {date(self.contract_end_date, 'DATE_FORMAT')}"
+        )
 
     def get_absolute_url(self):
         return reverse(
