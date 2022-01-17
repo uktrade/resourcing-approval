@@ -21,3 +21,16 @@ def validate_value(value):
             code="invalid",
             params={"value": value},
         )
+
+
+def extract_text(value) -> str:
+    if value in ({}, None):
+        return ""
+
+    ops = value["delta"]["ops"]
+
+    text = []
+    for op in ops:
+        text.append(op["insert"])
+
+    return "".join(text)
