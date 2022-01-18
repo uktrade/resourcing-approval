@@ -1,4 +1,5 @@
 from django import forms
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 
 from main.models import (
@@ -195,6 +196,11 @@ class FinancialInformationForm(forms.ModelForm):
 
         self.fields["resourcing_request"].disabled = True
 
+        self.fields["total_budget"].help_text = render_to_string(
+            "main/partials/total-budget-help-text.html"
+        )
+
+        # Add prefix to currency fields.
         money_fields = ["total_budget", "min_day_rate", "max_day_rate", "project_fees"]
 
         for field in money_fields:

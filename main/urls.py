@@ -49,6 +49,7 @@ from main.views.supporting_documents import (
     SdsStatusDeterminationCreateView,
     SdsStatusDeterminationUpdateView,
 )
+from main.views.tools import total_budget_calculator
 
 
 def supporting_document_urls(name, create_view, update_view, detail_view=None):
@@ -260,4 +261,9 @@ urlpatterns = [
     # htmx
     path("htmx/load-directorates/", load_directorates, name="htmx-load-directorates"),
     path("htmx/load-costcentres/", load_costcentres, name="htmx-load-costcentres"),
+    path(
+        "htmx/total-budget-calculator/",
+        total_budget_calculator,
+        name="htmx-total-budget-calculator",
+    ),
 ]
