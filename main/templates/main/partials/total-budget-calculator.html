@@ -1,0 +1,17 @@
+{% load currency %}
+{% load form %}
+
+<form
+    hx-post="{% url 'htmx-total-budget-calculator' %}"
+    hx-swap="outerHTML"
+    novalidate
+>
+    {% csrf_token %}
+    {% include 'main/partials/forms/form.html' %}
+    <div class="govuk-button-group mb-0">
+        <button class="govuk-button mb-0">Calculate</button>
+        {% if total %}
+            <strong>The total is {{ total|currency }}</strong>
+        {% endif %}
+    </div>
+</form>
