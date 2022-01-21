@@ -43,7 +43,7 @@ def create_full_test_resourcing_request(
         cost_centre_code_id="111113",
         team="Live Services",
         programme_code_id="1111",
-        area_of_work=FinancialInformation.AreaOfWork.INVESTMENT,
+        area_of_work=FinancialInformation.AreaOfWork.DDAT,
         total_budget=500_000,
         timesheet_and_expenses_validator="Mr Anthony Manager",
         second_timesheet_validator="Mrs Anna Manager",
