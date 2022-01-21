@@ -347,10 +347,7 @@ class JobDescription(models.Model):
 
 class FinancialInformation(models.Model):
     class AreaOfWork(models.TextChoices):
-        INVESTMENT = "investment", "Investment"
-        TRADE = "trade", "Trade"
         DDAT = "ddat", "DDaT"
-        CORPORATE = "corporate", "Corporate"
 
     resourcing_request = models.OneToOneField(
         "ResourcingRequest",
