@@ -33,23 +33,14 @@ class Directorate(models.Model):
 
 
 class CostCentre(models.Model):
-    cost_centre_code = models.CharField(
-        "Cost Centre Code", primary_key=True, max_length=6
-    )
-    cost_centre_name = models.CharField("Cost Centre Name", max_length=300)
-    directorate = models.ForeignKey(
-        Directorate, on_delete=models.CASCADE, related_name="cost_centres"
-    )
-
-    @property
-    def full_name(self):
-        return f"{self.cost_centre_code} - {self.cost_centre_name}"
-
-    def __str__(self):
-        return self.full_name
-
     class Meta:
         ordering = ["cost_centre_code"]
+
+    cost_centre_code = models.CharField(primary_key=True, max_length=6)
+    cost_centre_name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return f"{self.cost_centre_code} - {self.cost_centre_name}"
 
 
 class ProgrammeCode(models.Model):

@@ -1,161 +1,154 @@
 [
-{
-  "model": "chartofaccount.departmentalgroup",
-  "pk": "1111AA",
-  "fields": {
-    "group_name": "Communications"
+  {
+    "model": "chartofaccount.departmentalgroup",
+    "pk": "1111AA",
+    "fields": {
+      "group_name": "Communications"
+    }
+  },
+  {
+    "model": "chartofaccount.departmentalgroup",
+    "pk": "2222BB",
+    "fields": {
+      "group_name": "Overseas"
+    }
+  },
+  {
+    "model": "chartofaccount.directorate",
+    "pk": "11111A",
+    "fields": {
+      "directorate_name": "Social Media",
+      "group": "1111AA"
+    }
+  },
+  {
+    "model": "chartofaccount.directorate",
+    "pk": "11111C",
+    "fields": {
+      "directorate_name": "Radio",
+      "group": "1111AA"
+    }
+  },
+  {
+    "model": "chartofaccount.directorate",
+    "pk": "22222A",
+    "fields": {
+      "directorate_name": "Europe",
+      "group": "2222BB"
+    }
+  },
+  {
+    "model": "chartofaccount.directorate",
+    "pk": "22222B",
+    "fields": {
+      "directorate_name": "Australia",
+      "group": "2222BB"
+    }
+  },
+  {
+    "model": "chartofaccount.directorate",
+    "pk": "22222C",
+    "fields": {
+      "directorate_name": "Asia",
+      "group": "2222BB"
+    }
+  },
+  {
+    "model": "chartofaccount.costcentre",
+    "pk": "111111",
+    "fields": {
+      "cost_centre_name": "Radio 4"
+    }
+  },
+  {
+    "model": "chartofaccount.costcentre",
+    "pk": "111112",
+    "fields": {
+      "cost_centre_name": "Radio 2"
+    }
+  },
+  {
+    "model": "chartofaccount.costcentre",
+    "pk": "111113",
+    "fields": {
+      "cost_centre_name": "tack tack"
+    }
+  },
+  {
+    "model": "chartofaccount.costcentre",
+    "pk": "222221",
+    "fields": {
+      "cost_centre_name": "France"
+    }
+  },
+  {
+    "model": "chartofaccount.costcentre",
+    "pk": "33333",
+    "fields": {
+      "cost_centre_name": "India"
+    }
+  },
+  {
+    "model": "chartofaccount.costcentre",
+    "pk": "456711",
+    "fields": {
+      "cost_centre_name": "China"
+    }
+  },
+  {
+    "model": "chartofaccount.costcentre",
+    "pk": "765444",
+    "fields": {
+      "cost_centre_name": "Western Australia"
+    }
+  },
+  {
+    "model": "chartofaccount.programmecode",
+    "pk": "1111",
+    "fields": {
+      "programme_description": "Programme 3"
+    }
+  },
+  {
+    "model": "chartofaccount.programmecode",
+    "pk": "1234",
+    "fields": {
+      "programme_description": "Programme 1"
+    }
+  },
+  {
+    "model": "chartofaccount.programmecode",
+    "pk": "1235",
+    "fields": {
+      "programme_description": "Programme 2"
+    }
+  },
+  {
+    "model": "chartofaccount.projectcode",
+    "pk": "1111",
+    "fields": {
+      "project_description": "Project 1"
+    }
+  },
+  {
+    "model": "chartofaccount.projectcode",
+    "pk": "2222",
+    "fields": {
+      "project_description": "Project 2"
+    }
+  },
+  {
+    "model": "chartofaccount.projectcode",
+    "pk": "3333",
+    "fields": {
+      "project_description": "Project 3"
+    }
+  },
+  {
+    "model": "chartofaccount.projectcode",
+    "pk": "4444",
+    "fields": {
+      "project_description": "Project 4"
+    }
   }
-},
-{
-  "model": "chartofaccount.departmentalgroup",
-  "pk": "2222BB",
-  "fields": {
-    "group_name": "Overseas"
-  }
-},
-{
-  "model": "chartofaccount.directorate",
-  "pk": "11111A",
-  "fields": {
-    "directorate_name": "Social Media",
-    "group": "1111AA"
-  }
-},
-{
-  "model": "chartofaccount.directorate",
-  "pk": "11111C",
-  "fields": {
-    "directorate_name": "Radio",
-    "group": "1111AA"
-  }
-},
-{
-  "model": "chartofaccount.directorate",
-  "pk": "22222A",
-  "fields": {
-    "directorate_name": "Europe",
-    "group": "2222BB"
-  }
-},
-{
-  "model": "chartofaccount.directorate",
-  "pk": "22222B",
-  "fields": {
-    "directorate_name": "Australia",
-    "group": "2222BB"
-  }
-},
-{
-  "model": "chartofaccount.directorate",
-  "pk": "22222C",
-  "fields": {
-    "directorate_name": "Asia",
-    "group": "2222BB"
-  }
-},
-{
-  "model": "chartofaccount.costcentre",
-  "pk": "111111",
-  "fields": {
-    "cost_centre_name": "Radio 4",
-    "directorate": "11111C"
-  }
-},
-{
-  "model": "chartofaccount.costcentre",
-  "pk": "111112",
-  "fields": {
-    "cost_centre_name": "Radio 2",
-    "directorate": "11111C"
-  }
-},
-{
-  "model": "chartofaccount.costcentre",
-  "pk": "111113",
-  "fields": {
-    "cost_centre_name": "tack tack",
-    "directorate": "11111A"
-  }
-},
-{
-  "model": "chartofaccount.costcentre",
-  "pk": "222221",
-  "fields": {
-    "cost_centre_name": "France",
-    "directorate": "22222A"
-  }
-},
-{
-  "model": "chartofaccount.costcentre",
-  "pk": "33333",
-  "fields": {
-    "cost_centre_name": "India",
-    "directorate": "22222C"
-  }
-},
-{
-  "model": "chartofaccount.costcentre",
-  "pk": "456711",
-  "fields": {
-    "cost_centre_name": "China",
-    "directorate": "22222C"
-  }
-},
-{
-  "model": "chartofaccount.costcentre",
-  "pk": "765444",
-  "fields": {
-    "cost_centre_name": "Western Australia",
-    "directorate": "22222B"
-  }
-},
-{
-  "model": "chartofaccount.programmecode",
-  "pk": "1111",
-  "fields": {
-    "programme_description": "Programme 3"
-  }
-},
-{
-  "model": "chartofaccount.programmecode",
-  "pk": "1234",
-  "fields": {
-    "programme_description": "Programme 1"
-  }
-},
-{
-  "model": "chartofaccount.programmecode",
-  "pk": "1235",
-  "fields": {
-    "programme_description": "Programme 2"
-  }
-},
-{
-  "model": "chartofaccount.projectcode",
-  "pk": "1111",
-  "fields": {
-    "project_description": "Project 1"
-  }
-},
-{
-  "model": "chartofaccount.projectcode",
-  "pk": "2222",
-  "fields": {
-    "project_description": "Project 2"
-  }
-},
-{
-  "model": "chartofaccount.projectcode",
-  "pk": "3333",
-  "fields": {
-    "project_description": "Project 3"
-  }
-},
-{
-  "model": "chartofaccount.projectcode",
-  "pk": "4444",
-  "fields": {
-    "project_description": "Project 4"
-  }
-}
 ]

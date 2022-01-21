@@ -11,7 +11,6 @@ from main.views.interim_request_views import (
     InterimRequestCreateView,
     InterimRequestDetailView,
     InterimRequestUpdateView,
-    load_costcentres,
     load_directorates,
 )
 from main.views.resourcing_request import (
@@ -260,7 +259,6 @@ urlpatterns = [
     ),
     # htmx
     path("htmx/load-directorates/", load_directorates, name="htmx-load-directorates"),
-    path("htmx/load-costcentres/", load_costcentres, name="htmx-load-costcentres"),
     path(
         "htmx/total-budget-calculator/",
         total_budget_calculator,

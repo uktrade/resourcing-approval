@@ -374,6 +374,7 @@ class FinancialInformation(models.Model):
         verbose_name="Cost Centre/Team",
         related_name="+",
     )
+    team = models.CharField(max_length=64)
     programme_code = models.ForeignKey(
         ProgrammeCode,
         models.PROTECT,
