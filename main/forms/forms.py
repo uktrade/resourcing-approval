@@ -178,12 +178,6 @@ class FinancialInformationForm(forms.ModelForm):
                     "hx-target": "#id_directorate",
                 }
             ),
-            "directorate": forms.Select(
-                attrs={
-                    "hx-get": reverse_lazy("htmx-load-costcentres"),
-                    "hx-target": "#id_cost_centre_code",
-                }
-            ),
         }
 
     inside_ir35_fields = ["min_day_rate", "max_day_rate", "days_required"]

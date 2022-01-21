@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from chartofaccount.models import CostCentre, Directorate
+from chartofaccount.models import Directorate
 from main.forms.interim_request_form import InterimRequestNewForm
 from main.models import InterimRequest, ResourcingRequest
 from main.views.supporting_documents import (
@@ -51,16 +51,4 @@ def load_directorates(request):
         request,
         "main/partials/directorate_list_options.html",
         {"directorates": directorates},
-    )
-
-
-def load_costcentres(request):
-    directorate_code = request.GET.get("directorate")
-    costcentres = CostCentre.objects.filter(directorate=directorate_code).order_by(
-        "cost_centre_name"
-    )
-    return render(
-        request,
-        "main/partials/costcentre_list_options.html",
-        {"costcentres": costcentres},
     )

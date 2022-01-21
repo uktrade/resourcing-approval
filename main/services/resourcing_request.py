@@ -41,6 +41,7 @@ def create_full_test_resourcing_request(
         group_id="1111AA",
         directorate_id="11111A",
         cost_centre_code_id="111113",
+        team="Live Services",
         programme_code_id="1111",
         area_of_work=FinancialInformation.AreaOfWork.INVESTMENT,
         total_budget=500_000,

@@ -1,4 +1,4 @@
-from chartofaccount.models import CostCentre, Directorate
+from chartofaccount.models import Directorate
 from main.models import Approval
 
 
@@ -28,29 +28,16 @@ def syncronise_cost_centre_dropdowns(
     form,
     group_field="group",
     directorate_field="directorate",
-    cost_centre_field="cost_centre_code",
 ):
 
-    # The three dropdowns group/directorate/cost_centre are linked.
+    # The two dropdowns group/directorate are linked.
     # The group selection  is used to filter the directorate list.
-    # The directorate selection  is used to filter the cost_centre list.
 
     clear_directorate = True
-    clear_cost_centre = True
 
     if group_field in form.data:
         # if a group has been selected, we can populate the other lists.
         if directorate_field in form.data:
-            # if we have a directorate, populate the cost centres
-            try:
-                directorate_code = form.data.get(directorate_field)
-                form.fields[cost_centre_field].queryset = CostCentre.objects.filter(
-                    directorate=directorate_code
-                ).order_by("cost_centre_name")
-                clear_cost_centre = False
-            except (ValueError, TypeError):
-                pass
-
             try:
                 # Populate the directorate
                 group_code = form.data.get(group_field)
@@ -60,20 +47,8 @@ def syncronise_cost_centre_dropdowns(
                 clear_directorate = False
             except (ValueError, TypeError):
                 pass
-
     elif form.instance.pk:
-        # Update case: set the cost_centre and directorate dropdown
-        # using the instance values
-        try:
-            form.fields[
-                cost_centre_field
-            ].queryset = form.instance.directorate.cost_centres.order_by(
-                "cost_centre_name"
-            )
-            clear_cost_centre = False
-        except (ValueError, TypeError):
-            pass
-
+        # Update case: set the directorate dropdown using the instance values
         try:
             form.fields[
                 directorate_field
@@ -84,8 +59,3 @@ def syncronise_cost_centre_dropdowns(
 
     if clear_directorate:
         form.fields[directorate_field].queryset = Directorate.objects.none()
-        # if there are no directorates, clear the cost centre too.
-        clear_cost_centre = True
-
-    if clear_cost_centre:
-        form.fields[cost_centre_field].queryset = CostCentre.objects.none()
