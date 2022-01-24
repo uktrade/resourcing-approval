@@ -76,7 +76,10 @@ class ApprovalForm(forms.ModelForm):
         ]
 
     reason = forms.CharField(
-        required=False, empty_value=None, widget=forms.Textarea(attrs={"rows": 5})
+        label="Explanation",
+        required=False,
+        empty_value=None,
+        widget=forms.Textarea(attrs={"rows": 5}),
     )
 
     def __init__(self, *args, user, resourcing_request, **kwargs):
@@ -163,6 +166,8 @@ class CommentForm(forms.ModelForm):
 
         self.fields["resourcing_request"].disabled = True
         self.fields["user"].disabled = True
+        # Hide the label.
+        self.fields["text"].label = ""
         self.fields["text"].widget.attrs.update({"rows": 5})
 
 

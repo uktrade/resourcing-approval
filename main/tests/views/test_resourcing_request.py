@@ -170,7 +170,7 @@ class TestResourcingRequestApprovalView:
 
 
 def test_scenario_mark_as_complete(client, full_resourcing_request):
-    # remove the SDS status determination form
+    # remove the status determination statement form
     full_resourcing_request.sds_status_determination.delete()
 
     # send for approval
@@ -201,7 +201,7 @@ def test_scenario_mark_as_complete(client, full_resourcing_request):
 
     login(client, "hiring-manager")
 
-    # check we can't mark as complete without the SDS status determination
+    # check we can't mark as complete without the status determination statement
     with pytest.raises(ValidationError):
         client.post(
             reverse(
@@ -210,7 +210,7 @@ def test_scenario_mark_as_complete(client, full_resourcing_request):
             )
         )
 
-    # add back the SDS status determination form
+    # add back the status determination statement form
     client.post(
         reverse(
             "sds-status-determination-create",

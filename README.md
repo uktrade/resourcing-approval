@@ -48,3 +48,6 @@
 
 - `HRBP` has been renamed to `HR Business Partners`. References in the code will stick
   to `HRBP` for the time being, and labels will change to `HR Business Partners`.
+
+- `SDS status determination` has been renamed to `Status determination statement (SDS)`.
+  The Django model will stay as `SDSStatusDetermination` for the time being.

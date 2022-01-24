@@ -159,17 +159,24 @@ class CestDocumentUpdateView(SupportingDocumentUpdateView):
     title = "CEST document"
 
 
+SDS_FORM_HELP_TEXT = (
+    "This form is not required until after approvals, and the person has been hired."
+)
+
+
 class SdsStatusDeterminationCreateView(SupportingDocumentCreateView):
     model = SdsStatusDetermination
     form_class = SdsStatusDeterminationForm
     permission_required = "main.add_sdsstatusdetermination"
-    event_context = {"object": "SDS status determination"}
-    title = "SDS status determination"
+    event_context = {"object": "Status determination statement"}
+    title = "Status determination statement (SDS)"
+    form_help_text = SDS_FORM_HELP_TEXT
 
 
 class SdsStatusDeterminationUpdateView(SupportingDocumentUpdateView):
     model = SdsStatusDetermination
     form_class = SdsStatusDeterminationForm
     permission_required = "main.change_sdsstatusdetermination"
-    event_context = {"object": "SDS status determination"}
-    title = "SDS status determination"
+    event_context = {"object": "Status determination statement"}
+    title = "Status determination statement (SDS)"
+    form_help_text = SDS_FORM_HELP_TEXT

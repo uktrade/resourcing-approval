@@ -33,7 +33,7 @@
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {% if approval %}
-                        {{ approval.approved|default_if_none:"Cleared" }} - {{ approval.user }} - {{ approval.timestamp }}
+                        {{ approval.approved|yesno:"Approved,Rejected,Cleared" }}, {{ approval.user }}, {{ approval.timestamp }}
                     {% endif %}
                 </dd>
             </div>
@@ -49,10 +49,10 @@
         </summary>
         <div class="govuk-details__text">
             {% for approval in resourcing_request.approvals.all %}
-                <div>
-                    {{ approval.get_type_display }} - {{ approval.approved|default_if_none:"Cleared" }} - {{ approval.user }} - {{ approval.timestamp }}
+                <div style="margin-bottom: 10px">
+                    {{ approval.get_type_display }}, {{ approval.approved|yesno:"Approved,Rejected,Cleared" }}, {{ approval.user }}, {{ approval.timestamp }}
                     {% if approval.reason %}
-                        <div>{{ approval.reason.text }}</div>
+                        <div class="secondary-text">{{ approval.reason.text }}</div>
                     {% endif %}
                 </div>
             {% empty %}

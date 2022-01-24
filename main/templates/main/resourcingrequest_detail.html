@@ -21,7 +21,7 @@
     {% field_summary object 'state' %}
 </dl>
 
-<h2 class="govuk-heading-m">Supporting forms</h2>
+<h2 class="govuk-heading-m">Supporting information</h2>
 
 <dl class="govuk-summary-list">
     <!-- Financial information -->
@@ -136,13 +136,13 @@
         </dd>
     </div>
 
-    <!-- SDS status determination -->
+    <!-- Status determination statement -->
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
-            SDS status determination
+            Status determination statement
         </dt>
         <dd class="govuk-summary-list__value">
-            {{ object.sds_status_determination|default:'No SDS status determination' }}
+            {{ object.sds_status_determination|default:'No status determination statement' }}
         </dd>
         <dd class="govuk-summary-list__actions">
             {% if perms.main.view_sdsstatusdetermination and object.sds_status_determination %}
@@ -215,7 +215,7 @@
 <h1 class="govuk-heading-l">Approvals</h1>
 
 {% if object.is_draft %}
-    <p class="govuk-body">Resourcing request is not ready for approval.</p>
+    <p class="govuk-body">Not ready for approval.</p>
 {% else %}
     {% include 'main/partials/approvals.html' with form=approval_form resourcing_request=object can_user_approve=can_user_approve %}
 {% endif %}
@@ -232,7 +232,7 @@
                     <p class="govuk-body">{{ comment.text }}</p>
                 </div>
             {% empty %}
-                <p class="govuk-body">No comments have been added.</p>
+                <p class="govuk-body">There are currently no comments.</p>
             {% endfor %}
         </div>
     </div>
@@ -250,7 +250,7 @@
 <details class="govuk-details" data-module="govuk-details">
     <summary class="govuk-details__summary">
         <span class="govuk-details__summary-text">
-            Event log
+            Resourcing request history
         </span>
     </summary>
     <div class="govuk-details__text">
