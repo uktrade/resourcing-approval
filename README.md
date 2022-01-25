@@ -11,9 +11,10 @@
 
 ## Setup
 
-1. `cp .env.example .env`
-2. `npm install`
-3. `make build`
+1. `git config core.hooksPath .githooks`
+2. `cp .env.example .env`
+3. `npm install`
+4. `make build`
 
 ## Running
 

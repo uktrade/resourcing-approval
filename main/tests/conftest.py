@@ -43,6 +43,11 @@ def busops(db, client):
 
 
 @pytest.fixture
+def dg_coo(db, client):
+    return login(client, "dg-coo")
+
+
+@pytest.fixture
 def resourcing_request(db):
     c = Client()
 

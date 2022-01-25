@@ -17,9 +17,11 @@ shell:
 
 migrations:
 	$(web) python manage.py makemigrations
+	$(web) chown $(shell id -u):$(shell id -g) */migrations/*
 
 empty-migration:
 	$(web) python manage.py makemigrations --empty $(app)
+	$(web) chown $(shell id -u):$(shell id -g) */migrations/*
 
 migrate:
 	$(web) python manage.py migrate
@@ -64,7 +66,7 @@ check-flake8:
 	$(web) flake8 $(file)
 
 check-migrations:
-	$(web) python manage.py makemigrations --check
+	$(web) python manage.py makemigrations --check --dry-run
 
 check: check-black check-isort check-flake8 check-migrations
 
@@ -90,9 +92,9 @@ test-ci:
 
 # Local commands
 black:
-	black .
+	poetry run black .
 
 isort:
-	isort .
+	poetry run isort .
 
 all-formatters: isort black

@@ -1,3 +1,5 @@
+from typing import TypedDict
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
@@ -5,10 +7,19 @@ from django.urls import reverse
 from main.models import Approval
 
 
+SummaryConfigFields = dict[str, list[str]]
+
+
+class SummaryConfig(TypedDict):
+    fields: SummaryConfigFields
+
+
 class User(AbstractUser):
     profession = models.ForeignKey(
         "main.Profession", models.PROTECT, null=True, blank=True
     )
+
+    summary_config = models.JSONField(default=dict)
 
     def __str__(self):
         return self.get_full_name() or self.get_username()
@@ -32,3 +43,11 @@ class User(AbstractUser):
     @property
     def is_busops(self):
         return self.has_approval_perm(Approval.Type.BUSOPS)
+
+    @property
+    def summary_fields(self) -> SummaryConfigFields:
+        return self.summary_config.get("fields", {})
+
+    @summary_fields.setter
+    def summary_fields(self, value: SummaryConfigFields) -> None:
+        self.summary_config["fields"] = value
