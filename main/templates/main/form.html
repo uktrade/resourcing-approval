@@ -5,6 +5,10 @@
 {% block content %}
 <h2 class="govuk-heading-m">{{ title }}</h2>
 
+{% if form_help_text %}
+    <p class="govuk-body">{{ form_help_text }}</p>
+{% endif %}
+
 <form method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
 

@@ -3,7 +3,7 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<h1 class="govuk-heading-l">Resourcing Approvals</h1>
+<h1 class="govuk-heading-l">Resourcing approvals dashboard</h1>
 
 {% if perms.main.add_resourcingrequest %}
     <a class="govuk-button" href="{% url 'resourcing-request-create' %}">Create resourcing request</a>

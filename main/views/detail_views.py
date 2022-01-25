@@ -20,7 +20,7 @@ class JobDescriptionDetailView(SupportingDocumentDetailView):
 class SdsStatusDeterminationDetailView(SupportingDocumentDetailView):
     model = SdsStatusDetermination
     permission_required = "main.view_sdsstatusdetermination"
-    title = "SDS status determination"
+    title = "Status determination statement (SDS)"
     stacked_fields = ["reasons"]
 
 

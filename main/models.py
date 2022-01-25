@@ -6,6 +6,7 @@ from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.template.defaultfilters import date, truncatechars
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 from chartofaccount.models import (
     CostCentre,
@@ -79,7 +80,15 @@ class ResourcingRequest(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     is_ir35 = models.BooleanField(
-        "Is the role inside IR35?", null=True, choices=TRUE_FALSE_CHOICES
+        "Is the role inside IR35?",
+        null=True,
+        choices=TRUE_FALSE_CHOICES,
+        help_text=mark_safe(
+            "IR35 covers off-payroll working rules. So inside IR35 contractors not on"
+            " the payroll pay broadly the same Income Tax and National Insurance"
+            " contributions as employees. You can read more about IR35"
+            ' <a class="govuk-link" href="https://www.gov.uk/guidance/understanding-off-payroll-working-ir35" target="_blank">here</a>.'
+        ),
     )
     chief = models.ForeignKey(
         "user.User", models.CASCADE, verbose_name="Chief/SMT sponsor", related_name="+"
@@ -308,10 +317,18 @@ class Approval(models.Model):
     )
     user = models.ForeignKey("user.User", models.CASCADE, related_name="+")
     reason = models.OneToOneField(
-        "Comment", models.CASCADE, null=True, related_name="reason"
+        "Comment",
+        models.CASCADE,
+        null=True,
+        related_name="reason",
+        verbose_name="Explanation",
+        help_text=(
+            "You need to provide a reason for rejection, if you approve then you don't"
+            " have to add a note."
+        ),
     )
 
-    type = models.CharField(choices=Type.choices, max_length=20)
+    type = models.CharField("role", choices=Type.choices, max_length=20)
     approved = models.BooleanField(null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -384,10 +401,10 @@ class FinancialInformation(models.Model):
         "Total Budget, including sourcing fees, expenses and interim labour cost"
     )
     timesheet_and_expenses_validator = models.CharField(
-        "name of the first timesheet & expenses validator", max_length=255
+        "name of the first timesheet and expenses validator", max_length=255
     )
     second_timesheet_validator = models.CharField(
-        "name of the second timesheet & expenses validator", max_length=255
+        "name of the second timesheet and expenses validator", max_length=255
     )
     min_day_rate = models.IntegerField(
         "Minimum anticipated day rate", null=True, blank=True
@@ -613,12 +630,12 @@ class InterimRequest(models.Model):
     type_of_security_clearance = models.CharField(
         max_length=50,
         choices=SECURITY_CLEARANCE_CHOICES,
-        verbose_name="Level of Security clearance required",
+        verbose_name="Level of security clearance required",
     )
     contractor_type = models.CharField(
         max_length=50,
         choices=CONTRACTOR_TYPE_CHOICES,
-        verbose_name="Category of Interim",
+        verbose_name="Type of interim required",
     )
     position_code = models.CharField(max_length=30)
     equivalent_civil_servant_grade = models.CharField(
@@ -627,18 +644,17 @@ class InterimRequest(models.Model):
     supplier = models.CharField(max_length=20, choices=Supplier.choices)
     part_b_business_case = models.TextField(
         verbose_name="Business case",
-        help_text="Please detail why the interim resource is required",
+        help_text="Explain why an interim resource is needed.",
     )
     part_b_impact = models.TextField(
         verbose_name="Impact",
-        help_text="What would be the impact of not filling this requirement.",
+        help_text="Explain the impact of not getting this resource.",
     )
     part_b_main_reason = models.TextField(
-        verbose_name="Main reason",
+        verbose_name="Justification",
         help_text=(
-            "What are the main reasons why this role has not been filled by a"
-            " substantive Civil Servant. Please detail the strategic workforce plan for"
-            " this role after the assignment end date:"
+            "Why has this role not been filled by a substantive civil servant? What is"
+            " the strategic workforce plan for this role after the contract end date?"
         ),
     )
 
@@ -672,8 +688,10 @@ class CestDocument(models.Model):
     file = models.FileField(
         upload_to=resourcing_request_directory_path,
         validators=[FileExtensionValidator(["pdf"])],
-        help_text=(
-            "The link to the document is only valid for 5 minutes."
+        help_text=mark_safe(
+            'Use the <a class="govuk-link" target="_blank" href="https://www.gov.uk/guidance/check-employment-status-for-tax">CEST tool</a>'
+            " and upload the PDF file output."
+            "<br>The link to the document is only valid for 5 minutes."
             " After this, you will need to refresh the page to get a new link."
         ),
     )
@@ -689,6 +707,9 @@ class CestDocument(models.Model):
 
 
 class SdsStatusDetermination(models.Model):
+    class Meta:
+        verbose_name = "status determination statement (SDS)"
+
     resourcing_request = models.OneToOneField(
         "ResourcingRequest",
         models.CASCADE,
@@ -727,4 +748,10 @@ class Comment(models.Model):
     user = models.ForeignKey("user.User", models.CASCADE, related_name="comments")
 
     timestamp = models.DateTimeField(auto_now_add=True)
-    text = models.TextField("Add a comment")
+    text = models.TextField(
+        "Add a comment",
+        help_text=(
+            "You can add a comment at any stage of the process. Use these to provide"
+            " further information. Approval and rejection notes will also appear here."
+        ),
+    )
