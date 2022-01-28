@@ -81,7 +81,7 @@ def send_group_notification(
 
     tasks = [
         send_notification.s(
-            email_address=user.email,
+            email_address=user.contact_email,
             template_id=template_id,
             personalisation={
                 **personalisation,
@@ -135,7 +135,7 @@ def notify_approvers(
     # Notify the requestor that the request has been approved.
     if resourcing_request.is_approved:
         send_notification.delay(
-            email_address=resourcing_request.requestor.email,
+            email_address=resourcing_request.requestor.contact_email,
             template_id=settings.GOVUK_NOTIFY_APPROVED_TEMPLATE_ID,
             personalisation={
                 **personalisation,
@@ -167,7 +167,7 @@ def notify_approvers(
 
         if next_approval_type == Approval.Type.CHIEF:
             send_notification.delay(
-                email_address=resourcing_request.chief.email,
+                email_address=resourcing_request.chief.contact_email,
                 template_id=settings.GOVUK_NOTIFY_READY_FOR_APPROVAL_TEMPLATE_ID,
                 personalisation={
                     **personalisation,

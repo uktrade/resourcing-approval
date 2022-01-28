@@ -6,7 +6,7 @@ from user.models import User
 
 class EditUserView(SuccessMessageMixin, UpdateView):
     model = User
-    fields = ["profession"]
+    fields = ["profession", "preferred_email"]
     template_name = "user/edit-user.html"
     context_object_name = "user"
     success_message = "User updated"

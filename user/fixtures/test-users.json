@@ -173,6 +173,7 @@
       "first_name": "DG COO",
       "last_name": "Douglas",
       "email": "dg-coo@example.com",
+      "preferred_email": "dg-coo-office@example.com",
       "is_staff": true,
       "is_active": true,
       "date_joined": "2021-10-25T10:00:18Z",

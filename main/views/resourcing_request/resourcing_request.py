@@ -210,7 +210,7 @@ class ResourcingRequestFinishAmendmentsReviewView(ResourcingRequestActionView):
 
         # Notify the requestor that the amendments have been reviewed.
         send_notification.delay(
-            email_address=resourcing_request.requestor.email,
+            email_address=resourcing_request.requestor.contact_email,
             template_id=settings.GOVUK_NOTIFY_FINISHED_AMENDMENTS_REVIEW_TEMPLATE_ID,
             personalisation={"resourcing_request_url": self.resourcing_request_url},
         )
@@ -250,7 +250,7 @@ class ResourcingRequestAddComment(
 
     def form_valid(self, form):
         send_notification.delay(
-            email_address=self.resourcing_request.requestor.email,
+            email_address=self.resourcing_request.requestor.contact_email,
             template_id=settings.GOVUK_NOTIFY_COMMENT_LEFT_TEMPLATE_ID,
             personalisation={
                 "first_name": self.resourcing_request.requestor.first_name,
@@ -341,7 +341,7 @@ class ResourcingRequestApprovalView(FormView, ResourcingRequestBaseView):
         )
 
         send_notification.delay(
-            email_address=self.resourcing_request.requestor.email,
+            email_address=self.resourcing_request.requestor.contact_email,
             template_id=settings.GOVUK_NOTIFY_APPROVAL_TEMPLATE_ID,
             personalisation={
                 "first_name": self.resourcing_request.requestor.first_name,
