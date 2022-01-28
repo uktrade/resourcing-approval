@@ -20,6 +20,7 @@ class User(AbstractUser):
     )
 
     summary_config = models.JSONField(default=dict)
+    preferred_email = models.EmailField(null=True, blank=True)
 
     def __str__(self):
         return self.get_full_name() or self.get_username()
@@ -51,3 +52,7 @@ class User(AbstractUser):
     @summary_fields.setter
     def summary_fields(self, value: SummaryConfigFields) -> None:
         self.summary_config["fields"] = value
+
+    @property
+    def contact_email(self):
+        return self.preferred_email or self.email
