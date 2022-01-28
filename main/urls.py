@@ -20,11 +20,13 @@ from main.views.resourcing_request import (
     ResourcingRequestCreateView,
     ResourcingRequestDeleteView,
     ResourcingRequestDetailView,
+    ResourcingRequestEditSummaryView,
     ResourcingRequestFinishAmendmentsReviewView,
     ResourcingRequestListView,
     ResourcingRequestMarkAsCompleteView,
     ResourcingRequestSendForApprovalView,
     ResourcingRequestSendForReviewView,
+    ResourcingRequestSummaryView,
     ResourcingRequestUpdateView,
 )
 from main.views.statement_of_work_views import (
@@ -72,6 +74,19 @@ def supporting_document_urls(name, create_view, update_view, detail_view=None):
 
     return urls
 
+
+summary_urls = [
+    path(
+        "",
+        ResourcingRequestSummaryView.as_view(),
+        name="resourcing-request-summary-view",
+    ),
+    path(
+        "edit",
+        ResourcingRequestEditSummaryView.as_view(),
+        name="resourcing-request-summary-edit",
+    ),
+]
 
 financial_information_urls = supporting_document_urls(
     "financial-information",
@@ -187,6 +202,7 @@ request_urls = [
         ResourcingRequestDeleteView.as_view(),
         name="resourcing-request-delete",
     ),
+    path("summary/", include(summary_urls)),
     # Supporting documents
     path("financial-information/", include(financial_information_urls)),
     path("job-description/", include(job_description_urls)),

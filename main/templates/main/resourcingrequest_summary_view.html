@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Summary{% endblock %}
+
+{% block content %}
+<h1 class="govuk-heading-l">Summary</h1>
+
+{% for section in sections %}
+    <div style="margin-bottom: 20px;">
+        <h2 class="govuk-heading-m">{{ section.heading }}</h2>
+        {% for field in section.render_fields %}
+            {{ field }}
+        {% endfor %}
+    </div>
+{% endfor %}
+
+<div>
+    <a class="govuk-button govuk-button--secondary" href="{% url 'resourcing-request-summary-edit' resourcing_request_pk=resourcing_request.pk %}">Edit fields</a>
+    <a class="govuk-button govuk-button--secondary" href="{% url 'resourcing-request-detail' resourcing_request_pk=resourcing_request.pk %}">Back to request</a>
+</div>
+{% endblock %}

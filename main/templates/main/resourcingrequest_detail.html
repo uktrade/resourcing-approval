@@ -7,6 +7,8 @@
 {% block content %}
 <h1 class="govuk-heading-l">{{ object }}</h1>
 
+<a class="govuk-button govuk-button--secondary" href="{% url 'resourcing-request-summary-view' resourcing_request_pk=object.pk %}">View summary</a>
+
 <dl class="govuk-summary-list">
     {% field_summary object 'type' %}
     {% field_summary object 'job_title' %}

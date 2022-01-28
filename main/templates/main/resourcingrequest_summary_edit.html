@@ -1,0 +1,18 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Edit summary fields{% endblock %}
+
+{% block content %}
+<h1 class="govuk-heading-l">Edit summary fields</h1>
+
+<form method="post">
+    {% csrf_token %}
+
+    {% include 'main/partials/forms/form.html' %}
+
+    <div>
+        <button class="govuk-button" type="submit">Save</button>
+        <a class="govuk-button govuk-button--secondary" href="{% url 'resourcing-request-summary-view' resourcing_request_pk=resourcing_request.pk %}">Back to summary</a>
+    </div>
+</form>
+{% endblock %}
