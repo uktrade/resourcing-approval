@@ -16,3 +16,17 @@ class InterimRequestNewForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields["resourcing_request"].disabled = True
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        uk_based = cleaned_data.get("uk_based")
+        overseas_country = cleaned_data.get("overseas_country")
+
+        if not uk_based and not overseas_country:
+            self.add_error(
+                "overseas_country",
+                "You must select a country when the role is not UK based.",
+            )
+
+        return cleaned_data

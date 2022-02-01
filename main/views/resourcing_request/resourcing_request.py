@@ -44,10 +44,13 @@ class ResourcingRequestCreateView(
     permission_required = "main.add_resourcingrequest"
     event_type = EventType.CREATED
     event_context = {"object": "resourcing request"}
-    title = "Create resourcing request"
+    title = "Create a new resourcing request"
 
     def get_initial(self):
-        return {"requestor": self.request.user}
+        return {
+            "requestor": self.request.user,
+            "type": ResourcingRequest.Type.NEW,
+        }
 
     def get_event_content_object(self) -> models.Model:
         return self.object
