@@ -50,6 +50,7 @@ class ResourcingRequestForm(FormWithStartEndDates):
         ]
         widgets = {
             "requestor": forms.HiddenInput,
+            "type": forms.HiddenInput,
         }
 
     def __init__(self, *args, **kwargs):
