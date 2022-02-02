@@ -15,7 +15,7 @@
 {% endfor %}
 
 <div>
-    <a class="govuk-button govuk-button--secondary" href="{% url 'resourcing-request-summary-edit' resourcing_request_pk=resourcing_request.pk %}">Edit fields</a>
-    <a class="govuk-button govuk-button--secondary" href="{% url 'resourcing-request-detail' resourcing_request_pk=resourcing_request.pk %}">Back to request</a>
+    <a class="govuk-button govuk-button--secondary" href="{% url 'resourcing-request-summary-edit' resourcing_request_pk=resourcing_request.pk %}">Edit view</a>
+    <a class="govuk-button govuk-button--secondary" href="{% url 'resourcing-request-detail' resourcing_request_pk=resourcing_request.pk %}">Back to main record</a>
 </div>
 {% endblock %}

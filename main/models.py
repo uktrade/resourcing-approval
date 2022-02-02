@@ -690,9 +690,9 @@ class CestDocument(models.Model):
         validators=[FileExtensionValidator(["pdf"])],
         help_text=mark_safe(
             'Use the <a class="govuk-link" target="_blank" href="https://www.gov.uk/guidance/check-employment-status-for-tax">CEST tool</a>'
-            " and upload the PDF file output."
-            "<br>The link to the document is only valid for 5 minutes."
-            " After this, you will need to refresh the page to get a new link."
+            ", this will generate a PDF which should be uploaded here."
+            "<br>The link to the current file will time out after 5 minutes."
+            " If it has timed out, refresh the page to update the link."
         ),
     )
 

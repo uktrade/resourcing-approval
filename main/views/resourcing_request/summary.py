@@ -159,20 +159,32 @@ class ResourcingRequestSummaryView(TemplateView, ResourcingRequestBaseView):
             ResourcingRequestSummary(
                 instance=self.resourcing_request,
                 summary_fields=summary_fields.get("resourcing_request", []),
-            ),
-            FinancialInformationSummary(
-                instance=self.resourcing_request.financial_information,
-                summary_fields=summary_fields.get("financial_information", []),
-            ),
-            StatementOfWorkSummary(
-                instance=self.resourcing_request.statement_of_work,
-                summary_fields=summary_fields.get("statement_of_work", []),
-            ),
-            InterimRequestSummary(
-                instance=self.resourcing_request.interim_request,
-                summary_fields=summary_fields.get("interim_request", []),
-            ),
+            )
         ]
+
+        if hasattr(self.resourcing_request, "financial_information"):
+            sections.append(
+                FinancialInformationSummary(
+                    instance=self.resourcing_request.financial_information,
+                    summary_fields=summary_fields.get("financial_information", []),
+                )
+            )
+
+        if hasattr(self.resourcing_request, "statement_of_work"):
+            sections.append(
+                StatementOfWorkSummary(
+                    instance=self.resourcing_request.statement_of_work,
+                    summary_fields=summary_fields.get("statement_of_work", []),
+                )
+            )
+
+        if hasattr(self.resourcing_request, "interim_request"):
+            sections.append(
+                InterimRequestSummary(
+                    instance=self.resourcing_request.interim_request,
+                    summary_fields=summary_fields.get("interim_request", []),
+                )
+            )
 
         context = {
             "resourcing_request": self.resourcing_request,

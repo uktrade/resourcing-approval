@@ -144,7 +144,7 @@
             Status determination statement
         </dt>
         <dd class="govuk-summary-list__value">
-            {{ object.sds_status_determination|default:'No status determination statement' }}
+            {{ object.sds_status_determination|default:'None - must be completed after hiring staff' }}
         </dd>
         <dd class="govuk-summary-list__actions">
             {% if perms.main.view_sdsstatusdetermination and object.sds_status_determination %}
