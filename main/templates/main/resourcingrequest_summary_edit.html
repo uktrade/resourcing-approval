@@ -1,9 +1,14 @@
 {% extends 'main/base.html' %}
 
-{% block title %}Edit summary fields{% endblock %}
+{% block title %}Edit summary view{% endblock %}
 
 {% block content %}
-<h1 class="govuk-heading-l">Edit summary fields</h1>
+<h1 class="govuk-heading-l">Edit summary view</h1>
+
+<p class="govuk-body">
+    Select the options you want to be displayed every time you view a summary. You can
+    change these at any time by editing the summary view.
+</p>
 
 <form method="post">
     {% csrf_token %}
