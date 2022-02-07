@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.shortcuts import redirect
@@ -273,9 +274,12 @@ class ResourcingRequestAddComment(
         return self.resourcing_request
 
 
-class ResourcingRequestApprovalView(FormView, ResourcingRequestBaseView):
+class ResourcingRequestApprovalView(
+    SuccessMessageMixin, FormView, ResourcingRequestBaseView
+):
     form_class = ApprovalForm
     template_name = "main/partials/approvals.html"
+    success_message = "Your approval has been successfully submitted."
 
     def get_context_data(self, **kwargs):
         context = {

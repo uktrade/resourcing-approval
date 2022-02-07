@@ -1,5 +1,5 @@
 {% if messages %}
-    <ul class="govuk-list messages-list">
+    <ul class="govuk-list messages-list" remove-me="5s">
         {% for message in messages %}
             <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
                 {{ message }}

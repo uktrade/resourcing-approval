@@ -117,6 +117,7 @@ class TestResourcingRequestApprovalView:
         type: str,
         approved: bool,
         reason: str = None,
+        follow: bool = False,
     ):
         return client.post(
             reverse(
@@ -128,6 +129,7 @@ class TestResourcingRequestApprovalView:
                 "approved": approved,
                 "reason": reason,
             },
+            follow=follow,
         )
 
     def test_can_add_approval(
@@ -167,6 +169,20 @@ class TestResourcingRequestApprovalView:
             approval_notifications[0]["personalisation"]["approved_or_rejected"]
             == "approved"
         )
+
+    def test_confirmation_message(
+        self, client, head_of_profession, full_resourcing_request
+    ):
+        r = self._approval(
+            client,
+            full_resourcing_request,
+            type="head_of_profession",
+            approved=True,
+            reason="LGTM!",
+            follow=True,
+        )
+        assert r.status_code == 200
+        assert r.context["messages"]
 
 
 def test_scenario_mark_as_complete(client, full_resourcing_request):

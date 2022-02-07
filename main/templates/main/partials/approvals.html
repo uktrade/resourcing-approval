@@ -1,6 +1,8 @@
 {% load form %}
 
 <div data-hx-component-id="approvals">
+    {% include 'main/partials/messages.html' %}
+
     {% if can_user_approve %}
         <form
             novalidate
