@@ -49,17 +49,25 @@ class SupportingDocumentDetailView(
     template_name = "main/supporting_document_detail.html"
     # App
     title = "Supporting document"
-    excluded_fields: ClassVar[list[str]] = ["id", "resourcing_request"]
+    excluded_fields: ClassVar[list[str]] = ["id", "resourcing_request", "change_log"]
     stacked_fields: ClassVar[list[str]] = []
 
     def get_context_data(self, **kwargs):
-        context = {
+        context = super().get_context_data(**kwargs)
+        obj = context["object"]
+
+        object_changes = (
+            obj.change_log.get_changes() if hasattr(obj, "change_log") else {}
+        )
+
+        context_ext = {
             "title": self.title,
             "excluded_fields": self.excluded_fields,
             "stacked_fields": self.stacked_fields,
+            "object_changes": object_changes,
         }
 
-        return super().get_context_data(**kwargs) | context
+        return context | context_ext
 
 
 class SupportingDocumentUpdateView(

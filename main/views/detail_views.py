@@ -33,7 +33,11 @@ class StatementOfWorkDetailView(SupportingDocumentDetailView):
     excluded_fields = [
         "id",
         "resourcing_request",
+        "statement_of_work",
         "modules",
+        "statement_of_work_module",
+        "deliverables",
+        "change_log",
     ]
     stacked_fields = [
         "project_description",

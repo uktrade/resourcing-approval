@@ -77,6 +77,10 @@ main {
   cursor: help;
 }
 
+.border-left-turquoise {
+  border-left: 4px solid govuk-colour("turquoise");
+}
+
 // Components
 .messages-list {
   margin-top: 20px;

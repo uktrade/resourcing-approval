@@ -8,6 +8,7 @@ from django.template.defaultfilters import date, truncatechars
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
+from change_log.models import ChangeLogRelation
 from chartofaccount.models import (
     CostCentre,
     DepartmentalGroup,
@@ -124,6 +125,7 @@ class ResourcingRequest(models.Model):
     )
 
     event_log = GenericRelation("event_log.Event")
+    change_log = ChangeLogRelation("change_log.Change")
 
     objects = ResourcingRequestQuerySet.as_manager()
 
@@ -333,6 +335,13 @@ class Approval(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
 
+class SupportingInformation(models.Model):
+    class Meta:
+        abstract = True
+
+    change_log = ChangeLogRelation("change_log.Change")
+
+
 class JobDescription(models.Model):
     resourcing_request = models.OneToOneField(
         "ResourcingRequest",
@@ -362,7 +371,7 @@ class JobDescription(models.Model):
         )
 
 
-class FinancialInformation(models.Model):
+class FinancialInformation(SupportingInformation):
     class AreaOfWork(models.TextChoices):
         DDAT = "ddat", "DDaT"
 
@@ -454,7 +463,7 @@ class FinancialInformation(models.Model):
         return currency(self.project_fees)
 
 
-class StatementOfWork(models.Model):
+class StatementOfWork(SupportingInformation):
     resourcing_request = models.OneToOneField(
         "ResourcingRequest",
         models.CASCADE,
@@ -514,7 +523,7 @@ class StatementOfWork(models.Model):
         )
 
 
-class StatementOfWorkModule(models.Model):
+class StatementOfWorkModule(SupportingInformation):
     statement_of_work = models.ForeignKey(
         StatementOfWork,
         on_delete=models.CASCADE,
@@ -552,7 +561,7 @@ class StatementOfWorkModule(models.Model):
         return self.statement_of_work.get_absolute_url()
 
 
-class StatementOfWorkModuleDeliverable(models.Model):
+class StatementOfWorkModuleDeliverable(SupportingInformation):
     statement_of_work_module = models.ForeignKey(
         StatementOfWorkModule,
         on_delete=models.CASCADE,
@@ -581,7 +590,7 @@ class StatementOfWorkModuleDeliverable(models.Model):
         return self.statement_of_work_module.statement_of_work.get_absolute_url()
 
 
-class InterimRequest(models.Model):
+class InterimRequest(SupportingInformation):
     class CivilServantGrade(models.TextChoices):
         AO = "AO", "AO"
         EO = "EO", "EO"
@@ -706,7 +715,7 @@ class CestDocument(models.Model):
         )
 
 
-class SdsStatusDetermination(models.Model):
+class SdsStatusDetermination(SupportingInformation):
     class Meta:
         verbose_name = "status determination statement (SDS)"
 

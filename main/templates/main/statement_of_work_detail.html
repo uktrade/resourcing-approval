@@ -1,6 +1,6 @@
 {% extends 'main/supporting_document_detail.html' %}
 
-{% load list_object %}
+{% load change_log %}
 
 {% block children %}
 <h2 class="govuk-heading-m">Modules</h2>
@@ -8,10 +8,7 @@
     <div>
         {% for module in my_modules %}
             <div>
-                <dl class="govuk-summary-list">
-                    {% include 'main/partials/summary-row.html' with key="Module" value=module.module_title %}
-                    {% include 'main/partials/summary-row.html' with key="Completion date" value=module.completion_date %}
-                </dl>
+                {% include 'main/partials/supporting_document_view.html' with object=module object_changes=module|get_changes %}
 
                 <h3 class="govuk-heading-s">Deliverables</h3>
 
@@ -23,9 +20,7 @@
                             </span>
                         </summary>
                         <div class="govuk-details__text">
-                            <dl class="govuk-summary-list">
-                                {% object_as_list deliverable deliverable_exclude_list %}
-                            </dl>
+                            {% include 'main/partials/supporting_document_view.html' with object=deliverable object_changes=deliverable|get_changes %}
 
                             {% if perms.main.change_statementofwork %}
                                 <a class="govuk-button govuk-button--secondary mb-0" href="{% url 'statement-of-work-module-deliverable-update' resourcing_request_pk=object.resourcing_request.pk statement_of_work_pk=object.pk module_pk=module.pk deliverable_pk=deliverable.pk %}">Edit deliverable</a>

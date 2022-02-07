@@ -79,7 +79,7 @@ compilescss:
 testrunner = docker-compose run --rm --name testrunner web
 
 test:
-	$(testrunner) pytest
+	$(testrunner) pytest $(file)
 
 test-fresh:
 	$(testrunner) pytest --create-db
@@ -89,6 +89,12 @@ test-bash:
 
 test-ci:
 	$(testrunner) ./scripts/test-ci.sh
+
+coverage-html:
+	$(testrunner) coverage html
+
+test-coverage: test-ci coverage-html
+	python -m webbrowser -t "file://$(shell pwd)/htmlcov/index.html"
 
 # Local commands
 black:

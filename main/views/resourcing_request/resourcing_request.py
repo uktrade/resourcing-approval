@@ -86,6 +86,8 @@ class ResourcingRequestDetailView(
             self.request.user
         )
 
+        context["object_changes"] = resourcing_request.change_log.get_changes()
+
         return context
 
 

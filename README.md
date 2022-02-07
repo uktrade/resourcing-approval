@@ -42,6 +42,22 @@
 
 - GOV.UK Notify
 
+# Technologies we use
+
+## Frontend
+
+- [GDS](https://design-system.service.gov.uk/)
+- [htmx](https://htmx.org/)
+- [Alpine.js](https://alpinejs.dev/)
+
+## Backend
+
+- Python
+- Django
+- Postgres
+- Redis
+- Celery
+
 # Notes
 
 - `BusOps` has been renamed to `Workforce Planning`. References in the code will stick

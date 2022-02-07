@@ -1,35 +1,59 @@
 {% load model %}
+{% load change_log %}
 
-<div style="margin-bottom: 40px;">
+{# Here we are using Alpine.js. #}
+<div style="margin-bottom: 40px;" x-data="{ showChanges: false }">
+
+    {% if object_changes %}
+        <button
+            class="govuk-button govuk-button--secondary govuk-button--small"
+            x-text="showChanges ? 'Hide previous values' : 'Show previous values'"
+            @click="showChanges = ! showChanges"
+        >
+            Show previous values
+        </button>
+    {% endif %}
+
     {% for field in object|fields %}
         {% if field.name not in excluded_fields %}
-            {% if field.name in stacked_fields %}        
-                <div class="govuk-grid-row govuk-body" style="margin-top: 10px; margin-bottom: 10px;">
-                    <div class="govuk-grid-column-full">
-                        <div>
+            {% with has_previous_value=object_changes|has_field_previous_value:field previous_value=object_changes|get_field_previous_value:field %}
+                <div class="govuk-grid-row govuk-body{% if has_previous_value %} border-left-turquoise{% endif %}" style="margin-top: 10px; margin-bottom: 10px;">
+                    {% if field.name in stacked_fields %}        
+                        <div class="govuk-grid-column-full">
+                            <div>
+                                <span class="govuk-!-font-weight-bold">{{ field|verbose_name|capfirst }}</span>
+                            </div>
+                            <div class="govuk-hint">
+                                {{ field|help_text }}
+                            </div>
+                            <div>
+                                {{ object|value:field.name }}
+                            </div>
+                            {% if has_previous_value %}
+                                <div class="secondary-text" style="margin-top: 10px;" x-show="showChanges">
+                                    {{ previous_value }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="govuk-grid-column-one-half">
                             <span class="govuk-!-font-weight-bold">{{ field|verbose_name|capfirst }}</span>
+                            {% if field|help_text %}
+                                <span class="tooltip" title="{{ object|field:field_name|help_text }}">🛈</span>
+                            {% endif %}
                         </div>
-                        <div class="govuk-hint">
-                            {{ field|help_text }}
-                        </div>
-                        <div>
+                        <div class="govuk-grid-column-one-quarter">
                             {{ object|value:field.name }}
                         </div>
-                    </div>
-                </div>
-            {% else %}
-                <div class="govuk-grid-row govuk-body" style="margin-top: 10px; margin-bottom: 10px;">
-                    <div class="govuk-grid-column-one-half">
-                        <span class="govuk-!-font-weight-bold">{{ field|verbose_name|capfirst }}</span>
-                        {% if field|help_text %}
-                            <span class="tooltip" title="{{ object|field:field_name|help_text }}">🛈</span>
+                        {% if has_previous_value %}
+                            <div class="govuk-grid-column-one-quarter secondary-text" x-show="showChanges">
+                                {{ previous_value }}
+                            </div>
                         {% endif %}
-                    </div>
-                    <div class="govuk-grid-column-one-half">
-                        {{ object|value:field.name }}
-                    </div>
+                    {% endif %}
                 </div>
-            {% endif %}
+            {% endwith %}
+
             <hr class="govuk-section-break govuk-section-break--visible">
         {% endif %}
     {% endfor %}
