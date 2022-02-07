@@ -10,10 +10,11 @@
     <link rel="shortcut icon" href="{% static 'main/favicon.ico' %}" type="image/x-icon">
     <link href="{% sass_src 'main/css/styles.scss' %}" rel="stylesheet" type="text/css"/>
     <script src="https://unpkg.com/htmx.org@1.6.0" integrity="sha384-G4dtlRlMBrk5fEiRXDsLjriPo8Qk5ZeHVVxS8KhX6D7I9XXJlNqbdvRlp9/glk5D" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org@1.6.0/dist/ext/remove-me.js"></script>
     <script src="https://unpkg.com/alpinejs" defer></script>
     {% block libraries %}{% endblock %}
 </head>
-<body>
+<body hx-ext="remove-me">
     {% include 'main/partials/header.html' with service_name='Resourcing Approval' %}
     <div class="govuk-width-container">
         <main class="govuk-main-wrapper">
