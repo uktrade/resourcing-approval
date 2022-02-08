@@ -29,7 +29,7 @@ class CanAccessResourcingRequestMixin(UserPassesTestMixin):
 class CanEditResourcingRequestMixin:
     def dispatch(self, request, *args, **kwargs):
         if not self.resourcing_request.can_update:
-            raise ValidationError("Cannot edit resourcing request")
+            raise ValidationError("Cannot edit contractor request")
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -44,8 +44,8 @@ class ResourcingRequestCreateView(
     form_class = ResourcingRequestForm
     permission_required = "main.add_resourcingrequest"
     event_type = EventType.CREATED
-    event_context = {"object": "resourcing request"}
-    title = "Create a new resourcing request"
+    event_context = {"object": "contractor request"}
+    title = "Create a new contractor request"
 
     def get_initial(self):
         return {
@@ -106,8 +106,8 @@ class ResourcingRequestUpdateView(
     form_class = ResourcingRequestForm
     permission_required = "main.change_resourcingrequest"
     event_type = EventType.UPDATED
-    event_context = {"object": "resourcing request"}
-    title = "Update resourcing request"
+    event_context = {"object": "contractor request"}
+    title = "Update contractor request"
 
     def get_event_content_object(self) -> models.Model:
         return self.object

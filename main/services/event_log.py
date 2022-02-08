@@ -24,16 +24,16 @@ class EventType(Enum):
     # value = tuple[string, Optional[set[str]]]
     CREATED = ("Created a {object}", {"object"})
     UPDATED = ("Updated a {object}", {"object"})
-    SENT_FOR_APPROVAL = ("Sent the resourcing request for approval", None)
-    AMENDING = ("Amending the resourcing request", None)
+    SENT_FOR_APPROVAL = ("Sent the contractor request for approval", None)
+    AMENDING = ("Amending the contractor request", None)
     SENT_FOR_REVIEW = ("Sent the amendments for review", None)
     REVIEWED_AMENDMENTS = ("Reviewed the amendments", None)
-    GROUP_APPROVED = ("{group} approved the resourcing request", {"group"})
-    GROUP_REJECTED = ("{group} rejected the resourcing request", {"group"})
-    COMMENTED = ("Commented on the resourcing request", None)
-    APPROVED = ("The resourcing request was approved", None)
+    GROUP_APPROVED = ("{group} approved the contractor request", {"group"})
+    GROUP_REJECTED = ("{group} rejected the contractor request", {"group"})
+    COMMENTED = ("Commented on the contractor request", None)
+    APPROVED = ("The contractor request was approved", None)
     DELETED = ("Deleted a {object}", {"object"})
-    COMPLETED = ("Marked the resourcing request as complete", None)
+    COMPLETED = ("Marked the contractor request as complete", None)
 
 
 class EventLogService:

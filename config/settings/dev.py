@@ -6,5 +6,5 @@ init_sentry()  # noqa: F405
 
 ALLOWED_HOSTS = [
     "resourcing-approval-dev.london.cloudapps.digital",
-    "resourcing-approval.dev.uktrade.digital",
+    "contractor-approval-dev.london.cloudapps.digital",
 ]

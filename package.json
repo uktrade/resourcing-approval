@@ -1,7 +1,7 @@
 {
   "name": "resourcing-approval",
   "version": "1.0.0",
-  "description": "A web application to aid with resourcing approvals.",
+  "description": "A web application to aid with contractor approvals.",
   "main": "index.js",
   "dependencies": {
     "govuk-frontend": "^3.14.0"

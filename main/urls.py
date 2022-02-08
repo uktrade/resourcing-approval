@@ -255,7 +255,7 @@ urlpatterns = [
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
     # Resourcing request
     path(
-        "resourcing-request/",
+        "contractor-request/",
         include(
             [
                 path(

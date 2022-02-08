@@ -111,11 +111,11 @@ class ApprovalForm(forms.ModelForm):
             )
 
         if self.resourcing_request.get_is_approved():
-            self.add_error(None, "The resourcing request has already been approved.")
+            self.add_error(None, "The contractor request has already been approved.")
 
         if approved in (True, False):
             if not self.resourcing_request.can_approve:
-                self.add_error(None, "The resourcing request cannot be approved")
+                self.add_error(None, "The contractor request cannot be approved")
 
             if not self.user.has_approval_perm(approval_type):
                 self.add_error(

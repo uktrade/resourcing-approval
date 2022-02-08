@@ -3,14 +3,14 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<h1 class="govuk-heading-l">Resourcing approvals dashboard</h1>
+<h1 class="govuk-heading-l">Contractor approvals dashboard</h1>
 
 {% if perms.main.add_resourcingrequest %}
-    <a class="govuk-button" href="{% url 'resourcing-request-create' %}">Create resourcing request</a>
+    <a class="govuk-button" href="{% url 'resourcing-request-create' %}">Create contractor request</a>
 {% endif %}
 
 {% if your_resourcing_requests %}
-    <h1 class="govuk-heading-m">Your resourcing requests</h1>
+    <h1 class="govuk-heading-m">Your contractor requests</h1>
 
     {% include 'main/partials/resourcing_request_table.html' with resourcing_requests=your_resourcing_requests %}
 {% endif %}

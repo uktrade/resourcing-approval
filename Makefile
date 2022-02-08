@@ -68,7 +68,10 @@ check-flake8:
 check-migrations:
 	$(web) python manage.py makemigrations --check --dry-run
 
-check: check-black check-isort check-flake8 check-migrations
+check-fixme:
+	! git --no-pager grep -i "fixme" -- :^Makefile
+
+check: check-black check-isort check-flake8 check-migrations check-fixme
 
 collectstatic:
 	$(web) python manage.py collectstatic
