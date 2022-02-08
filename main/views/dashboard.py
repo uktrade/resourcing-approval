@@ -8,7 +8,11 @@ from main.utils import get_user_related_approval_types
 
 
 def index(request):
-    return redirect(reverse("dashboard"))
+    # If the user has previously logged in, let's take them to the dashboard, else to
+    # the getting started page.
+    url_name = "dashboard" if request.user.last_login else "getting-started"
+
+    return redirect(reverse(url_name))
 
 
 class DashboardView(TemplateView):
