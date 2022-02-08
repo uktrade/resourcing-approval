@@ -7,6 +7,7 @@ from main.views.detail_views import (
     SdsStatusDeterminationDetailView,
     StatementOfWorkDetailView,
 )
+from main.views.getting_started import getting_started
 from main.views.interim_request_views import (
     InterimRequestCreateView,
     InterimRequestDetailView,
@@ -250,6 +251,7 @@ request_urls = [
 
 urlpatterns = [
     path("", index, name="index"),
+    path("getting-started/", getting_started, name="getting-started"),
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
     # Resourcing request
     path(
