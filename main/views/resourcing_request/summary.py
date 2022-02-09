@@ -64,7 +64,7 @@ class ModelSummary:
 
 class ResourcingRequestSummary(ModelSummary):
     model = ResourcingRequest
-    heading = "Resourcing request"
+    heading = "Contractor request"
     fields = [
         "requestor",
         "state",

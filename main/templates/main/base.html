@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Home{% endblock %} - Resourcing Approval</title>
+    <title>{% block title %}Home{% endblock %} - Contractor Approval</title>
     <link rel="shortcut icon" href="{% static 'main/favicon.ico' %}" type="image/x-icon">
     <link href="{% sass_src 'main/css/styles.scss' %}" rel="stylesheet" type="text/css"/>
     <script src="https://unpkg.com/htmx.org@1.6.0" integrity="sha384-G4dtlRlMBrk5fEiRXDsLjriPo8Qk5ZeHVVxS8KhX6D7I9XXJlNqbdvRlp9/glk5D" crossorigin="anonymous"></script>
@@ -15,7 +15,7 @@
     {% block libraries %}{% endblock %}
 </head>
 <body hx-ext="remove-me">
-    {% include 'main/partials/header.html' with service_name='Resourcing Approval' %}
+    {% include 'main/partials/header.html' with service_name='Contractor Approval' %}
     <div class="govuk-width-container">
         <main class="govuk-main-wrapper">
             <div class="govuk-grid-row">

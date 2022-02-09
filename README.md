@@ -68,3 +68,7 @@
 
 - `SDS status determination` has been renamed to `Status determination statement (SDS)`.
   The Django model will stay as `SDSStatusDetermination` for the time being.
+
+- The project has been renamed from `Resourcing Approval` to `Contractor Approval`. The
+  name change will only be applied to user facing parts of the project. The internals of
+  the project will still reference the old name `Resourcing Approval`.

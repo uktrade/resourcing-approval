@@ -1,5 +1,6 @@
 import datetime
 import json
+from pathlib import Path
 
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.validators import FileExtensionValidator
@@ -706,7 +707,7 @@ class CestDocument(models.Model):
     )
 
     def __str__(self):
-        return self.file.name
+        return Path(self.file.name).name
 
     def get_absolute_url(self):
         return reverse(
