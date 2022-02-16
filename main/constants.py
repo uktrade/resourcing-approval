@@ -15,6 +15,10 @@ class ApproverGroup(Enum):
     DG_COO = "DG COO"
 
 
+GROUP_USER_ADMIN = "User Administrator"
+GROUP_SYSTEM_ADMIN = "System Administrator"
+
+
 assert set(x.value for x in ApproverGroup) == set(
     x.label for x in Approval.Type
 ), "ApproverGroup and Approval.Type are out of sync"

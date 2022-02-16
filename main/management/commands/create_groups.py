@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group, Permission
 from django.core.management.base import BaseCommand
 
-from main.constants import ApproverGroup
+from main.constants import GROUP_SYSTEM_ADMIN, GROUP_USER_ADMIN, ApproverGroup
 
 
 class Command(BaseCommand):
@@ -44,6 +44,14 @@ class Command(BaseCommand):
         )
         dg_coo_group.name = ApproverGroup.DG_COO.value
         dg_coo_group.save()
+
+        user_admin, _ = Group.objects.get_or_create(
+            pk=11, defaults={"name": GROUP_USER_ADMIN}
+        )
+
+        system_admin, _ = Group.objects.get_or_create(
+            pk=12, defaults={"name": GROUP_SYSTEM_ADMIN}
+        )
 
         hiring_manager_group.permissions.set(
             Permission.objects.filter(
@@ -184,6 +192,22 @@ class Command(BaseCommand):
                     content_type__app_label="main",
                 )
             ]
+        )
+
+        user_admin.permissions.set(
+            Permission.objects.filter(
+                codename__in=[
+                    "view_user",
+                    "change_user",
+                ],
+                content_type__app_label="user",
+            )
+        )
+
+        system_admin.permissions.set(
+            Permission.objects.filter(
+                content_type__app_label="chartofaccount",
+            )
         )
 
         self.stdout.write(self.style.SUCCESS("Successfully created groups"))
