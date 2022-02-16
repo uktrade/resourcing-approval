@@ -67,7 +67,7 @@
       "is_staff": true,
       "is_active": true,
       "date_joined": "2021-10-19T14:52:38Z",
-      "groups": [2, 5],
+      "groups": [2, 5, 11, 12],
       "user_permissions": []
     }
   },
