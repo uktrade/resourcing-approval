@@ -56,6 +56,10 @@ main {
   background-color: hsl(30, 7.7%, 92%);
 }
 
+.govuk-summary-list__actions > a:not(:last-child) {
+  margin-right: 0.5rem;
+}
+
 // Utilities
 .secondary-text {
   color: $govuk-secondary-text-colour;
