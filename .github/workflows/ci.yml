@@ -19,11 +19,11 @@ jobs:
       - name: Build the web image
         run: docker-compose build web
 
-      - name: Run check
-        run: make check -j
-
       - name: Docker compose up
         run: docker-compose up -d
+
+      - name: Run check
+        run: make check -j
 
       - name: Run test
         run: make test-ci
