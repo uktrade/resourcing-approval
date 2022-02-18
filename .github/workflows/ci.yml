@@ -20,7 +20,7 @@ jobs:
         run: docker-compose build web
 
       - name: Run check
-        run: make check
+        run: make check -j
 
       - name: Docker compose up
         run: docker-compose up -d
