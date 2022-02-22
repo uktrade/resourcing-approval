@@ -5,6 +5,28 @@
 {% block content %}
 <h1 class="govuk-heading-l">Edit {{ user }}</h1>
 
+{% if show_profession_warning %}
+    {% include 'gds/warning.html' with warning='You need to select your profession below.' %}
+{% endif %}
+
+{% if show_approver_warning %}
+    {% include 'gds/warning.html' with warning='As an approver, you are missing an approver group.' %}
+{% endif %}
+
+<p class="govuk-body">Groups:</p>
+<ul class="govuk-list govuk-list--bullet">
+    {% for group in user.groups.all %}
+        <li>{{ group }}</li>
+    {% endfor %}
+</ul>
+
+<p class="govuk-body">User:</p>
+<ul class="govuk-list govuk-list--bullet">
+    <li>is active: {% include 'user/partials/yes-no-text.html' with yesno=user.is_active %}</li>
+    <li>is staff: {% include 'user/partials/yes-no-text.html' with yesno=user.is_staff %}</li>
+    <li>is superuser: {% include 'user/partials/yes-no-text.html' with yesno=user.is_superuser %}</li>
+</ul>
+
 <form method="POST" novalidate>
     {% csrf_token %}
     {% include 'main/partials/forms/form.html' %}

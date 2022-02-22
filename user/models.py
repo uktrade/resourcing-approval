@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 
+from main.constants import GROUP_APPROVER_PK
 from main.models import Approval
 
 
@@ -27,6 +28,10 @@ class User(AbstractUser):
 
     def get_absolute_url(self):
         return reverse("user:edit-user", kwargs={"pk": self.pk})
+
+    @property
+    def is_in_approver_group(self):
+        return self.groups.filter(pk=GROUP_APPROVER_PK).exists()
 
     @property
     def is_approver(self):
