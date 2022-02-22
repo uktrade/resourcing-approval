@@ -61,6 +61,14 @@ main {
   color: $govuk-secondary-text-colour;
 }
 
+.text-red {
+  color: govuk-colour("red");
+}
+
+.text-green {
+  color: govuk-colour("green");
+}
+
 .inline {
   display: inline;
 }

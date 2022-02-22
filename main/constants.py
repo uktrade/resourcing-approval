@@ -15,6 +15,8 @@ class ApproverGroup(Enum):
     DG_COO = "DG COO"
 
 
+GROUP_APPROVER_PK = 2
+
 GROUP_USER_ADMIN = "User Administrator"
 GROUP_SYSTEM_ADMIN = "System Administrator"
 
