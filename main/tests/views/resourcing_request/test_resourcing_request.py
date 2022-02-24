@@ -1,10 +1,12 @@
 import pytest
+from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from main import tasks
-from main.models import ResourcingRequest
+from main.models import Approval, ResourcingRequest
 from main.services.resourcing_request import create_sds_status_determination_test_data
+from main.services.review import ReviewAction
 from main.tests.conftest import login
 from main.tests.constants import USERNAME_APPROVAL_ORDER
 
@@ -73,22 +75,24 @@ class TestResourcingRequestSendForApprovalView:
             r = self._send_for_approval(client, full_resourcing_request)
 
 
+# The add comment view was replaced with the review view. I'm going to leave this as is
+# for the time being as it groups the comment tests together.
 class TestResourcingRequestAddCommentView:
     # Helpers
     def _add_comment(self, client, resourcing_request, text: str):
         return client.post(
             reverse(
-                "resourcing-request-add-comment",
+                "resourcing-request-review",
                 kwargs={"resourcing_request_pk": resourcing_request.pk},
             ),
-            data={"text": text},
+            data={"action": ReviewAction.COMMENT.value, "text": text},
         )
 
     # Tests
     def test_can_add_comment(self, client, hiring_manager, full_resourcing_request):
         text = "This is a test comment."
         r = self._add_comment(client, full_resourcing_request, text=text)
-        assert r.status_code == 302
+        assert r.status_code == 200
         assert full_resourcing_request.comments.last().text == text
 
     def test_notification_is_sent(
@@ -100,61 +104,71 @@ class TestResourcingRequestAddCommentView:
         assert tasks.TEST_NOTIFICATION_BOX[0]["personalisation"]["commenter"]
 
 
-class TestResourcingRequestApprovalView:
+class TestResourcingRequestReviewView:
     @pytest.fixture(autouse=True)
     def _setup(self, client, hiring_manager, full_resourcing_request):
-        client.post(
+        self.client = client
+
+        self.client.post(
             reverse(
                 "resourcing-request-send-for-approval",
                 kwargs={"resourcing_request_pk": full_resourcing_request.pk},
             )
         )
 
-    def _approval(
+    def _review(
         self,
-        client,
         resourcing_request,
-        type: str,
-        approved: bool,
-        reason: str = None,
+        action: ReviewAction,
+        approval_type: Approval.Type,
+        text: str = None,
         follow: bool = False,
     ):
-        return client.post(
+        return self.client.post(
             reverse(
-                "resourcing-request-approval",
+                "resourcing-request-review",
                 kwargs={"resourcing_request_pk": resourcing_request.pk},
             ),
             data={
-                "type": type,
-                "approved": approved,
-                "reason": reason,
+                "action": action.value,
+                "approval_type": approval_type.value,
+                "text": text,
             },
             follow=follow,
         )
 
-    def test_can_add_approval(
-        self, client, head_of_profession, full_resourcing_request
+    def _approve(
+        self,
+        resourcing_request,
+        approval_type: str,
+        text: str = None,
+        follow: bool = False,
     ):
-        r = self._approval(
-            client,
-            full_resourcing_request,
-            type="head_of_profession",
-            approved=True,
-            reason="LGTM!",
+        return self._review(
+            resourcing_request=resourcing_request,
+            action=ReviewAction.APPROVE,
+            approval_type=Approval.Type(approval_type),
+            text=text,
+            follow=follow,
         )
-        assert r.status_code == 302
+
+    def test_can_add_approval(self, head_of_profession, full_resourcing_request):
+        r = self._approve(
+            full_resourcing_request,
+            approval_type="head_of_profession",
+            text="LGTM!",
+        )
+        assert r.status_code == 200
         full_resourcing_request.refresh_from_db()
         assert full_resourcing_request.head_of_profession_approval
 
     def test_requestor_is_notified_of_approval(
-        self, client, head_of_profession, full_resourcing_request, settings
+        self, head_of_profession, full_resourcing_request, settings
     ):
-        self._approval(
-            client,
+        self._approve(
             full_resourcing_request,
-            type="head_of_profession",
-            approved=True,
-            reason="LGTM!",
+            approval_type="head_of_profession",
+            text="LGTM!",
         )
 
         approval_notifications = [
@@ -170,19 +184,15 @@ class TestResourcingRequestApprovalView:
             == "approved"
         )
 
-    def test_confirmation_message(
-        self, client, head_of_profession, full_resourcing_request
-    ):
-        r = self._approval(
-            client,
+    def test_confirmation_message(self, head_of_profession, full_resourcing_request):
+        r = self._approve(
             full_resourcing_request,
-            type="head_of_profession",
-            approved=True,
-            reason="LGTM!",
+            approval_type="head_of_profession",
+            text="LGTM!",
             follow=True,
         )
         assert r.status_code == 200
-        assert r.context["messages"]
+        assert messages.get_messages(r.wsgi_request)
 
 
 def test_scenario_mark_as_complete(client, full_resourcing_request):
@@ -203,12 +213,12 @@ def test_scenario_mark_as_complete(client, full_resourcing_request):
         login(client, username)
         client.post(
             reverse(
-                "resourcing-request-approval",
+                "resourcing-request-review",
                 kwargs={"resourcing_request_pk": full_resourcing_request.pk},
             ),
             data={
-                "type": approval_type.value,
-                "approved": True,
+                "action": ReviewAction.APPROVE.value,
+                "approval_type": approval_type.value,
             },
         )
 

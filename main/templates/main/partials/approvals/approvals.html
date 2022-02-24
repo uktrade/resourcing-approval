@@ -1,0 +1,25 @@
+{% load form %}
+
+{% if can_user_approve %}
+    <form
+        novalidate
+        hx-post="{% url 'resourcing-request-approval' resourcing_request_pk=resourcing_request.pk %}"
+        hx-target="[data-hx-component-id='approvals']"
+        hx-swap="outerHTML"
+    >
+        {% include 'main/partials/forms/error-summary.html' %}
+
+        {% csrf_token %}
+
+        {% field form.type %}
+        {% field form.reason optional_text='optional for approval' %}
+
+        {% if resourcing_request.can_approve %}
+            <button class="govuk-button" type="submit" name="approved" value="true">Approve</button>
+            <button class="govuk-button govuk-button--secondary" type="submit" name="approved" value="false">Reviewed</button>
+        {% endif %}
+        {% if resourcing_request.can_clear_approval and perms.main.can_give_busops_approval %}
+            <button class="govuk-button govuk-button--secondary" type="submit" name="approved" value="unknown">Clear</button>
+        {% endif %}
+    </form>
+{% endif %}

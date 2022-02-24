@@ -12,15 +12,6 @@ def get_user_related_approval_types(user, resourcing_request=None):
         ):
             yield approval_type
         elif user.has_perm(f"main.can_give_{approval_type.value}_approval"):
-            # Guard clause to check if the user is the nominated chief.
-            if (
-                resourcing_request
-                and approval_type == Approval.Type.CHIEF
-                and user.pk != resourcing_request.chief_id
-                and not user.is_superuser
-            ):
-                continue
-
             yield approval_type
 
 

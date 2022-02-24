@@ -15,9 +15,7 @@ from main.views.interim_request_views import (
     load_directorates,
 )
 from main.views.resourcing_request import (
-    ResourcingRequestAddComment,
     ResourcingRequestAmendView,
-    ResourcingRequestApprovalView,
     ResourcingRequestCreateView,
     ResourcingRequestDeleteView,
     ResourcingRequestDetailView,
@@ -25,6 +23,7 @@ from main.views.resourcing_request import (
     ResourcingRequestFinishAmendmentsReviewView,
     ResourcingRequestListView,
     ResourcingRequestMarkAsCompleteView,
+    ResourcingRequestReviewView,
     ResourcingRequestSendForApprovalView,
     ResourcingRequestSendForReviewView,
     ResourcingRequestSummaryView,
@@ -233,14 +232,9 @@ request_urls = [
         name="resourcing-request-finish-amendments-review",
     ),
     path(
-        "add-comment",
-        ResourcingRequestAddComment.as_view(),
-        name="resourcing-request-add-comment",
-    ),
-    path(
-        "approval",
-        ResourcingRequestApprovalView.as_view(),
-        name="resourcing-request-approval",
+        "review",
+        ResourcingRequestReviewView.as_view(),
+        name="resourcing-request-review",
     ),
     path(
         "mark-as-complete",

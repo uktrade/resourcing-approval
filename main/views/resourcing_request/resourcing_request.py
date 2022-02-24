@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMi
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
@@ -10,9 +11,11 @@ from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateVi
 from django.views.generic.list import ListView
 
 from main.constants import APPROVAL_TYPE_TO_GROUP, ApproverGroup
-from main.forms.forms import ApprovalForm, CommentForm, ResourcingRequestForm
-from main.models import Approval, Comment, ResourcingRequest
-from main.services.event_log import EventLogMixin, EventLogService, EventType
+from main.forms.forms import ResourcingRequestForm
+from main.forms.review import ReviewForm
+from main.models import ResourcingRequest
+from main.services.event_log import EventLogMixin, EventType
+from main.services.review import ReviewAction, ReviewService
 from main.tasks import notify_approvers, send_group_notification, send_notification
 from main.views.base import ResourcingRequestBaseView
 from main.views.mixins import FormMixin
@@ -73,14 +76,8 @@ class ResourcingRequestDetailView(
         resourcing_request = context["object"]
 
         # forms
-        context["approval_form"] = ApprovalForm(
+        context["review_form"] = ReviewForm(
             user=self.request.user, resourcing_request=resourcing_request
-        )
-        context["comment_form"] = CommentForm(
-            initial={
-                "resourcing_request": resourcing_request.pk,
-                "user": self.request.user.pk,
-            }
         )
 
         context["can_user_approve"] = resourcing_request.can_user_approve(
@@ -236,50 +233,17 @@ class ResourcingRequestFinishAmendmentsReviewView(ResourcingRequestActionView):
             )
 
 
-class ResourcingRequestAddComment(
-    EventLogMixin,
-    PermissionRequiredMixin,
-    CreateView,
-    ResourcingRequestBaseView,
-):
-    pk_url_kwarg = "resourcing_request_pk"
-    model = Comment
-    form_class = CommentForm
-    permission_required = "main.view_resourcingrequest"
-    event_type = EventType.COMMENTED
-
-    def get_initial(self):
-        return {
-            "resourcing_request": self.resourcing_request.pk,
-            "user": self.request.user.pk,
-        }
-
-    def form_valid(self, form):
-        send_notification.delay(
-            email_address=self.resourcing_request.requestor.contact_email,
-            template_id=settings.GOVUK_NOTIFY_COMMENT_LEFT_TEMPLATE_ID,
-            personalisation={
-                "first_name": self.resourcing_request.requestor.first_name,
-                "commenter": self.request.user.get_full_name(),
-                "resourcing_request_url": self.resourcing_request_url,
-            },
-        )
-
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return self.resourcing_request.get_absolute_url()
-
-    def get_event_content_object(self) -> models.Model:
-        return self.resourcing_request
-
-
-class ResourcingRequestApprovalView(
+class ResourcingRequestReviewView(
     SuccessMessageMixin, FormView, ResourcingRequestBaseView
 ):
-    form_class = ApprovalForm
-    template_name = "main/partials/approvals.html"
-    success_message = "Your approval has been successfully submitted."
+    form_class = ReviewForm
+    template_name = "main/partials/review_form.html"
+    action_success_message = {
+        ReviewAction.APPROVE: "Your approval has been submitted.",
+        ReviewAction.CLEAR_APPROVAL: "The approval has been cleared.",
+        ReviewAction.REQUEST_CHANGES: "Your request change has been submitted.",
+        ReviewAction.COMMENT: "Your comment has been submitted.",
+    }
 
     def get_context_data(self, **kwargs):
         context = {
@@ -300,70 +264,27 @@ class ResourcingRequestApprovalView(
         return super().get_form_kwargs() | form_kwargs
 
     def form_valid(self, form):
-        approval_type = form.cleaned_data["type"]
-        approved = form.cleaned_data["approved"]
-        reason = form.cleaned_data["reason"]
-
-        comment = None
-
-        if reason:
-            comment = Comment.objects.create(
-                resourcing_request=self.resourcing_request,
-                user=self.request.user,
-                text=form.cleaned_data["reason"],
-            )
-
-        approval = Approval.objects.create(
+        ReviewService.add_review(
+            user=self.request.user,
             resourcing_request=self.resourcing_request,
-            user=self.request.user,
-            reason=comment,
-            type=approval_type,
-            approved=approved,
+            resourcing_request_url=self.resourcing_request_url,
+            action=form.cleaned_data["action"],
+            approval_type=form.cleaned_data["approval_type"],
+            text=form.cleaned_data["text"],
         )
 
-        setattr(self.resourcing_request, f"{approval_type}_approval", approval)
+        super().form_valid(form)
 
-        EventLogService.add_event(
-            content_object=self.resourcing_request,
-            user=self.request.user,
-            event_type=(
-                EventType.GROUP_APPROVED if approved else EventType.GROUP_REJECTED
-            ),
-            event_context={"group": Approval.Type(approval.type).label},
-        )
-
-        if self.resourcing_request.get_is_approved():
-            self.resourcing_request.state = self.resourcing_request.State.APPROVED
-
-            EventLogService.add_event(
-                content_object=self.resourcing_request,
-                user=self.request.user,
-                event_type=EventType.APPROVED,
-            )
-
-        self.resourcing_request.save()
-
-        notify_approvers.delay(
-            self.resourcing_request.pk,
-            self.resourcing_request_url,
-            approval.pk,
-        )
-
-        send_notification.delay(
-            email_address=self.resourcing_request.requestor.contact_email,
-            template_id=settings.GOVUK_NOTIFY_APPROVAL_TEMPLATE_ID,
-            personalisation={
-                "first_name": self.resourcing_request.requestor.first_name,
-                "approved_or_rejected": "approved" if approved else "rejected",
-                "approver": self.request.user.get_full_name(),
-                "resourcing_request_url": self.resourcing_request_url,
-            },
-        )
-
-        return super().form_valid(form)
+        # Tells HTMX to redirect to the success url.
+        return HttpResponse(headers={"HX-Redirect": self.get_success_url()})
 
     def get_success_url(self):
-        return self.request.path_info
+        return self.resourcing_request.get_absolute_url()
+
+    def get_success_message(self, cleaned_data):
+        action = cleaned_data["action"]
+
+        return self.action_success_message[action]
 
 
 class ResourcingRequestMarkAsCompleteView(ResourcingRequestActionView):
