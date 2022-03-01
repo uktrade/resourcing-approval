@@ -183,6 +183,7 @@ class ResourcingRequest(models.Model):
         yield from (
             hasattr(self, "interim_request"),
             hasattr(self, "cest_document"),
+            hasattr(self, "sds_status_determination"),
         )
 
     @property
@@ -228,7 +229,7 @@ class ResourcingRequest(models.Model):
 
     @property
     def can_mark_as_complete(self):
-        return hasattr(self, "sds_status_determination") and self.is_approved
+        return self.is_approved
 
     def get_approval(self, approval_type):
         return getattr(self, f"{approval_type.value}_approval")

@@ -5,7 +5,6 @@ from django.urls import reverse
 
 from main import tasks
 from main.models import Approval, ResourcingRequest
-from main.services.resourcing_request import create_sds_status_determination_test_data
 from main.services.review import ReviewAction
 from main.tests.conftest import login
 from main.tests.constants import USERNAME_APPROVAL_ORDER
@@ -196,9 +195,6 @@ class TestResourcingRequestReviewView:
 
 
 def test_scenario_mark_as_complete(client, full_resourcing_request):
-    # remove the status determination statement form
-    full_resourcing_request.sds_status_determination.delete()
-
     # send for approval
     login(client, "hiring-manager")
     client.post(
@@ -227,23 +223,6 @@ def test_scenario_mark_as_complete(client, full_resourcing_request):
 
     login(client, "hiring-manager")
 
-    # check we can't mark as complete without the status determination statement
-    with pytest.raises(ValidationError):
-        client.post(
-            reverse(
-                "resourcing-request-mark-as-complete",
-                kwargs={"resourcing_request_pk": full_resourcing_request.pk},
-            )
-        )
-
-    # add back the status determination statement form
-    client.post(
-        reverse(
-            "sds-status-determination-create",
-            kwargs={"resourcing_request_pk": full_resourcing_request.pk},
-        ),
-        data=create_sds_status_determination_test_data(),
-    )
     # mark as complete
     client.post(
         reverse(
