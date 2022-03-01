@@ -5,7 +5,7 @@
 {% else %}
     <div class="govuk-form-group{% if field.errors %} govuk-form-group--error{% endif %}">
         <label class="govuk-label" for="{{ field.id_for_label }}">
-            {{ field.label }} {% if not field.field.required %}<span class="secondary-text">(optional)</span>{% endif %}
+            {{ field.label }} {% if not field.field.required %}<span class="secondary-text">({{ optional_text|default:'optional' }})</span>{% endif %}
         </label>
 
         {% if field.help_text %}

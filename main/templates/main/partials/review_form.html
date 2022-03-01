@@ -1,0 +1,38 @@
+{% comment %}
+Review form component.
+
+context:
+    form
+    resourcing_request
+    can_user_approve
+{% endcomment %}
+
+{% load form %}
+
+<form novalidate hx-post="{% url 'resourcing-request-review' resourcing_request_pk=resourcing_request.pk %}" hx-swap="outerHTML">
+    {% include 'main/partials/forms/error-summary.html' %}
+
+    {% csrf_token %}
+
+    {% if can_user_approve %}
+        {% field form.approval_type %}
+        {% field form.text optional_text='optional for approval' %}
+    {% else %}
+        {% field form.text %}
+    {% endif %}
+
+    {% if can_user_approve and resourcing_request.can_approve %}
+        <button class="govuk-button" type="submit" name="action" value="approve">Approve</button>
+    {% endif %}
+    {% if perms.main.add_comment %}
+        {% if can_user_approve %}
+            <button class="govuk-button govuk-button--secondary" type="submit" name="action" value="request_changes">Request changes</button>
+            <button class="govuk-button govuk-button--secondary" type="submit" name="action" value="comment">Comment</button>
+        {% else %}
+            <button class="govuk-button govuk-button" type="submit" name="action" value="comment">Add comment</button>
+        {% endif %}
+    {% endif %}
+    {% if resourcing_request.can_clear_approval and perms.main.can_give_busops_approval %}
+        <button class="govuk-button govuk-button--secondary" type="submit" name="action" value="clear_approval">Clear</button>
+    {% endif %}
+</form>

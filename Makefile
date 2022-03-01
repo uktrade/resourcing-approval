@@ -97,6 +97,8 @@ coverage-html:
 	$(testrunner) coverage html
 
 test-coverage: test-ci coverage-html
+
+open-coverage: test-coverage
 	python -m webbrowser -t "file://$(shell pwd)/htmlcov/index.html"
 
 # Local commands

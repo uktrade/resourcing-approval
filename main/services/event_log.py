@@ -34,6 +34,7 @@ class EventType(Enum):
     APPROVED = ("The contractor request was approved", None)
     DELETED = ("Deleted a {object}", {"object"})
     COMPLETED = ("Marked the contractor request as complete", None)
+    APPROVAL_CLEARED = ("Cleared the approval for {group}", {"group"})
 
 
 class EventLogService:

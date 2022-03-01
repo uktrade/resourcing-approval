@@ -213,19 +213,27 @@
     </form>
 {% endif %}
 
-<!-- Approvals -->
+<!-- Approval summary -->
 <h1 class="govuk-heading-l">Approvals</h1>
+{% include 'main/partials/approvals/summary.html' with resourcing_request=object %}
 
-{% if object.is_draft %}
-    <p class="govuk-body">Not ready for approval.</p>
-{% else %}
-    {% include 'main/partials/approvals.html' with form=approval_form resourcing_request=object can_user_approve=can_user_approve %}
+<!-- Approve, request changes or comment -->
+{% if can_user_approve %}
+    <h1 class="govuk-heading-l">Approve, request changes or comment</h1>
+    {% include 'main/partials/review_form.html' with form=review_form resourcing_request=object can_user_approve=can_user_approve %}
 {% endif %}
 
 <!-- Comments -->
 {% if perms.main.view_comment %}
     <div>
-        <h1 class="govuk-heading-l">Comments</h1>
+        <h1 class="govuk-heading-l">Comments and additional information</h1>
+
+        <p class="govuk-body">All comments, conditional approval notes and requests for more information will appear here.</p>
+
+        {% if not can_user_approve and perms.main.add_comment %}
+            {% include 'main/partials/review_form.html' with form=review_form resourcing_request=object can_user_approve=can_user_approve %}
+        {% endif %}
+
         <div>
             {% for comment in object.comments.all %}
                 <div>
@@ -238,14 +246,6 @@
             {% endfor %}
         </div>
     </div>
-{% endif %}
-
-{% if perms.main.add_comment %}
-    <form action="{% url 'resourcing-request-add-comment' object.pk %}" method="post">
-        {% csrf_token %}
-        {% include 'main/partials/forms/form.html' with form=comment_form %}
-        <button class="govuk-button">Add comment</button>
-    </form>
 {% endif %}
 
 <!-- Event log -->
@@ -264,7 +264,7 @@
 function handleFormConfirmSubmit(event) {
     event.preventDefault();
 
-    form = event.target;
+    const form = event.target;
 
     if (confirm(form.dataset.confirm)) {
         form.submit();

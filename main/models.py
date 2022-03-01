@@ -324,10 +324,10 @@ class Approval(models.Model):
         models.CASCADE,
         null=True,
         related_name="reason",
-        verbose_name="Explanation",
+        verbose_name="Additional information",
         help_text=(
-            "You need to provide a reason for rejection, if you approve then you don't"
-            " have to add a note."
+            "If you don't approve the case and need more information or want to"
+            " approve with a conditional change add your note and select 'Reviewed'."
         ),
     )
 
@@ -752,6 +752,9 @@ class SdsStatusDetermination(SupportingInformation):
 
 
 class Comment(models.Model):
+    class Meta:
+        ordering = ["-timestamp"]
+
     resourcing_request = models.ForeignKey(
         "ResourcingRequest", models.CASCADE, related_name="comments"
     )
@@ -761,7 +764,7 @@ class Comment(models.Model):
     text = models.TextField(
         "Add a comment",
         help_text=(
-            "You can add a comment at any stage of the process. Use these to provide"
-            " further information. Approval and rejection notes will also appear here."
+            "You can provide additional information at any stage of the process,"
+            " by adding a comment."
         ),
     )

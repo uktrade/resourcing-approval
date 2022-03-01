@@ -1,0 +1,42 @@
+{% comment %}
+Approvals summary component.
+
+context:
+    resourcing_request
+{% endcomment %}
+
+<dl class="govuk-summary-list">
+    {% for approval_type, approval in resourcing_request.get_approvals.items %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                {{ approval_type.label }} approval
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {% if approval %}
+                    {{ approval.approved|yesno:'Approved,Rejected,Cleared' }}, {{ approval.user }}, {{ approval.timestamp }}
+                {% endif %}
+            </dd>
+        </div>
+    {% endfor %}
+</dl>
+
+<!-- Approvals history -->
+<details class="govuk-details" data-module="govuk-details">
+    <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+            Approvals history
+        </span>
+    </summary>
+    <div class="govuk-details__text">
+        {% for approval in resourcing_request.approvals.all %}
+            <div style="margin-bottom: 10px">
+                {{ approval.get_type_display }}, {{ approval.approved|yesno:"Approved,Rejected,Cleared" }}, {{ approval.user }}, {{ approval.timestamp }}
+                {% if approval.reason %}
+                    <div class="secondary-text">{{ approval.reason.text }}</div>
+                {% endif %}
+            </div>
+        {% empty %}
+            No approval history.
+        {% endfor %}
+    </div>
+</details>
