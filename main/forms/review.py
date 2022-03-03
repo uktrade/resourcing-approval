@@ -1,8 +1,9 @@
 from django import forms
 
-from main.models import Approval
+from main.models import Approval, ResourcingRequest
 from main.services.review import ReviewAction
 from main.utils import get_user_related_approval_types
+from user.models import User
 
 
 class ReviewForm(forms.Form):
@@ -23,7 +24,9 @@ class ReviewForm(forms.Form):
         coerce=ReviewAction,
     )
 
-    def __init__(self, *args, user, resourcing_request, **kwargs):
+    def __init__(
+        self, *args, user: User, resourcing_request: ResourcingRequest, **kwargs
+    ) -> None:
         super().__init__(*args, **kwargs)
 
         self.user = user
@@ -35,6 +38,13 @@ class ReviewForm(forms.Form):
                 user, resourcing_request
             )
         ]
+
+        can_approve = self.resourcing_request.can_user_approve(user)
+
+        # The form is only dealing with adding a comment.
+        if not can_approve:
+            self.fields["text"].required = True
+            self.fields["text"].label = "Comment"
 
     def clean(self):
         # The validation here covers potential user errors that should not result in a
@@ -75,7 +85,8 @@ class ReviewForm(forms.Form):
             ReviewAction.REQUEST_CHANGES,
             ReviewAction.COMMENT,
         ):
-            if not text:
+            # If the `text` field is required we don't need 2 error messages.
+            if not text and not self.fields["text"].required:
                 self.add_error(
                     "text",
                     (

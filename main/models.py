@@ -1,6 +1,7 @@
 import datetime
 import json
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.validators import FileExtensionValidator
@@ -21,6 +22,10 @@ from main.templatetags.currency import currency
 from quill.db.models.fields import QuillField
 from quill.forms.widgets import QuillWidget
 from quill.utils import extract_text
+
+
+if TYPE_CHECKING:
+    from user.models import User
 
 
 TRUE_FALSE_CHOICES = (
@@ -249,7 +254,7 @@ class ResourcingRequest(models.Model):
     def get_is_approved(self):
         return all(x and x.approved for x in self.get_approvals().values())
 
-    def can_user_approve(self, user):
+    def can_user_approve(self, user: "User") -> bool:
         """Return whether the user can approve this resourcing request."""
         if self.can_approve:
             if user.is_superuser:
