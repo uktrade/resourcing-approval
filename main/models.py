@@ -136,7 +136,7 @@ class ResourcingRequest(models.Model):
     objects = ResourcingRequestQuerySet.as_manager()
 
     def __str__(self):
-        return f"{self.job_title} for {self.project_name}"
+        return f"{self.get_type_display()} - {self.job_title} for {self.project_name}"
 
     def get_absolute_url(self):
         return reverse(
@@ -273,6 +273,10 @@ class ResourcingRequest(models.Model):
             return True
 
         return False
+
+    @property
+    def proposed_contract_period(self):
+        return f"{date(self.start_date)} to {date(self.end_date)}"
 
 
 class Approval(models.Model):
