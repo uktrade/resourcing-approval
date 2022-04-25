@@ -21,7 +21,7 @@ django-sass-processor==1.1
 django-staff-sso-client==3.1.1
 django-storages==1.12.3; python_version >= "3.5"
 django-timezone-field==4.2.3; python_version >= "3.5"
-django==3.2.12; python_version >= "3.6"
+django==3.2.13; python_version >= "3.6"
 docopt==0.6.2; python_version >= "3.6"
 idna==3.3; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6"
 jmespath==0.10.0; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version >= "3.6"
@@ -46,6 +46,6 @@ six==1.16.0; python_version >= "3.7" and python_full_version < "3.0.0" or python
 sqlparse==0.4.2; python_version >= "3.6"
 urllib3==1.26.8; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version < "4" and python_version >= "3.6"
 vine==5.0.0; python_version >= "3.7"
-waitress==2.0.0; python_full_version >= "3.6.0"
+waitress==2.1.1; python_full_version >= "3.7.0"
 wcwidth==0.2.5; python_full_version >= "3.6.2" and python_version >= "3.7"
 whitenoise==5.3.0; python_version >= "3.5" and python_version < "4"
